@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Thêm sản phẩm</title>
+</head>
+<body>
+  <h2>Thêm sản phẩm</h2>
+  <form id="productForm">
+    <label>Tên: <input type="text" id="ten"></label><br><br>
+    <label>Giá bán: <input type="text" id="gia"></label><br><br>
+    //<label>Giá khuyến mãi: <input type="number" id="giakhuyenmai"></label><br><br>
+    <label>Hình: <input type="file" id="hinh" accept="image/*"></label><br><br>
+    <button type="submit">Thêm sản phẩm</button>
+  </form>
+
+  <script>
+    const form = document.getElementById("productForm");
+
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const ten = document.getElementById("ten").value;
+      const gia = document.getElementById("gia").value;
+      //const giakhuyenmai = document.getElementById("giakhuyenmai").value;
+      const hinh = document.getElementById("hinh").files[0];
+
+      if (!ten || !gia || !hinh) {
+        alert("Vui lòng nhập đủ thông tin");
+        return;
+      }
+
+      // Tạo object sản phẩm
+      const reader = new FileReader();
+      reader.onload = function() {
+        const product = {
+          ten: ten,
+          gia: gia,
+         // giakhuyenmai:giakhuyenmai,
+          hinh: reader.result
+        };
+
+        // Lấy danh sách cũ từ localStorage
+        let products = JSON.parse(localStorage.getItem("products")) || [];
+        products.push(product);
+
+        // Lưu lại vào localStorage
+        localStorage.setItem("products", JSON.stringify(products));
+
+        alert("Đã thêm sản phẩm thành công!");
+        window.location.href = "product.html"; // chuyển sang trang sản phẩm
+      };
+      reader.readAsDataURL(hinh); // đọc file ảnh
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Giỏ hàng</title>
+  <link href="../css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body.login-bg {
+      background: url('../img/banner.jpg') no-repeat center center fixed;
+      background-size: cover;
+    }
+    .card {
+      border-radius: 18px;
+      background: rgba(255,255,255,0.97);
+    }
+  </style>
+</head>
+<body class="container py-4">
+<body class="d-flex justify-content-center align-items-center vh-100 login-bg">
+  <div class="card p-4 shadow" style="min-width:400px;max-width:600px;width:100%;">
+    <h3 class="mb-3 text-center">Giỏ hàng</h3>
+    <table class="table table-bordered bg-white" id="cartTable">
+      <tr><th>Sản phẩm</th><th>Số lượng</th><th>Giá</th><th>Tổng</th><th></th></tr>
+      <!-- Sản phẩm sẽ được render động bằng JS -->
+    </table>
+    <div class="text-end mb-2">
+      <strong>Tổng tiền: <span id="cartTotal">338,000đ</span></strong>
+    </div>
+    <div class="text-end">
+      <a href="checkout.html" class="btn btn-success">Thanh toán</a>
+    </div>
+    <script>
+      // Giỏ hàng động từ localStorage
+      function renderCart() {
+        let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        let table = document.getElementById('cartTable');
+        // Xóa các dòng cũ
+        table.querySelectorAll('tr:not(:first-child)').forEach(tr => tr.remove());
+        let total = 0;
+        cart.forEach((item, idx) => {
+          let tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${item.name}</td>
+            <td><input type="number" min="1" value="${item.qty}" class="form-control form-control-sm" style="width:60px;"></td>
+            <td>${Number(item.price).toLocaleString('vi-VN')}đ</td>
+            <td>${(item.qty * item.price).toLocaleString('vi-VN')}đ</td>
+            <td><button class="btn btn-sm btn-danger">Xóa</button></td>
+          `;
+          table.appendChild(tr);
+          total += item.qty * item.price;
+        });
+        document.getElementById('cartTotal').textContent = total.toLocaleString('vi-VN') + 'đ';
+        // Sự kiện thay đổi số lượng
+        table.querySelectorAll('input[type=number]').forEach((input, idx) => {
+          input.onchange = function() {
+            cart[idx].qty = Number(this.value);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            renderCart();
+          }
+        });
+        // Sự kiện xóa sản phẩm
+        table.querySelectorAll('.btn-danger').forEach((btn, idx) => {
+          btn.onclick = function() {
+            cart.splice(idx, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            renderCart();
+          }
+        });
+      }
+      renderCart();
+    </script>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

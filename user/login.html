@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Đăng nhập</title>
+  <link href="../css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body.login-bg {
+      background: url('../img/banner.jpg') no-repeat center center fixed;
+      background-size: cover;
+    }
+    .card {
+      border-radius: 18px;
+      background: rgba(255,255,255,0.95);
+    }
+    .form-control:focus {
+      box-shadow: 0 0 0 0.2rem rgba(108,117,125,.15);
+      border-color: #ced4da;
+      outline: none;
+    }
+    .btn-login {
+      background: #198754;
+      color: #fff;
+      font-weight: 500;
+      border: none;
+    }
+    .btn-login:hover {
+      background: #157347;
+      color: #fff;
+    }
+  </style>
+</head>
+
+<body class="d-flex justify-content-center align-items-center vh-100 login-bg">
+  <div class="card p-4 shadow" style="width:400px;">
+    <h3 class="mb-3 text-center">Đăng nhập</h3>
+    <form id="loginForm">
+      <input id="username" class="form-control mb-3" type="text" placeholder="Tài khoản" required>
+      <input id="password" class="form-control mb-3" type="password" placeholder="Mật khẩu" required>
+      <button id="loginBtn" type="submit" class="btn btn-login w-100">Đăng nhập</button>
+    </form>
+
+    <p class="mt-3 text-center">Chưa có tài khoản? <a href="register.html">Đăng ký</a></p>
+
+    <div id="loginError" class="alert alert-danger mt-3 text-center" style="display:none;">
+      ❌ Tài khoản hoặc mật khẩu không đúng!
+    </div>
+
+    <div id="loginSuccess" class="alert alert-success mt-3 text-center" style="display:none;">
+      ✅ Đăng nhập thành công! Đang chuyển hướng...
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      // 🔹 Đọc danh sách khách hàng đã đăng ký từ localStorage
+      const users = JSON.parse(localStorage.getItem('khachhang_demo') || '[]');
+
+      // 🔹 Tìm người dùng khớp username và password
+      const foundUser = users.find(u => u.username === username && u.password === password);
+
+      if (foundUser) {
+        // ✅ Nếu đăng nhập đúng
+        document.getElementById('loginError').style.display = 'none';
+        document.getElementById('loginSuccess').style.display = 'block';
+
+        // 🔹 Lưu người dùng hiện tại
+        localStorage.setItem('currentUser', JSON.stringify(foundUser));
+
+        // 🔹 Chuyển hướng sang trang giỏ hàng (product.html ở ngoài thư mục user)
+        setTimeout(() => {
+          window.location.href = '../product.html';
+        }, 1000);
+      } else {
+        // ❌ Sai tài khoản hoặc mật khẩu
+        document.getElementById('loginError').style.display = 'block';
+        document.getElementById('loginSuccess').style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Quản lý khách hàng</title>
+  <style>
+    :root{
+      --bg:#ffffff;
+      --bg-accent:#ecfdf5;
+      --card:#ffffff;
+      --accent:#16a34a;
+      --accent-dark:#059669;
+      --muted:#375a3b;
+      --danger:#ef4444;
+      --radius:12px;
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
+    }
+    body{
+      margin:0;
+      background: linear-gradient(180deg,var(--bg),var(--bg-accent));
+      color: #062018;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+    .app{max-width:1200px;margin:28px auto;padding:20px}
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+    .brand{display:flex;gap:14px;align-items:center}
+    .logo{
+      width:48px;height:48px;border-radius:10px;
+      background:linear-gradient(135deg,var(--accent),var(--accent-dark));
+      display:flex;align-items:center;justify-content:center;color:white;font-weight:700;
+      box-shadow:0 6px 18px rgba(5,102,60,0.12);
+    }
+    h1{font-size:20px;margin:0;color:var(--muted)}
+    .sub{color:rgba(55,90,59,0.75);font-size:13px}
+    .controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .btn{
+      background:var(--accent);color:white;padding:8px 12px;border-radius:10px;border:0;cursor:pointer;font-weight:600;font-size:13px;
+      box-shadow:0 6px 18px rgba(6,64,48,0.06);
+    }
+    .btn.secondary{
+      background:transparent;color:var(--accent);border:1px solid rgba(22,163,74,0.12);
+    }
+    .input{padding:8px 12px;border-radius:10px;border:1px solid rgba(6,32,24,0.06);width:240px;background:white}
+    table{
+      width:100%;border-collapse:collapse;background:var(--card);border-radius:12px;overflow:hidden;
+      box-shadow:0 6px 18px rgba(6,32,24,0.04);
+    }
+    thead{background:linear-gradient(90deg,rgba(22,163,74,0.06),transparent)}
+    th,td{padding:10px 12px;text-align:left;font-size:14px;border-bottom:1px solid rgba(6,32,24,0.04)}
+    th{font-size:13px;color:var(--muted);font-weight:600}
+    tr:hover td{background:linear-gradient(90deg,rgba(22,163,74,0.015),transparent)}
+    .actions{display:flex;flex-wrap:wrap;gap:6px}
+    .pill{padding:4px 8px;border-radius:999px;font-size:12px;border:1px solid rgba(6,32,24,0.06)}
+    .status-active{background:#ecfdf5;color:#065f46;border-color:#bbf7d0}
+    .status-locked{background:#fff7f7;color:#7f1d1d;border-color:#ffd7d7}
+    .modal-backdrop{position:fixed;inset:0;background:rgba(2,6,23,0.25);display:none;align-items:center;justify-content:center;padding:20px}
+    .modal{background:var(--card);width:820px;max-width:100%;border-radius:12px;padding:18px;box-shadow:0 18px 50px rgba(2,6,23,0.2)}
+    .modal h2{margin:0 0 12px 0;color:var(--muted)}
+    .form-row{display:flex;gap:12px}
+    .form-row .col{flex:1}
+    label{display:block;font-size:13px;color:rgba(55,90,59,0.9);margin-bottom:6px}
+    input[type=text], input[type=email], input[type=password], select{
+      width:100%;padding:10px;border-radius:10px;border:1px solid rgba(6,32,24,0.06);background:#fff;
+    }
+    .modal-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+    .small-btn{padding:6px 8px;border-radius:8px;font-size:12px}
+    .pw-mask{font-family:monospace;letter-spacing:2px}
+    @media (max-width:900px){
+      .form-row{flex-direction:column}
+      .controls{justify-content:flex-end}
+      .input{width:160px}
+      table{font-size:13px}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="brand">
+        <div class="logo">KH</div>
+        <div>
+          <h1>Quản lý khách hàng</h1>
+          <div class="sub">Thêm, sửa, xóa, reset mật khẩu, khóa/mở tài khoản — hiển thị tài khoản & mật khẩu</div>
+        </div>
+      </div>
+      <div class="controls">
+        <input id="search" class="input" placeholder="Tìm khách hàng..." />
+        <button class="btn secondary" id="clearSearch">Xóa</button>
+        <button class="btn secondary" id="openAdd">+ Thêm (Admin)</button>
+      </div>
+    </header>
+
+    <section class="list">
+      <table>
+        <thead>
+          <tr>
+            <th>Họ & tên</th>
+            <th>Email</th>
+            <th>Điện thoại</th>
+            <th>Thành phố</th>
+            <th>Tài khoản</th>
+            <th>Mật khẩu</th>
+            <th>Nguồn</th>
+            <th>Trạng thái</th>
+            <th>Thao tác</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </section>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal" role="dialog" aria-modal="true">
+      <h2 id="modalTitle">Thêm khách hàng</h2>
+
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:10px;">
+        <div style="flex:1">
+          <label>Chế độ tạo</label>
+          <select id="createdBy" style="padding:9px;border-radius:10px;border:1px solid rgba(6,32,24,0.06);width:100%">
+            <option value="admin">Admin tạo</option>
+            <option value="customer">Khách hàng (đăng ký)</option>
+          </select>
+        </div>
+        <div style="width:180px">
+          <label>Tự sinh mật khẩu</label>
+          <select id="autoPw" style="padding:9px;border-radius:10px;border:1px solid rgba(6,32,24,0.06);width:100%">
+            <option value="no">Không</option>
+            <option value="yes">Có (tự tạo mật khẩu ngẫu nhiên)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="col">
+          <label>Họ & tên</label>
+          <input id="name" type="text" />
+        </div>
+        <div class="col">
+          <label>Email</label>
+          <input id="email" type="email" />
+        </div>
+      </div>
+
+      <div class="form-row" style="margin-top:10px">
+        <div class="col">
+          <label>SĐT</label>
+          <input id="phone" type="text" />
+        </div>
+        <div class="col">
+          <label>Thành phố</label>
+          <input id="city" type="text" />
+        </div>
+      </div>
+
+      <div class="form-row" style="margin-top:10px">
+        <div class="col">
+          <label>Tài khoản (username)</label>
+          <input id="username" type="text" placeholder="vd: nguyenvana" />
+        </div>
+        <div class="col">
+          <label>Mật khẩu</label>
+          <input id="password" type="password" placeholder="Nhập mật khẩu hoặc chọn tự sinh" />
+        </div>
+      </div>
+
+      <div style="margin-top:10px;display:flex;gap:12px;align-items:center;">
+        <div style="flex:1">
+          <label>Trạng thái</label>
+          <select id="status" style="padding:9px;border-radius:10px;border:1px solid rgba(6,32,24,0.06);width:100%">
+            <option value="active">Active</option>
+            <option value="locked">Locked</option>
+          </select>
+        </div>
+        <div style="width:200px;text-align:right">
+          <small style="color:#666">* Lưu ý: Đây là demo — mật khẩu được lưu trên localStorage.</small>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn secondary" id="cancel">Hủy</button>
+        <button class="btn" id="saveBtn">Lưu</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // sample data extended with username/password/createdBy
+    const sample = [
+      {id:1,name:'Nguyễn Văn A',email:'a@example.com',phone:'0901111222',city:'Hà Nội',status:'active',username:'nguvana',password:'12345678',createdBy:'admin'},
+      {id:2,name:'Trần Thị B',email:'b@example.com',phone:'0903333444',city:'Hồ Chí Minh',status:'locked',username:'tranb',password:'password',createdBy:'customer'}
+    ];
+    let data = JSON.parse(localStorage.getItem('khachhang_demo')||'null') || sample.slice();
+    let editingId=null;
+    const tbody=document.getElementById('tbody');
+    const modal=document.getElementById('modalBackdrop');
+
+    function render(){
+      tbody.innerHTML='';
+      const q=document.getElementById('search').value.trim().toLowerCase();
+      data.filter(c=>!q||(c.name+c.email+c.phone+c.city+c.username).toLowerCase().includes(q))
+        .forEach(c=>{
+          const tr=document.createElement('tr');
+
+          // masked password display, with toggle
+          const pwMasked = maskPw(c.password || '');
+          tr.innerHTML=`
+            <td>${escapeHtml(c.name||'')}</td>
+            <td>${escapeHtml(c.email||'')}</td>
+            <td>${escapeHtml(c.phone||'')}</td>
+            <td>${escapeHtml(c.city||'')}</td>
+            <td>${escapeHtml(c.username||'—')}</td>
+            <td><span id="pw-${c.id}" class="pw-mask">${pwMasked}</span> <button class="small-btn" onclick="togglePw(${c.id})">Hiện/Ẩn</button></td>
+            <td>${escapeHtml(c.createdBy || 'admin')}</td>
+            <td><span class="pill ${c.status==='active'?'status-active':'status-locked'}">${c.status}</span></td>
+            <td>
+              <div class="actions">
+                <button class="btn secondary small-btn" onclick="openEdit(${c.id})">Sửa</button>
+                <button class="btn secondary small-btn" onclick="resetPass(${c.id})">Reset MK</button>
+                <button class="btn small-btn" style="background:${c.status==='active'?'var(--danger)':'var(--accent)'}" onclick="toggleLock(${c.id})">${c.status==='active'?'Khóa':'Mở'}</button>
+                <button class="btn small-btn" style="background:var(--danger)" onclick="remove(${c.id})">Xóa</button>
+              </div>
+            </td>
+          `;
+          tbody.appendChild(tr);
+      });
+      localStorage.setItem('khachhang_demo',JSON.stringify(data));
+    }
+
+    // helpers
+    function maskPw(pw){ if(!pw) return '—'; return '●'.repeat(Math.max(3, Math.min(12, pw.length))); }
+    function escapeHtml(str){ return String(str).replace(/[&<>"']/g, s=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])); }
+
+    // actions
+    window.resetPass=function(id){
+      const u=data.find(x=>x.id===id); if(!u) return;
+      const newPw = prompt(`Reset mật khẩu cho ${u.name}. Nhập mật khẩu mới:`, '');
+      if(newPw===null) return;
+      u.password = newPw;
+      alert(`Mật khẩu của ${u.name} đã được cập nhật (demo).`);
+      render();
+    }
+
+    window.togglePw=function(id){
+      const span=document.getElementById(`pw-${id}`);
+      if(!span) return;
+      const u=data.find(x=>x.id===id);
+      if(!u) return;
+      if(span.dataset.shown==='1'){
+        span.textContent = maskPw(u.password||'');
+        span.dataset.shown='0';
+      }else{
+        span.textContent = u.password || '—';
+        span.dataset.shown='1';
+      }
+    }
+
+    window.toggleLock=function(id){
+      const idx=data.findIndex(x=>x.id===id);
+      if(idx<0) return;
+      data[idx].status=data[idx].status==='active'?'locked':'active';
+      render();
+    }
+
+    window.remove=function(id){
+      if(!confirm('Xóa khách hàng này?')) return;
+      data=data.filter(x=>x.id!==id); render();
+    }
+
+    window.openEdit=function(id){
+      const c=data.find(x=>x.id===id); if(!c) return;
+      editingId=id;
+      document.getElementById('modalTitle').textContent='Sửa khách hàng';
+      document.getElementById('createdBy').value = c.createdBy || 'admin';
+      document.getElementById('autoPw').value = 'no';
+      document.getElementById('name').value=c.name||'';
+      document.getElementById('email').value=c.email||'';
+      document.getElementById('phone').value=c.phone||'';
+      document.getElementById('city').value=c.city||'';
+      document.getElementById('username').value=c.username||'';
+      document.getElementById('password').value=c.password||'';
+      document.getElementById('status').value=c.status||'active';
+      modal.style.display='flex';
+    }
+
+    // add admin
+    document.getElementById('openAdd').addEventListener('click',()=>{
+      editingId=null;
+      document.getElementById('modalTitle').textContent='Thêm khách hàng (Admin)';
+      document.getElementById('createdBy').value='admin';
+      document.getElementById('autoPw').value='no';
+      ['name','email','phone','city','username','password'].forEach(id=>document.getElementById(id).value='');
+      document.getElementById('status').value='active';
+      modal.style.display='flex';
+    });
+
+    
+
+    document.getElementById('cancel').addEventListener('click',()=>modal.style.display='none');
+
+    document.getElementById('saveBtn').addEventListener('click',()=>{
+      const name=document.getElementById('name').value.trim();
+      if(!name){alert('Nhập tên!');return;}
+      const email=document.getElementById('email').value.trim();
+      const phone=document.getElementById('phone').value.trim();
+      const city=document.getElementById('city').value.trim();
+      const status=document.getElementById('status').value;
+      const createdBy=document.getElementById('createdBy').value;
+      let username=document.getElementById('username').value.trim();
+      let password=document.getElementById('password').value;
+      const autoPw = document.getElementById('autoPw').value === 'yes';
+
+      // if autoPw requested => generate
+      if(autoPw){
+        password = generatePw(10);
+        // if username empty, create from name + random
+        if(!username){
+          username = makeUsernameFromName(name);
+        }
+      }
+
+      // if username provided but duplicate -> append id
+      if(!username){
+        username = makeUsernameFromName(name);
+      }
+      // ensure username uniqueness (simple)
+      let base = username;
+      let i=1;
+      while(data.some(u=>u.username===username && u.id!==editingId)){
+        username = base + i;
+        i++;
+      }
+
+      if(editingId){
+        const idx=data.findIndex(x=>x.id===editingId);
+        if(idx>=0) data[idx]={...data[idx],name,email,phone,city,status,username,password,createdBy};
+      }else{
+        data.unshift({id:Date.now(),name,email,phone,city,status,username,password,createdBy});
+      }
+
+      modal.style.display='none';
+      render();
+      // if auto generated password, show to admin
+      if(autoPw){
+        alert(`Tài khoản: ${username}\nMật khẩu (tự sinh): ${password}\n(Lưu ý: đây là demo, mật khẩu lưu trên localStorage)`);
+      }
+    });
+
+    function generatePw(len=8){
+      const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%";
+      let s='';
+      for(let i=0;i<len;i++) s += chars[Math.floor(Math.random()*chars.length)];
+      return s;
+    }
+    function makeUsernameFromName(name){
+      return name.toLowerCase().replace(/[^a-z0-9]+/g,'').slice(0,10) || 'user'+Math.floor(Math.random()*1000);
+    }
+
+    document.getElementById('search').addEventListener('input',render);
+    document.getElementById('clearSearch').addEventListener('click',()=>{document.getElementById('search').value='';render();});
+    modal.addEventListener('click',e=>{if(e.target===modal) modal.style.display='none'});
+    render();
+  </script>
+</body>
+</html>

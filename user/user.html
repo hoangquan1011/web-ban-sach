@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Thông tin cá nhân</title>
+  <link href="../css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: #f8f9fa;
+    }
+    .card {
+      border-radius: 18px;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+  </style>
+</head>
+<body class="d-flex justify-content-center align-items-center vh-100">
+  <div class="card p-4" style="width:400px;">
+    <h3 class="mb-3 text-center">Thông tin cá nhân</h3>
+    <form id="profileForm">
+      <div class="mb-3">
+        <label for="profileName" class="form-label">Họ tên</label>
+        <input id="profileName" class="form-control" type="text" value="Nguyễn Văn A">
+      </div>
+      <div class="mb-3">
+        <label for="profileEmail" class="form-label">Email</label>
+        <input id="profileEmail" class="form-control" type="email" value="user@email.com" disabled>
+      </div>
+      <div class="mb-3">
+        <label for="profileAddress" class="form-label">Địa chỉ</label>
+        <input id="profileAddress" class="form-control" type="text" value="123 Đường ABC, Quận 1, TP.HCM">
+      </div>
+      <div class="mb-3">
+        <label for="profilePhone" class="form-label">Số điện thoại</label>
+        <input id="profilePhone" class="form-control" type="text" value="0901234567">
+      </div>
+      <button type="submit" class="btn btn-success w-100">Lưu thông tin</button>
+    </form>
+    <div id="saveMsg" class="alert alert-success mt-3 text-center" style="display:none;">Đã lưu thông tin!</div>
+  </div>
+  <script>
+    document.getElementById('profileForm').onsubmit = function(e) {
+      e.preventDefault();
+      document.getElementById('saveMsg').style.display = 'block';
+      setTimeout(function(){
+        document.getElementById('saveMsg').style.display = 'none';
+      }, 2000);
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Đăng ký tài khoản khách hàng</title>
+  <link href="../css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --green: #16a34a;
+      --green-dark: #0f5132;
+      --bg: #f8fff9;
+    }
+    body {
+      background: linear-gradient(180deg, var(--bg), #ffffff);
+      font-family: 'Inter', system-ui, Arial;
+    }
+    .register-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .card {
+      width: 420px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+      padding: 28px;
+    }
+    h3 {
+      color: var(--green-dark);
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .form-control {
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+    .form-control:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 0.2rem rgba(22,163,74,0.15);
+    }
+    .btn-register {
+      background: var(--green);
+      border: none;
+      color: #fff;
+      font-weight: 600;
+      border-radius: 10px;
+      padding: 10px;
+      transition: 0.2s;
+    }
+    .btn-register:hover {
+      background: #15803d;
+    }
+    .alert {
+      border-radius: 10px;
+    }
+    .login-link {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 14px;
+    }
+    .login-link a {
+      color: var(--green);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="register-container">
+    <div class="card">
+      <h3>Đăng ký tài khoản khách hàng</h3>
+      <form id="registerForm">
+        <input id="regName" class="form-control mb-3" type="text" placeholder="Họ và tên" required>
+        <input id="regEmail" class="form-control mb-3" type="email" placeholder="Email" required>
+        <input id="regPhone" class="form-control mb-3" type="text" placeholder="Số điện thoại" required>
+        <input id="regCity" class="form-control mb-3" type="text" placeholder="Thành phố" required>
+        <input id="regUsername" class="form-control mb-3" type="text" placeholder="Tài khoản" required>
+        <input id="regPassword" class="form-control mb-3" type="password" placeholder="Mật khẩu" required>
+        <input id="regPassword2" class="form-control mb-3" type="password" placeholder="Xác nhận mật khẩu" required>
+        <button id="registerBtn" type="submit" class="btn btn-register w-100">Đăng ký</button>
+      </form>
+      <div id="registerMsg" class="alert alert-success mt-3 text-center" style="display:none;">
+        🎉 Đăng ký thành công! Đang chuyển sang trang đăng nhập...
+      </div>
+      <div class="login-link">
+        Đã có tài khoản? <a href="login.html">Đăng nhập ngay</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('registerForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      const name = regName.value.trim();
+      const email = regEmail.value.trim();
+      const phone = regPhone.value.trim();
+      const city = regCity.value.trim();
+      const username = regUsername.value.trim();
+      const pass = regPassword.value;
+      const pass2 = regPassword2.value;
+
+      if (pass !== pass2) {
+        regPassword2.classList.add('is-invalid');
+        alert('Mật khẩu xác nhận không khớp!');
+        return;
+      }
+      regPassword2.classList.remove('is-invalid');
+
+      // Lưu tài khoản vào localStorage (demo)
+      const user = { name, email, phone, city, username, password: pass, role: 'customer' };
+      let users = JSON.parse(localStorage.getItem('users') || '[]');
+      users.push(user);
+      localStorage.setItem('users', JSON.stringify(users));
+
+      // Hiện thông báo
+      registerMsg.style.display = 'block';
+      setTimeout(() => {
+        window.location.href = 'login.html';
+      }, 1500);
+    });
+  </script>
+  <script src="../js/bootstrap.min.js"></script>
+</body>
+</html>
