@@ -76,21 +76,9 @@
                 <a href="trang-chu-user.html" class="nav-item nav-link active">Trang chủ</a>
                 <a href="about.html" class="nav-item nav-link">Về Thức Store</a>
                 <a href="product.html" class="nav-item nav-link">Sản phẩm</a>
-                <div class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Thể loại sách</a>
-                    <div class="dropdown-menu bg-light m-0">
-                        <a href="gallery.html" class="dropdown-item">Gallery</a>
-                        <a href="feature.html" class="dropdown-item">Features</a>
-                        <a href="team.html" class="dropdown-item">Our Team</a>
-                        <a href="testimonial.html" class="dropdown-item">Testimonial</a>
-                        <a href="404.html" class="dropdown-item">404 Page</a>
-                    </div>
-                </div>
                 <a href="contact.html" class="nav-item nav-link">Liên lạc</a>
             </div>
-            <div class="border-start ps-4 d-none d-lg-block">
-                <button type="button" class="btn btn-sm p-0"><i class="fa fa-search"></i></button>
-            </div>
+
         </div>
         <div id="userSection" class="ms-3">
              <a href="user/login.html" class="btn btn-outline-primary btn-sm me-2" id="loginBtn">Đăng nhập</a>
@@ -109,116 +97,45 @@
     </div>
     <!-- Page Header End -->
 
-
-    <!-- Product Start -->
-    <div class="container-xxl py-5">
-        <div class="container">
-                        <div class="text-center mx-auto wow fadeInUp" data-wow-delay="0.1s" style="max-width: 700px;">
-                                <p class="section-title bg-white text-center text-primary px-3">Sách bán chạy</p>
-                                <h1 class="mb-4">Danh mục sản phẩm sách</h1>
-                                <!-- Bộ lọc và tìm kiếm -->
-                                <form class="row g-2 mb-4 justify-content-center align-items-end" id="searchForm">
-                                    <div class="col-md-4">
-                                        <input type="text" class="form-control" id="searchName" placeholder="Tìm theo tên sách...">
-                                    </div>
-                                    <div class="col-md-3">
-                                        <select class="form-select" id="searchCategory">
-                                            <option value="">Phân loại</option>
-                                            <option>Văn học</option>
-                                            <option>Kinh tế</option>
-                                            <option>Kỹ năng sống</option>
-                                            <option>Thiếu nhi</option>
-                                            <option>Giáo khoa</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <input type="text" class="form-control" id="searchPrice" placeholder="Khoảng giá (VD: 50000-200000)">
-                                    </div>
-                                    <div class="col-md-2">
-                                        <button type="submit" class="btn btn-primary w-100">Tìm kiếm</button>
-                                    </div>
-                                </form>
-                        </div>
-                        <!-- Danh sách sản phẩm -->
-                        <div class="row gx-4" id="productList">
-                <div class="col-md-6 col-lg-4 col-xl-3 wow fadeInUp" data-wow-delay="0.1s">
-                    <div class="product-item">
-                        <div class="position-relative">
-                            <img class="img-fluid" src="img/product-1.jpg" alt="">
-                            <div class="product-overlay">
-                                <a class="btn btn-square btn-secondary rounded-circle m-1" href="product-detail.html?id=1"><i class="bi bi-link"></i></a>
-                                <a class="btn btn-square btn-secondary rounded-circle m-1" href="user/cart.html"><i class="bi bi-cart"></i></a>
-                            </div>
-                        </div>
-                        <div class="text-center p-4">
-                            <a class="d-block h5" href="product-detail.html?id=1">Đắc Nhân Tâm</a>
-                            <span class="text-primary me-1">120.000đ</span>
-                            <span class="text-decoration-line-through">150.000đ</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-4 col-xl-3 wow fadeInUp" data-wow-delay="0.3s">
-                    <div class="product-item">
-                        <div class="position-relative">
-                            <img class="img-fluid" src="img/product-2.jpg" alt="">
-                            <div class="product-overlay">
-                                <a class="btn btn-square btn-secondary rounded-circle m-1" href="product-detail.html?id=2"><i class="bi bi-link"></i></a>
-                                <a class="btn btn-square btn-secondary rounded-circle m-1" href="user/cart.html"><i class="bi bi-cart"></i></a>
-                            </div>
-                        </div>
-                        <div class="text-center p-4">
-                            <a class="d-block h5" href="product-detail.html?id=2">Nhà Giả Kim</a>
-                            <span class="text-primary me-1">98.000đ</span>
-                            <span class="text-decoration-line-through">120.000đ</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-4 col-xl-3 wow fadeInUp" data-wow-delay="0.5s">
-                    <div class="product-item">
-                        <div class="position-relative">
-                            <img class="img-fluid" src="img/product-3.jpg" alt="">
-                            <div class="product-overlay">
-                                <a class="btn btn-square btn-secondary rounded-circle m-1" href="product-detail.html?id=3"><i class="bi bi-link"></i></a>
-                                <a class="btn btn-square btn-secondary rounded-circle m-1" href="user/cart.html"><i class="bi bi-cart"></i></a>
-                            </div>
-                        </div>
-                        <div class="text-center p-4">
-                            <a class="d-block h5" href="product-detail.html?id=3">Totto-chan bên cửa sổ</a>
-                            <span class="text-primary me-1">75.000đ</span>
-                            <span class="text-decoration-line-through">99.000đ</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-4 col-xl-3 wow fadeInUp" data-wow-delay="0.7s">
-                    <div class="product-item">
-                        <div class="position-relative">
-                            <img class="img-fluid" src="img/product-4.jpg" alt="">
-                            <div class="product-overlay">
-                                <a class="btn btn-square btn-secondary rounded-circle m-1" href="product-detail.html?id=4"><i class="bi bi-link"></i></a>
-                                <a class="btn btn-square btn-secondary rounded-circle m-1" href="user/cart.html"><i class="bi bi-cart"></i></a>
-                            </div>
-                        </div>
-                        <div class="text-center p-4">
-                            <a class="d-block h5" href="product-detail.html?id=4">Combo Sách Giáo Khoa</a>
-                            <span class="text-primary me-1">320.000đ</span>
-                            <span class="text-decoration-line-through">400.000đ</span>
-                        </div>
-                    </div>
-                </div>
-                        </div>
-                        <!-- Phân trang -->
-                        <nav aria-label="Page navigation example" class="mt-4">
-                            <ul class="pagination justify-content-center">
-                                <li class="page-item disabled"><a class="page-link" href="#">Trước</a></li>
-                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                <li class="page-item"><a class="page-link" href="#">Sau</a></li>
-                            </ul>
-                        </nav>
+    <!-- About -->
+<div class="container-xxl py-5">
+  <div class="container">
+    <div class="row g-5 align-items-end">
+      <div class="col-lg-6">
+        <div class="row g-2">
+          <div class="col-6 position-relative wow fadeIn" data-wow-delay="0.7s">
+            <div class="about-experience bg-primary rounded text-center text-white py-5">
+              <h1 class="display-1 mb-0">1000+</h1>
+              <small class="fs-5 fw-bold">Đầu sách chất lượng</small>
+            </div>
+          </div>
+          <div class="col-6 wow fadeIn" data-wow-delay="0.1s">
+            <img class="img-fluid rounded" src="img/product-2.jpg" alt="Thức Store - Nhà sách hiện đại">
+          </div>
+          <div class="col-6 wow fadeIn" data-wow-delay="0.3s">
+            <img class="img-fluid rounded" src="img/product-1.jpg" alt="Không gian đọc sách thân thiện">
+          </div>
+          <div class="col-6 wow fadeIn" data-wow-delay="0.5s">
+            <img class="img-fluid rounded" src="img/product-3.jpg" alt="Sách dành cho mọi lứa tuổi">
+          </div>
         </div>
+      </div>
+      <div class="col-lg-6 wow fadeIn" data-wow-delay="0.5s">
+        <p class="section-title bg-white text-start text-primary pe-3">Giới thiệu</p>
+        <h1 class="mb-4">Thức Store – Hành trình lan tỏa tri thức</h1>
+        <p class="mb-4">
+          Được thành lập từ niềm đam mê đọc sách, Thức Store mong muốn tạo nên không gian mua sắm thân thiện,
+          nơi mỗi cuốn sách không chỉ là sản phẩm mà còn là người bạn đồng hành trong hành trình khám phá tri thức.
+        </p>
+        <p class="mb-4">
+          Chúng tôi cam kết mang đến trải nghiệm đọc phong phú với nhiều thể loại — từ văn học, kỹ năng sống đến sách thiếu nhi —
+          cùng dịch vụ tận tâm và uy tín hàng đầu.
+        </p>
+        <a class="btn btn-secondary rounded-pill py-3 px-5" href="about.html">Tìm hiểu thêm</a>
+      </div>
     </div>
-    <!-- Product End -->
+  </div>
+</div>
 
 
     <!-- Features Start -->
@@ -292,7 +209,7 @@
                     <h5 class="text-white mb-4">Thức Store</h5>
                     <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>273 An Dương Vương, TP.HCM, Việt Nam</p>
                     <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+012 345 6789</p>
-                    <p class="mb-2"><i class="fa fa-envelope me-3"></i>ThucStore@gmail.com</p>
+                    <p class="mb-2"><i class="fa fa-envelope me-3"></i>Thuc@gmail.com</p>
                     <div class="d-flex pt-3">
                         <a class="btn btn-square btn-secondary rounded-circle me-2" href=""><i class="fab fa-twitter"></i></a>
                         <a class="btn btn-square btn-secondary rounded-circle me-2" href=""><i class="fab fa-facebook-f"></i></a>
@@ -301,21 +218,16 @@
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
-                    <h5 class="text-white mb-4">Quick Links</h5>
-                    <a class="btn btn-link" href="">About Us</a>
-                    <a class="btn btn-link" href="">Contact Us</a>
-                    <a class="btn btn-link" href="">Our Services</a>
-                    <a class="btn btn-link" href="">Terms & Condition</a>
-                    <a class="btn btn-link" href="">Support</a>
+                    <h5 class="text-white mb-4">Liên Kết Nhanh</h5>
+                    <a class="btn btn-link" href="about.html">Về Thức Store</a>
+                    <a class="btn btn-link" href="contact.html">Liên lạc</a>
+                    <a class="btn btn-link" href="product.html">Sản phẩm</a>
+                    <a class="btn btn-link" href="contact.html">Trợ giúp</a>
                 </div>
                 <div class="col-lg-3 col-md-6">
-                    <h5 class="text-white mb-4">Business Hours</h5>
-                    <p class="mb-1">Monday - Friday</p>
+                    <h5 class="text-white mb-4">Thời Gian Làm Việc</h5>
+                    <p class="mb-1">Thứ 2 - Chủ Nhật</p>
                     <h6 class="text-light">09:00 am - 07:00 pm</h6>
-                    <p class="mb-1">Saturday</p>
-                    <h6 class="text-light">09:00 am - 12:00 pm</h6>
-                    <p class="mb-1">Sunday</p>
-                    <h6 class="text-light">Closed</h6>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <h5 class="text-white mb-4">Newsletter</h5>
