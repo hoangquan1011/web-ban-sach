@@ -78,11 +78,20 @@
                 <a href="product.html" class="nav-item nav-link">Sản phẩm</a>
                 <a href="contact.html" class="nav-item nav-link">Liên lạc</a>
             </div>
-
         </div>
+
+        <!-- 🔹 Giỏ hàng (màu xanh lá) -->
+        <div class="ms-3">
+            <a href="cart.html" class="btn btn-success btn-sm position-relative">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cartCount">0</span>
+            </a>
+        </div>
+
+        <!-- 🔹 Khu vực người dùng -->
         <div id="userSection" class="ms-3">
-             <a href="user/login.html" class="btn btn-outline-primary btn-sm me-2" id="loginBtn">Đăng nhập</a>
-             <a href="user/register.html" class="btn btn-primary btn-sm" id="registerBtn">Đăng ký</a>
+            <a href="user/login.html" class="btn btn-outline-primary btn-sm me-2" id="loginBtn">Đăng nhập</a>
+            <a href="user/register.html" class="btn btn-primary btn-sm" id="registerBtn">Đăng ký</a>
         </div>
 
     </nav>
@@ -128,7 +137,7 @@
           nơi mỗi cuốn sách không chỉ là sản phẩm mà còn là người bạn đồng hành trong hành trình khám phá tri thức.
         </p>
         <p class="mb-4">
-          Chúng tôi cam kết mang đến trải nghiệm đọc phong phú với nhiều thể loại — từ văn học, kỹ năng sống đến sách thiếu nhi —
+          Chúng tôi cam kết mang đến trải nghiệm đọc phong phú với nhiều thể loại — từ văn học, kỹ năng sống đến sách thiếu nhi — 
           cùng dịch vụ tận tâm và uy tín hàng đầu.
         </p>
         <a class="btn btn-secondary rounded-pill py-3 px-5" href="about.html">Tìm hiểu thêm</a>
@@ -260,20 +269,21 @@
     <script src="lib/lightbox/js/lightbox.min.js"></script>
 
     <!-- Template Javascript -->
-
-    <!-- Template Javascript -->
 <script>
 document.addEventListener('DOMContentLoaded', function () {
   const userSection = document.getElementById('userSection');
+  const cartCount = document.getElementById('cartCount');
+
+  // 🔹 Cập nhật số lượng giỏ hàng từ localStorage (nếu có)
+  const cart = JSON.parse(localStorage.getItem('cart')) || [];
+  cartCount.textContent = cart.length;
 
   // 🔹 Lấy thông tin người dùng đang đăng nhập
   const currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
   if (currentUser) {
-    // 🔹 Ưu tiên hiển thị tên thật (hoten hoặc name), nếu không có thì dùng username
     const displayName = currentUser.hoten || currentUser.name || currentUser.username || "Người dùng";
 
-    // 🔹 Hiển thị chào + nút đăng xuất
     userSection.innerHTML = `
       <span class="me-3 fw-bold text-success">
         👋 Xin chào, ${displayName}
@@ -281,7 +291,6 @@ document.addEventListener('DOMContentLoaded', function () {
       <button class="btn btn-outline-danger btn-sm" id="logoutBtn">Đăng xuất</button>
     `;
 
-    // 🔹 Gắn sự kiện Đăng xuất
     document.getElementById('logoutBtn').addEventListener('click', function () {
       localStorage.removeItem('currentUser');
       alert('Bạn đã đăng xuất!');
@@ -289,7 +298,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
   } else {
-    // 🔹 Nếu chưa đăng nhập thì hiển thị nút mặc định
     userSection.innerHTML = `
       <a href="user/login.html" class="btn btn-outline-primary btn-sm me-2" id="loginBtn">Đăng nhập</a>
       <a href="user/register.html" class="btn btn-primary btn-sm" id="registerBtn">Đăng ký</a>
@@ -300,8 +308,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
 <script src="js/main.js"></script>
 
-
-    <script src="js/main.js"></script>
 </body>
-
 </html>
