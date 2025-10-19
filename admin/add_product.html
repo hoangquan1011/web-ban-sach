@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Thêm sản phẩm</title>
+</head>
+<body>
+  <h2>Thêm sản phẩm</h2>
+  <form id="productForm">
+    <label>Tên: <input type="text" id="ten"></label><br><br>
+    <label>Thể loại:
+  <input type="text" id="loai" placeholder="VD: Tiểu thuyết, Ngôn tình...">
+</label><br><br>
+
+    <label>Giá gốc: <input type="text" id="giagoc"></label><br><br>
+    <label>Giá bán: <input type="text" id="gia"></label><br><br>
+    <label>Hình: <input type="file" id="hinh" accept="image/*"></label><br><br>
+    <button type="submit">Thêm sản phẩm</button>
+  </form>
+
+  <script>
+    const form = document.getElementById("productForm");
+
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const ten = document.getElementById("ten").value.trim();
+      const gia = document.getElementById("gia").value.trim();
+      const giagoc = document.getElementById("giagoc").value.trim();
+      const hinh = document.getElementById("hinh").files[0];
+      const loai = document.getElementById("loai").value;
+const mota = document.getElementById("mota").value.trim();
+
+
+
+      if (!ten || !gia || !giagoc || !hinh) {
+        alert("⚠️ Vui lòng nhập đủ thông tin!");
+        return;
+      }
+
+      // ✅ CHỈNH QUAN TRỌNG NHẤT — chuẩn hóa giá
+      const giaNum = parseInt(gia.replace(/\D/g, ""), 10);
+      const giagocNum = parseInt(giagoc.replace(/\D/g, ""), 10);
+
+      if (isNaN(giaNum) || isNaN(giagocNum)) {
+        alert("⚠️ Giá không hợp lệ (chỉ nhập số)!");
+        return;
+      }
+
+      if (giaNum > giagocNum) {
+        alert("⚠️ Giá bán phải nhỏ hơn hoặc bằng giá gốc!");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function() {
+        const product = {
+          ten: ten,
+        gia: giaNum,       // ✅ số
+        giagoc: giagocNum, // ✅ số
+          loai: loai,
+        mota: mota,  
+          hinh: reader.result,
+          an: false
+        };
+
+        let products = JSON.parse(localStorage.getItem("products")) || [];
+        products.push(product);
+        localStorage.setItem("products", JSON.stringify(products));
+
+        alert("✅ Đã thêm sản phẩm thành công!");
+        window.location.href = "product.html";
+      };
+      reader.readAsDataURL(hinh);
+    });
+  </script>
+</body>
+</html>
