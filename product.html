@@ -105,114 +105,288 @@
 
 
     <!-- Product Start -->
-    <div class="container-xxl py-5">
-        <div class="container">
-                        <div class="text-center mx-auto wow fadeInUp" data-wow-delay="0.1s" style="max-width: 700px;">
-                                <p class="section-title bg-white text-center text-primary px-3">Sách bán chạy</p>
-                                <h1 class="mb-4">Danh mục sản phẩm sách</h1>
-                                <!-- Bộ lọc và tìm kiếm -->
-                                <form class="row g-2 mb-4 justify-content-center align-items-end" id="searchForm">
-                                    <div class="col-md-4">
-                                        <input type="text" class="form-control" id="searchName" placeholder="Tìm theo tên sách...">
-                                    </div>
-                                    <div class="col-md-3">
-                                        <select class="form-select" id="searchCategory">
-                                            <option value="">Phân loại</option>
-                                            <option>Văn học</option>
-                                            <option>Kinh tế</option>
-                                            <option>Kỹ năng sống</option>
-                                            <option>Thiếu nhi</option>
-                                            <option>Giáo khoa</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <input type="text" class="form-control" id="searchPrice" placeholder="Khoảng giá (VD: 50000-200000)">
-                                    </div>
-                                    <div class="col-md-2">
-                                        <button type="submit" class="btn btn-primary w-100">Tìm kiếm</button>
-                                    </div>
-                                </form>
-                        </div>
-                        <!-- Danh sách sản phẩm -->
-                        <div class="row gx-4" id="productList">
-                <div class="col-md-6 col-lg-4 col-xl-3 wow fadeInUp" data-wow-delay="0.1s">
-                    <div class="product-item">
-                        <div class="position-relative">
-                            <img class="img-fluid" src="img/product-1.jpg" alt="">
-                            <div class="product-overlay">
-                                <a class="btn btn-square btn-secondary rounded-circle m-1" href="product-detail.html?id=1"><i class="bi bi-link"></i></a>
-                                <a class="btn btn-square btn-secondary rounded-circle m-1" href="user/cart.html"><i class="bi bi-cart"></i></a>
-                            </div>
-                        </div>
-                        <div class="text-center p-4">
-                            <a class="d-block h5" href="product-detail.html?id=1">Đắc Nhân Tâm</a>
-                            <span class="text-primary me-1">120.000đ</span>
-                            <span class="text-decoration-line-through">150.000đ</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-4 col-xl-3 wow fadeInUp" data-wow-delay="0.3s">
-                    <div class="product-item">
-                        <div class="position-relative">
-                            <img class="img-fluid" src="img/product-2.jpg" alt="">
-                            <div class="product-overlay">
-                                <a class="btn btn-square btn-secondary rounded-circle m-1" href="product-detail.html?id=2"><i class="bi bi-link"></i></a>
-                                <a class="btn btn-square btn-secondary rounded-circle m-1" href="user/cart.html"><i class="bi bi-cart"></i></a>
-                            </div>
-                        </div>
-                        <div class="text-center p-4">
-                            <a class="d-block h5" href="product-detail.html?id=2">Nhà Giả Kim</a>
-                            <span class="text-primary me-1">98.000đ</span>
-                            <span class="text-decoration-line-through">120.000đ</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-4 col-xl-3 wow fadeInUp" data-wow-delay="0.5s">
-                    <div class="product-item">
-                        <div class="position-relative">
-                            <img class="img-fluid" src="img/product-3.jpg" alt="">
-                            <div class="product-overlay">
-                                <a class="btn btn-square btn-secondary rounded-circle m-1" href="product-detail.html?id=3"><i class="bi bi-link"></i></a>
-                                <a class="btn btn-square btn-secondary rounded-circle m-1" href="user/cart.html"><i class="bi bi-cart"></i></a>
-                            </div>
-                        </div>
-                        <div class="text-center p-4">
-                            <a class="d-block h5" href="product-detail.html?id=3">Totto-chan bên cửa sổ</a>
-                            <span class="text-primary me-1">75.000đ</span>
-                            <span class="text-decoration-line-through">99.000đ</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-4 col-xl-3 wow fadeInUp" data-wow-delay="0.7s">
-                    <div class="product-item">
-                        <div class="position-relative">
-                            <img class="img-fluid" src="img/product-4.jpg" alt="">
-                            <div class="product-overlay">
-                                <a class="btn btn-square btn-secondary rounded-circle m-1" href="product-detail.html?id=4"><i class="bi bi-link"></i></a>
-                                <a class="btn btn-square btn-secondary rounded-circle m-1" href="user/cart.html"><i class="bi bi-cart"></i></a>
-                            </div>
-                        </div>
-                        <div class="text-center p-4">
-                            <a class="d-block h5" href="product-detail.html?id=4">Combo Sách Giáo Khoa</a>
-                            <span class="text-primary me-1">320.000đ</span>
-                            <span class="text-decoration-line-through">400.000đ</span>
-                        </div>
-                    </div>
-                </div>
-                        </div>
-                        <!-- Phân trang -->
-                        <nav aria-label="Page navigation example" class="mt-4">
-                            <ul class="pagination justify-content-center">
-                                <li class="page-item disabled"><a class="page-link" href="#">Trước</a></li>
-                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                <li class="page-item"><a class="page-link" href="#">Sau</a></li>
-                            </ul>
-                        </nav>
-        </div>
+  <!-- ✅ Product Section Start -->
+<div class="container-xxl py-5">
+  <div class="container">
+
+    <!-- Tiêu đề & Bộ lọc -->
+    <div class="text-center mx-auto wow fadeInUp" data-wow-delay="0.1s" style="max-width: 700px;">
+      <p class="section-title bg-white text-center text-primary px-3">Sách bán chạy</p>
+      <h1 class="mb-4">Danh mục sản phẩm sách</h1>
     </div>
+
+    <!-- Bộ lọc tìm kiếm -->
+    <form class="row g-2 mb-5 justify-content-center align-items-end" id="searchForm">
+      <div class="col-md-4">
+        <input type="text" class="form-control" id="searchName" placeholder="Tìm theo tên sách...">
+      </div>
+      <div class="col-md-3">
+        <select class="form-select" id="searchCategory">
+          <option value="">Phân loại</option>
+          <option>Văn học</option>
+          <option>Kinh tế</option>
+          <option>Kỹ năng sống</option>
+          <option>Thiếu nhi</option>
+          <option>Giáo khoa</option>
+        </select>
+      </div>
+     <div class="col-md-3">
+  <select class="form-select" id="priceFilter">
+    <option value="">Khoảng giá</option>
+    <option value="duoi100">Dưới 100.000đ</option>
+    <option value="100-200">100.000đ - 200.000đ</option>
+    <option value="tren200">Trên 200.000đ</option>
+  </select>
+</div>
+
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100">Tìm kiếm</button>
+      </div>
+    </form>
+
+  <!-- ✅ Danh sách sản phẩm -->
+<div class="row gx-4 gy-4" id="productList"></div>
+
+               <!-- ✅ Thanh phân trang (chỉ một cái duy nhất) -->
+<nav aria-label="Page navigation example" class="mt-4">
+  <ul id="pagination" class="pagination justify-content-center"></ul>
+</nav>
+
+<!-- ✅ Product Section End -->
+
+
+<!-- Script thêm sản phẩm từ localStorage -->
+<script>
+  const productList = document.getElementById("productList");
+ const pagination = document.getElementById("pagination");
+
+  let products = JSON.parse(localStorage.getItem("products")) || [];
+
+
+
+// ✅ Chỉ lấy sản phẩm chưa bị ẩn
+function getVisibleProducts() {
+  return (JSON.parse(localStorage.getItem("products")) || []).filter(p => !p.an);
+}
+
+// ✅ Số sản phẩm mỗi trang
+const productsPerPage = 12;
+
+// ✅ Hàm hiển thị sản phẩm
+function renderProducts(page = 1) {
+  const productList = document.getElementById("productList");
+  productList.innerHTML = "";
+
+  // 🟢 Đọc từ localStorage
+  let visibleProducts = [];
+  try {
+    const temp = JSON.parse(localStorage.getItem("filteredProducts"));
+    if (Array.isArray(temp) && temp.length > 0) {
+      visibleProducts = temp;
+    } else {
+      visibleProducts = getVisibleProducts();
+    }
+  } catch (e) {
+    visibleProducts = getVisibleProducts();
+  }
+
+  // 🟢 Lọc theo từ khóa tìm kiếm (nếu có)
+  let filterText = localStorage.getItem("filterText") || "";
+  const keyword = filterText.toString().toLowerCase().trim();
+  if (keyword) {
+    visibleProducts = visibleProducts.filter(p =>
+      p.ten && p.ten.toLowerCase().includes(keyword)
+    );
+  }
+
+  // 🟢 Phân trang
+  const totalPages = Math.max(1, Math.ceil(visibleProducts.length / productsPerPage));
+  currentPage = page;
+
+  const start = (currentPage - 1) * productsPerPage;
+  const end = start + productsPerPage;
+  const pageProducts = visibleProducts.slice(start, end);
+
+  // 🟢 Hiển thị sản phẩm
+  if (pageProducts.length === 0) {
+    productList.innerHTML = `<div class="text-center py-5">Không có sản phẩm nào</div>`;
+    renderPagination(totalPages);
+    return;
+  }
+
+  pageProducts.forEach((p, index) => {
+    const giagocNum = parseFloat(p.giagoc) || 0;
+    const giaNum = parseFloat(p.gia) || 0;
+    const giamgia = giagocNum > giaNum ? Math.round(((giagocNum - giaNum) / giagocNum) * 100) : 0;
+
+    productList.innerHTML += `
+      <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="${0.05 * (index + 1)}s">
+        <div class="product-item">
+          <div class="position-relative">
+            <img class="img-fluid" src="${p.hinh}" alt="${p.ten}">
+            <div class="product-overlay">
+              <a class="btn btn-square btn-secondary rounded-circle m-1" href="#"><i class="bi bi-link"></i></a>
+              <a class="btn btn-square btn-secondary rounded-circle m-1" href="#"><i class="bi bi-cart"></i></a>
+            </div>
+          </div>
+          <div class="text-center p-4">
+            <a class="d-block h5" href="#">${p.ten}</a>
+            <span class="text-primary me-1">${giaNum.toLocaleString("vi-VN")}đ</span>
+            ${giagocNum > giaNum ? `<span class="text-decoration-line-through">${giagocNum.toLocaleString("vi-VN")}đ</span>` : ""}
+            ${giamgia > 0 ? `<div style="color:red;font-weight:bold;">Giảm ${giamgia}%</div>` : ""}
+          </div>
+        </div>
+      </div>
+    `;
+  });
+
+  renderPagination(totalPages);
+}
+// ✅ Hàm render thanh phân trang
+  function renderPagination(totalPages) {
+    pagination.innerHTML = "";
+
+    pagination.innerHTML += `
+      <li class="page-item ${currentPage === 1 ? "disabled" : ""}">
+        <a class="page-link" href="#" id="prevPage">Trước</a>
+      </li>
+    `;
+
+    for (let i = 1; i <= totalPages; i++) {
+      pagination.innerHTML += `
+        <li class="page-item ${i === currentPage ? "active" : ""}">
+          <a class="page-link page-number" href="#">${i}</a>
+        </li>
+      `;
+    }
+
+    pagination.innerHTML += `
+      <li class="page-item ${currentPage === totalPages ? "disabled" : ""}">
+        <a class="page-link" href="#" id="nextPage">Sau</a>
+      </li>
+    `;
+
+    // Gắn sự kiện
+    document.getElementById("prevPage")?.addEventListener("click", e => {
+      e.preventDefault();
+      if (currentPage > 1) renderProducts(currentPage - 1);
+    });
+
+    document.getElementById("nextPage")?.addEventListener("click", e => {
+      e.preventDefault();
+      if (currentPage < totalPages) renderProducts(currentPage + 1);
+    });
+
+    document.querySelectorAll(".page-number").forEach(link => {
+      link.addEventListener("click", e => {
+        e.preventDefault();
+        const newPage = parseInt(link.textContent);
+        renderProducts(newPage);
+      });
+    });
+  }
+
+  // ✅ Lắng nghe khi localStorage thay đổi (ví dụ từ admin.html)
+  window.addEventListener("storage", () => renderProducts(currentPage));
+
+
+  // Lọc sản phẩm theo tên, thể loại, giá
+function filterProducts() {
+  const name = document.getElementById("searchName").value.trim().toLowerCase();
+  const category = document.getElementById("searchCategory").value;
+  const priceFilter = document.getElementById("priceFilter").value;
+
+  const products = JSON.parse(localStorage.getItem("products")) || [];
+
+  const filtered = products.filter(p => {
+    const matchName = p.ten?.toLowerCase().includes(name);
+    const matchCategory = category ? p.loai === category : true;
+
+    const giaNum = parseFloat(p.gia.toString().replace(/\D/g, "")) || 0;
+    let matchPrice = true;
+
+    if (priceFilter === "duoi100") matchPrice = giaNum < 100000;
+    else if (priceFilter === "100-200") matchPrice = giaNum >= 100000 && giaNum <= 200000;
+    else if (priceFilter === "tren200") matchPrice = giaNum > 200000;
+
+    return matchName && matchCategory && matchPrice;
+  });
+
+  console.log("✅ Kết quả lọc:", filtered.map(p => `${p.ten} - ${p.gia}`));
+
+  // 🟢 Lưu mảng lọc vào localStorage
+  localStorage.setItem("filteredProducts", JSON.stringify(filtered));
+
+  // 🟢 Gọi lại render (đảm bảo gọi SAU khi lưu)
+  renderProducts(1);
+}
+
+
+// Gắn sự kiện
+document.getElementById("searchForm").addEventListener("submit", e => {
+  e.preventDefault();
+  filterProducts();
+});
+
+document.getElementById("searchName").addEventListener("input", filterProducts);
+document.getElementById("searchCategory").addEventListener("change", filterProducts);
+document.getElementById("priceFilter").addEventListener("change", filterProducts);
+
+// 🟢 THÊM ĐOẠN NÀY — để khi người dùng xóa từ khóa hoặc chọn “Tất cả” thì quay lại danh sách đầy đủ
+document.getElementById("searchName").addEventListener("input", () => {
+  if (document.getElementById("searchName").value.trim() === "") {
+    localStorage.removeItem("filteredProducts");
+    renderProducts(1);
+  }
+});
+
+document.getElementById("searchCategory").addEventListener("change", () => {
+  if (document.getElementById("searchCategory").value === "") {
+    localStorage.removeItem("filteredProducts");
+    renderProducts(1);
+  }
+});
+
+document.getElementById("priceFilter").addEventListener("change", () => {
+  if (document.getElementById("priceFilter").value === "") {
+    localStorage.removeItem("filteredProducts");
+    renderProducts(1);
+  }
+});
+
+  // ✅ Hiển thị lần đầu
+  renderProducts();
+console.log("Số sản phẩm:", JSON.parse(localStorage.getItem("products"))?.length || 0);
+
+
+</script>
+
+
+<!-- Script tính % giảm cho cả sản phẩm viết tay -->
+<script>
+ document.querySelectorAll(".text-center").forEach(item => {
+  const giaEl = item.querySelector(".text-primary"); 
+  const giagocEl = item.querySelector(".text-decoration-line-through");
+
+  if (giaEl && giagocEl) {
+    // Chuẩn hóa giá: bỏ dấu chấm, bỏ chữ đ
+    const gia = parseInt(giaEl.innerText.replace(/\./g, "").replace(/[^\d]/g, ""), 10);
+    const giagoc = parseInt(giagocEl.innerText.replace(/\./g, "").replace(/[^\d]/g, ""), 10);
+
+    if (gia && giagoc && giagoc > gia) {
+      let giamgia = Math.round(((giagoc - gia) / giagoc) * 100);
+
+
+    }
+  }
+});
+</script>
+
     <!-- Product End -->
+
+
+
+
 
 
 
