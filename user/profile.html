@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thông tin cá nhân</title>
+  <link href="../css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(180deg, #ffffff, #ecfdf5);
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
+      color: #062018;
+    }
+    .card {
+      max-width: 600px;
+      margin: 50px auto;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(6, 32, 24, 0.06);
+      padding: 24px;
+      background: white;
+    }
+    label {
+      font-weight: 600;
+      color: #065f46;
+    }
+    .btn {
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h3 class="text-center mb-4 text-success">Thông tin cá nhân</h3>
+
+    <form id="profileForm">
+      <div class="mb-3">
+        <label>Họ và tên</label>
+        <input type="text" id="name" class="form-control">
+      </div>
+
+      <div class="mb-3">
+        <label>Email</label>
+        <input type="email" id="email" class="form-control">
+      </div>
+
+      <div class="mb-3">
+        <label>Số điện thoại</label>
+        <input type="text" id="phone" class="form-control">
+      </div>
+
+      <div class="mb-3">
+        <label>Thành phố</label>
+        <input type="text" id="city" class="form-control">
+      </div>
+
+      <div class="mb-3">
+        <label>Tài khoản (username)</label>
+        <input type="text" id="username" class="form-control" disabled>
+      </div>
+
+      <div class="mb-3">
+        <label>Mật khẩu</label>
+        <input type="password" id="password" class="form-control">
+      </div>
+
+      <div class="mb-3">
+        <label>Trạng thái</label>
+        <input type="text" id="status" class="form-control" disabled>
+      </div>
+
+      <div class="mb-3">
+        <label>Được tạo bởi</label>
+        <input type="text" id="createdBy" class="form-control" disabled>
+      </div>
+
+      <button type="submit" class="btn btn-success w-100">Lưu thay đổi</button>
+      <a href="../trang-chu-user.html" class="btn btn-secondary w-100 mt-3">⬅ Quay lại Trang chủ</a>
+    </form>
+  </div>
+
+  <script>
+    // Lấy thông tin người dùng hiện tại
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser) {
+      alert('Bạn cần đăng nhập để xem thông tin cá nhân!');
+      window.location.href = 'login.html';
+    }
+
+    // Lấy danh sách khách hàng trong localStorage (dữ liệu admin)
+    let data = JSON.parse(localStorage.getItem('khachhang_demo') || '[]');
+
+    // Tìm user trong danh sách
+    let user = data.find(u => u.username === currentUser.username);
+
+    // Nếu chưa có trong danh sách (trường hợp đăng ký mới)
+    if (!user) {
+      user = {
+        id: Date.now(),
+        name: currentUser.hoten || '',
+        email: currentUser.email || '',
+        phone: currentUser.phone || '',
+        city: currentUser.city || '',
+        username: currentUser.username || '',
+        password: currentUser.password || '',
+        status: 'active',
+        createdBy: 'customer'
+      };
+      data.push(user);
+      localStorage.setItem('khachhang_demo', JSON.stringify(data));
+    }
+
+    // Hiển thị thông tin ra form
+    function loadProfile() {
+      document.getElementById('name').value = user.name || '';
+      document.getElementById('email').value = user.email || '';
+      document.getElementById('phone').value = user.phone || '';
+      document.getElementById('city').value = user.city || '';
+      document.getElementById('username').value = user.username || '';
+      document.getElementById('password').value = user.password || '';
+      document.getElementById('status').value = user.status || 'active';
+      document.getElementById('createdBy').value = user.createdBy || 'customer';
+    }
+    loadProfile();
+
+    // Cập nhật thông tin khi người dùng bấm Lưu
+    document.getElementById('profileForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      user.name = document.getElementById('name').value.trim();
+      user.email = document.getElementById('email').value.trim();
+      user.phone = document.getElementById('phone').value.trim();
+      user.city = document.getElementById('city').value.trim();
+      user.password = document.getElementById('password').value.trim();
+
+      // Cập nhật lại vào danh sách khách hàng và currentUser
+      const idx = data.findIndex(u => u.username === user.username);
+      if (idx >= 0) data[idx] = user;
+
+      localStorage.setItem('khachhang_demo', JSON.stringify(data));
+      localStorage.setItem('currentUser', JSON.stringify(user));
+
+      alert('Cập nhật thông tin thành công!');
+    });
+  </script>
+</body>
+</html>
