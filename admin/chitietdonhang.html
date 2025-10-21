@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chi tiết Đơn hàng - Thức Store Admin</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+  <style>
+    body { background-color: #f3f8f3; font-family: "Open Sans", sans-serif; }
+
+    .admin-banner {
+      background: url('../img/banner.jpg') center/cover no-repeat;
+      height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      overflow: hidden;
+    }
+    .admin-banner::after { content:""; position:absolute; inset:0; background:rgba(0,80,40,0.45); }
+    .admin-banner h1 { position:relative; color:#fff; font-weight:800; font-size:3rem; z-index:2; }
+    .admin-banner p { position:absolute; bottom:18px; font-size:1rem; color:#eafbea; z-index:2; }
+
+    .sidebar { background:#fff; border-radius:1rem; box-shadow:0 3px 10px rgba(0,0,0,0.1); padding:1.5rem; height:100%; }
+    .menu-item { display:flex; align-items:center; font-size:1.1rem; color:#2d6a4f; font-weight:600; text-decoration:none; margin-bottom:1rem; transition:all .3s ease; }
+    .menu-item:hover { color:#40916c; transform:translateX(5px); }
+    .menu-item span.emoji { font-size:1.5rem; margin-right:.75rem; }
+    .sidebar h5 { color:#2d6a4f; font-weight:700; margin-bottom:1rem; }
+
+    .content-area { background:#fff; border-radius:1rem; box-shadow:0 3px 8px rgba(0,0,0,0.05); padding:2rem; min-height:75vh; }
+    .logout-btn { background-color:#2d6a4f; color:#fff; border:none; padding:0.4rem 1rem; border-radius:0.5rem; transition:0.3s; }
+    .logout-btn:hover { background-color:#1b4332; }
+  </style>
+</head>
+
+<body>
+  <div class="container-fluid py-4">
+    <!-- Banner -->
+    <div class="admin-banner">
+      <h1>Thức Store Admin</h1>
+      <p>Chi tiết đơn hàng</p>
+    </div>
+
+    <div class="row">
+      <!-- Sidebar -->
+      <div class="col-lg-3 mb-4">
+        <div class="sidebar">
+          <h5>📋 Menu quản lý</h5>
+          <a href="quanlysanpham.html" class="menu-item"><span class="emoji">📘</span> Quản lý Sản phẩm</a>
+          <a href="quanlydonhang.html" class="menu-item" style="color:#1b4332;"><span class="emoji">🧾</span> <u>Quản lý Đơn hàng</u></a>
+          <a href="user.html" class="menu-item"><span class="emoji">👤</span> Quản lý Người dùng</a>
+          <a href="stock.html" class="menu-item"><span class="emoji">📦</span> Quản lý Kho</a>
+          <a href="pricing.html" class="menu-item"><span class="emoji">💲</span> Quản lý Giá</a>
+          <a href="import.html" class="menu-item"><span class="emoji">🚚</span> Nhập hàng</a>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="col-lg-9">
+        <div class="content-area">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="text-success fw-bold">Chi tiết đơn hàng</h4>
+            <button class="logout-btn">Đăng xuất</button>
+          </div>
+
+          <div id="order-detail">
+            <p><strong>Mã đơn hàng:</strong> <span id="order-id">Đang tải...</span></p>
+            <p><strong>Khách hàng:</strong> <span id="customer-name">Chưa có dữ liệu</span></p>
+            <p><strong>Địa chỉ:</strong> <span id="customer-address">Chưa có dữ liệu</span></p>
+
+            <table class="table table-bordered mt-4 text-center">
+              <thead class="table-success">
+                <tr>
+                  <th>Tên sản phẩm</th>
+                  <th>Số lượng</th>
+                  <th>Size</th>
+                  <th>Đơn giá</th>
+                  <th>Thành tiền</th>
+                </tr>
+              </thead>
+              <tbody id="order-items">
+                <!-- Dữ liệu sẽ hiển thị ở đây -->
+              </tbody>
+            </table>
+
+            <div class="mt-3 text-end">
+              <a href="quanlydonhang.html" class="btn btn-success">⬅ Quay lại</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Đọc mã đơn hàng từ URL
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+    document.getElementById("order-id").textContent = id || "(Không có mã đơn hàng)";
+  </script>
+</body>
+</html>
