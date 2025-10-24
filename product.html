@@ -465,43 +465,6 @@ console.log("Số sản phẩm:", JSON.parse(localStorage.getItem("products"))?.
 
     <!-- Template Javascript -->
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-  const userSection = document.getElementById('userSection');
-
-  // 🔹 Lấy thông tin người dùng đang đăng nhập
-  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-
-  if (currentUser) {
-    // 🔹 Ưu tiên hiển thị tên thật (hoten hoặc name), nếu không có thì dùng username
-    const displayName = currentUser.hoten || currentUser.name || currentUser.username || "Người dùng";
-
-    // 🔹 Hiển thị chào + nút đăng xuất
-    userSection.innerHTML = `
-      <span class="me-3 fw-bold text-success">
-        👋 Xin chào, ${displayName}
-      </span>
-      <button class="btn btn-outline-danger btn-sm" id="logoutBtn">Đăng xuất</button>
-    `;
-
-    // 🔹 Gắn sự kiện Đăng xuất
-    document.getElementById('logoutBtn').addEventListener('click', function () {
-      localStorage.removeItem('currentUser');
-      alert('Bạn đã đăng xuất!');
-      window.location.reload();
-    });
-
-  } else {
-    // 🔹 Nếu chưa đăng nhập thì hiển thị nút mặc định
-    userSection.innerHTML = `
-      <a href="user/login.html" class="btn btn-outline-primary btn-sm me-2" id="loginBtn">Đăng nhập</a>
-      <a href="user/register.html" class="btn btn-primary btn-sm" id="registerBtn">Đăng ký</a>
-    `;
-  }
-});
-</script>
-
-<!-- 🟢 XỬ LÝ NÚT THÊM VÀO GIỎ & MUA NGAY -->
-<script>
 document.addEventListener("click", function (e) {
   const btn = e.target.closest("button");
   if (!btn) return;
@@ -509,30 +472,66 @@ document.addEventListener("click", function (e) {
   const id = btn.getAttribute("data-id");
   if (!id) return;
 
+  // Lấy danh sách sản phẩm (từ localStorage hoặc JSON)
   const products = JSON.parse(localStorage.getItem("products")) || [];
   const product = products.find(p => p.id == id);
   if (!product) return;
 
+  // Lấy giỏ hàng hiện có
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
-  cart.push(product);
-  localStorage.setItem("cart", JSON.stringify(cart));
 
-  if (btn.classList.contains("them-gio-btn")) {
-    alert(`🛒 Sản phẩm "${product.ten}" đã được thêm vào giỏ hàng!`);
-    // Sử dụng setTimeout để chắc chắn alert xong mới redirect
-    setTimeout(() => {
-      window.location.href = "cart.html";
-    }, 100);
+  // Kiểm tra xem sản phẩm đã có trong giỏ chưa
+  const existing = cart.find(item => item.id === product.id);
+
+  if (existing) {
+    existing.qty += 1; // tăng số lượng nếu đã tồn tại
+  } else {
+    // Thêm mới nếu chưa có
+    cart.push({
+      id: product.id,
+      name: product.ten,        // đồng bộ với cart.html
+      price: parseFloat(product.gia),
+      img: product.hinh,
+      qty: 1
+    });
   }
 
-  if (btn.classList.contains("mua-ngay-btn")) {
-    alert(`🛍️ Đang chuyển đến giỏ hàng để thanh toán "${product.ten}"...`);
+  // Lưu lại giỏ hàng
+  localStorage.setItem("cart", JSON.stringify(cart));
+
+  // Hiển thị thông báo nhỏ đẹp mắt
+  const toast = document.createElement("div");
+  toast.textContent = `🛒 Đã thêm "${product.ten}" vào giỏ hàng!`;
+  toast.style.position = "fixed";
+  toast.style.bottom = "30px";
+  toast.style.right = "30px";
+  toast.style.background = "#dc3545";
+  toast.style.color = "#fff";
+  toast.style.padding = "12px 18px";
+  toast.style.borderRadius = "8px";
+  toast.style.fontWeight = "500";
+  toast.style.boxShadow = "0 4px 10px rgba(0,0,0,0.2)";
+  toast.style.zIndex = "9999";
+  toast.style.transition = "0.3s ease";
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2000);
+
+  // Cập nhật số lượng hiển thị trên biểu tượng giỏ (nếu có)
+  const cartCount = document.getElementById("cartCount");
+  if (cartCount) {
+    const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+    cartCount.textContent = totalQty;
+  }
+
+  // Nếu là nút "Thêm vào giỏ" chính → chuyển đến giỏ hàng
+  if (btn.classList.contains("them-gio-btn")) {
     setTimeout(() => {
       window.location.href = "cart.html";
-    }, 100);
+    }, 800);
   }
 });
 </script>
+
 <!-- 🔚 HẾT PHẦN THÊM MỚI -->
 
 <script src="js/main.js"></script>

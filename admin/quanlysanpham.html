@@ -380,28 +380,30 @@
       }
 
       const reader = new FileReader();
-      reader.onload = function(event) {
-        let product = {
-          loai: document.getElementById("loai").value.split(",").map(x => x.trim()),
-          ma: document.getElementById("ma").value,
-          ten: document.getElementById("ten").value,
-          hinh: event.target.result,
-          mota: document.getElementById("mota").value,
-          gia: document.getElementById("gia").value,
-          giagoc: document.getElementById("giagoc").value,
-          nhaxuatban: document.getElementById("nhaxuatban").value,
-          namxuatban: document.getElementById("namxuatban").value, 
-        an: false
-        };
+ reader.onload = function(event) {
+  let product = {
+    id: Date.now(), // ✅ thêm dòng này để tạo ID duy nhất
+    loai: document.getElementById("loai").value.split(",").map(x => x.trim()),
+    ma: document.getElementById("ma").value,
+    ten: document.getElementById("ten").value,
+    hinh: event.target.result,
+    mota: document.getElementById("mota").value,
+    gia: document.getElementById("gia").value,
+    giagoc: document.getElementById("giagoc").value,
+    nhaxuatban: document.getElementById("nhaxuatban").value,
+    namxuatban: document.getElementById("namxuatban").value, 
+    an: false
+  };
 
-        let products = JSON.parse(localStorage.getItem("products")) || [];
-        products.push(product);
-        localStorage.setItem("products", JSON.stringify(products));
+  let products = JSON.parse(localStorage.getItem("products")) || [];
+  products.push(product);
+  localStorage.setItem("products", JSON.stringify(products));
 
-        alert("✅ Đã thêm sản phẩm thành công!");
-        document.getElementById("addProductForm").reset();
-        renderProducts();
-      };
+  alert("✅ Đã thêm sản phẩm thành công!");
+  document.getElementById("addProductForm").reset();
+  renderProducts();
+};
+
 
       reader.readAsDataURL(fileInput);
     });
