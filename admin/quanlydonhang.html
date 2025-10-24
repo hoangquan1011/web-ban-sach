@@ -138,5 +138,52 @@
       </div>
     </div>
   </div>
+<script>
+const orders = JSON.parse(localStorage.getItem("orders")) || [];
+const table = document.getElementById("orderTable");
+
+if (orders.length === 0) {
+  table.innerHTML = `<tr><td colspan="7" class="text-center text-muted">Chưa có đơn hàng nào</td></tr>`;
+} else {
+ table.innerHTML = orders.map((order, index) => `
+  <tr>
+    <td>${index + 1}</td>
+    <td>${order.id}</td>
+    <td>${order.customer?.name || "Không rõ"}</td>
+    <td>${order.date}</td>
+    <td>${order.status || "Chưa xử lý"}</td>
+    <td>${order.address || "Không có địa chỉ"}</td>
+    <td><a href="#" class="btn-view" onclick="viewDetail('${order.id}')">Xem</a></td>
+  </tr>
+`).join("");
+}
+
+function convertStatus(status) {
+  switch (status) {
+    case "chua-xu-ly": return "Chưa xử lý";
+    case "dang-giao": return "Đang giao";
+    case "hoan-thanh": return "Hoàn thành";
+    case "da-huy": return "Đã hủy";
+    default: return "Không xác định";
+  }
+}
+
+function viewDetail(id) {
+  const orders = JSON.parse(localStorage.getItem("orders")) || [];
+  const order = orders.find(o => o.id === id);
+  if (!order) return;
+
+  alert(`
+Mã đơn: ${order.id}
+Khách: ${order.customer.name}
+SĐT: ${order.customer.phone}
+Địa chỉ: ${order.customer.address}
+Phương thức: ${order.payment}
+Tổng tiền: ${order.total.toLocaleString("vi-VN")}đ
+Sản phẩm:
+${order.items.map(i => ` - ${i.name} (${i.qty} x ${i.price.toLocaleString("vi-VN")}đ)`).join("\n")}
+  `);
+}
+</script>
 </body>
 </html>

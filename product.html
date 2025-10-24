@@ -235,7 +235,7 @@ pageProducts.forEach((p, index) => {
   <button class="btn btn-success px-4 py-2 rounded-pill them-gio-btn" data-id="${p.id}"> 
     <i class="bi bi-cart me-2"></i> Thêm vào giỏ
   </button>
-  <button class="btn btn-success px-4 py-2 rounded-pill">
+  <button class="btn btn-success px-4 py-2 rounded-pill mua-ngay-btn" data-id="${p.id}">
     <i class="bi bi-bag me-2"></i> Mua ngay
   </button>
 </div>
@@ -530,7 +530,37 @@ document.addEventListener("click", function (e) {
     }, 800);
   }
 });
+// 🛍️ Xử lý nút Mua Ngay
+document.addEventListener("click", function (e) {
+  const btn = e.target.closest(".mua-ngay-btn");
+  if (!btn) return;
+
+  const id = btn.getAttribute("data-id");
+  if (!id) return;
+
+  // Lấy thông tin sản phẩm từ localStorage
+  const products = JSON.parse(localStorage.getItem("products")) || [];
+  const product = products.find(p => p.id == id);
+  if (!product) return;
+
+  // Tạo dữ liệu đơn hàng tạm thời (chỉ sản phẩm này)
+  const order = [{
+    id: product.id,
+    name: product.ten,
+    price: parseFloat(product.gia),
+    img: product.hinh,
+    qty: 1
+  }];
+
+  // Lưu tạm vào localStorage để trang checkout dùng
+  localStorage.setItem("checkoutItems", JSON.stringify(order));
+
+  // Chuyển sang trang thanh toán
+  window.location.href = "checkout.html";
+});
+
 </script>
+
 
 <!-- 🔚 HẾT PHẦN THÊM MỚI -->
 
