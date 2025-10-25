@@ -154,23 +154,80 @@
       </div>
     </div>
   </div>
+<script>
+  // 1. Lấy ID đơn hàng từ URL
+  const params = new URLSearchParams(window.location.search);
+  const orderId = params.get('id');
 
-  <script>
-    // Hàm xử lý khi cập nhật tình trạng (chưa cần kết nối backend)
-    function updateStatus() {
-      const status = document.getElementById("orderStatus").value;
-      const message = document.getElementById("statusMessage");
-      let text = "";
+  // 2. Lấy danh sách đơn hàng từ localStorage
+  const orders = JSON.parse(localStorage.getItem("orders")) || [];
+  const order = orders.find(o => o.id === orderId);
 
-      switch (status) {
-        case "moi-dat": text = "Đơn hàng được đặt lại trạng thái: Mới đặt."; break;
-        case "da-xu-ly": text = "Đơn hàng đã được xử lý."; break;
-        case "da-giao": text = "Đơn hàng đã được giao thành công."; break;
-        case "huy": text = "Đơn hàng đã bị hủy."; break;
-      }
+  // 3. Tham chiếu các input và bảng sản phẩm
+  const orderIdInput = document.getElementById("orderId");
+  const orderDateInput = document.getElementById("orderDate");
+  const customerNameInput = document.getElementById("customerName");
+  const addressInput = document.getElementById("address");
+  const productListTbody = document.getElementById("productList");
+  const orderStatusSelect = document.getElementById("orderStatus");
+  const statusMessage = document.getElementById("statusMessage");
 
-      message.innerText = text;
+  // 4. Kiểm tra đơn hàng có tồn tại không
+  if (!order) {
+    orderIdInput.value = "Không tìm thấy đơn hàng";
+    statusMessage.innerText = "Không tìm thấy đơn hàng với ID này.";
+  } else {
+// Hiển thị thông tin đơn hàng
+orderIdInput.value = order.id;
+orderDateInput.value = order.date || "";
+customerNameInput.value = order.customer?.name || order.name || "Không có thông tin";
+addressInput.value = order.customer?.address || order.address || "Không có thông tin";
+
+    // Thiết lập trạng thái hiện tại
+    const statusMap = {
+      "chua-xu-ly": "moi-dat",
+      "dang-giao": "da-giao",
+      "hoan-thanh": "da-xu-ly",
+      "da-huy": "huy"
+    };
+    orderStatusSelect.value = statusMap[order.status] || "moi-dat";
+
+    // Hiển thị danh sách sản phẩm
+    productListTbody.innerHTML = order.items.map((i, index) => `
+      <tr>
+        <td>${index + 1}</td>
+        <td>${i.name}</td>
+        <td>${i.qty}</td>
+        <td>${i.price.toLocaleString("vi-VN")}đ</td>
+        <td>${(i.qty * i.price).toLocaleString("vi-VN")}đ</td>
+      </tr>
+    `).join("");
+  }
+
+  // 5. Hàm cập nhật trạng thái và lưu vào localStorage
+  function updateStatus() {
+    if (!order) return;
+
+    const newStatus = orderStatusSelect.value;
+    let message = "";
+
+    switch (newStatus) {
+      case "moi-dat": message = "Đơn hàng được đặt lại trạng thái: Mới đặt."; order.status = "chua-xu-ly"; break;
+      case "da-xu-ly": message = "Đơn hàng đã được xử lý."; order.status = "hoan-thanh"; break;
+      case "da-giao": message = "Đơn hàng đã được giao thành công."; order.status = "dang-giao"; break;
+      case "huy": message = "Đơn hàng đã bị hủy."; order.status = "da-huy"; break;
     }
-  </script>
+
+    // Cập nhật lại localStorage
+    const index = orders.findIndex(o => o.id === order.id);
+    if (index !== -1) {
+      orders[index] = order;
+      localStorage.setItem("orders", JSON.stringify(orders));
+    }
+
+    statusMessage.innerText = message;
+  }
+</script>
+
 </body>
 </html>

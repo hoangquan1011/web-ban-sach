@@ -153,7 +153,7 @@ if (orders.length === 0) {
     <td>${order.date}</td>
     <td>${order.status || "Chưa xử lý"}</td>
     <td>${order.address || "Không có địa chỉ"}</td>
-    <td><a href="#" class="btn-view" onclick="viewDetail('${order.id}')">Xem</a></td>
+    <td><a href="chitietdonhang.html?id=${order.id}" class="btn-view">Xem</a></td>
   </tr>
 `).join("");
 }
