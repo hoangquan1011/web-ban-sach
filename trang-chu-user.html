@@ -274,10 +274,6 @@ document.addEventListener('DOMContentLoaded', function () {
   const userSection = document.getElementById('userSection');
   const cartCount = document.getElementById('cartCount');
 
-  // 🔹 Cập nhật số lượng giỏ hàng từ localStorage (nếu có)
-  const cart = JSON.parse(localStorage.getItem('cart')) || [];
-  cartCount.textContent = cart.length;
-
   // 🔹 Lấy thông tin người dùng đang đăng nhập
   const currentUser = JSON.parse(localStorage.getItem('currentUser'));
 

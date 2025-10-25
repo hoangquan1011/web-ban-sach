@@ -73,22 +73,25 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <div class="navbar-nav ms-auto p-4 p-lg-0">
-                <a href="trang-chu-user.html" class="nav-item nav-link">Trang chủ</a>
+                <a href="trang-chu-user.html" class="nav-item nav-link active">Trang chủ</a>
                 <a href="about.html" class="nav-item nav-link">Về Thức Store</a>
-                <a href="product.html" class="nav-item nav-link active">Sản phẩm</a>
+                <a href="product.html" class="nav-item nav-link">Sản phẩm</a>
                 <a href="contact.html" class="nav-item nav-link">Liên lạc</a>
             </div>
         </div>
-         <!-- 🔹 Giỏ hàng (màu xanh lá) -->
+
+        <!-- 🔹 Giỏ hàng (màu xanh lá) -->
         <div class="ms-3">
             <a href="cart.html" class="btn btn-success btn-sm position-relative">
                 <i class="fas fa-shopping-cart"></i>
                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cartCount">0</span>
             </a>
         </div>
+
+        <!-- 🔹 Khu vực người dùng -->
         <div id="userSection" class="ms-3">
-             <a href="user/login.html" class="btn btn-outline-primary btn-sm me-2" id="loginBtn">Đăng nhập</a>
-             <a href="user/register.html" class="btn btn-primary btn-sm" id="registerBtn">Đăng ký</a>
+            <a href="user/login.html" class="btn btn-outline-primary btn-sm me-2" id="loginBtn">Đăng nhập</a>
+            <a href="user/register.html" class="btn btn-primary btn-sm" id="registerBtn">Đăng ký</a>
         </div>
 
     </nav>
@@ -472,93 +475,109 @@ document.addEventListener("click", function (e) {
   const id = btn.getAttribute("data-id");
   if (!id) return;
 
-  // Lấy danh sách sản phẩm (từ localStorage hoặc JSON)
+  // 🔒 Kiểm tra đăng nhập trước khi cho phép thêm/mua
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+  if (!currentUser) {
+    // Thông báo và chuyển hướng đến trang đăng nhập
+    alert("⚠️ Bạn cần đăng nhập để sử dụng chức năng giỏ hàng!");
+    window.location.href = "user/login.html";
+    return;
+  }
+
+  // ✅ Nếu đã đăng nhập → xử lý thêm vào giỏ hoặc mua ngay
   const products = JSON.parse(localStorage.getItem("products")) || [];
   const product = products.find(p => p.id == id);
   if (!product) return;
 
-  // Lấy giỏ hàng hiện có
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-  // Kiểm tra xem sản phẩm đã có trong giỏ chưa
   const existing = cart.find(item => item.id === product.id);
 
   if (existing) {
-    existing.qty += 1; // tăng số lượng nếu đã tồn tại
+    existing.qty += 1;
   } else {
-    // Thêm mới nếu chưa có
     cart.push({
       id: product.id,
-      name: product.ten,        // đồng bộ với cart.html
+      name: product.ten,
       price: parseFloat(product.gia),
       img: product.hinh,
       qty: 1
     });
   }
 
-  // Lưu lại giỏ hàng
   localStorage.setItem("cart", JSON.stringify(cart));
 
-  // Hiển thị thông báo nhỏ đẹp mắt
+  // Hiển thị thông báo nhỏ
   const toast = document.createElement("div");
   toast.textContent = `🛒 Đã thêm "${product.ten}" vào giỏ hàng!`;
   toast.style.position = "fixed";
   toast.style.bottom = "30px";
   toast.style.right = "30px";
-  toast.style.background = "#dc3545";
+  toast.style.background = "#28a745";
   toast.style.color = "#fff";
   toast.style.padding = "12px 18px";
   toast.style.borderRadius = "8px";
   toast.style.fontWeight = "500";
   toast.style.boxShadow = "0 4px 10px rgba(0,0,0,0.2)";
   toast.style.zIndex = "9999";
-  toast.style.transition = "0.3s ease";
   document.body.appendChild(toast);
   setTimeout(() => toast.remove(), 2000);
 
-  // Cập nhật số lượng hiển thị trên biểu tượng giỏ (nếu có)
+  // Cập nhật biểu tượng giỏ
   const cartCount = document.getElementById("cartCount");
   if (cartCount) {
     const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
     cartCount.textContent = totalQty;
   }
 
-  // Nếu là nút "Thêm vào giỏ" chính → chuyển đến giỏ hàng
-  if (btn.classList.contains("them-gio-btn")) {
-    setTimeout(() => {
-      window.location.href = "cart.html";
-    }, 800);
+  // Nếu nhấn "Mua ngay"
+  if (btn.classList.contains("mua-ngay-btn")) {
+    const order = [{
+      id: product.id,
+      name: product.ten,
+      price: parseFloat(product.gia),
+      img: product.hinh,
+      qty: 1
+    }];
+    localStorage.setItem("checkoutItems", JSON.stringify(order));
+    window.location.href = "checkout.html";
   }
 });
-// 🛍️ Xử lý nút Mua Ngay
-document.addEventListener("click", function (e) {
-  const btn = e.target.closest(".mua-ngay-btn");
-  if (!btn) return;
+</script>
+  <!-- Script hiển thị người dùng -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const userSection = document.getElementById('userSection');
+      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
-  const id = btn.getAttribute("data-id");
-  if (!id) return;
-
-  // Lấy thông tin sản phẩm từ localStorage
-  const products = JSON.parse(localStorage.getItem("products")) || [];
-  const product = products.find(p => p.id == id);
-  if (!product) return;
-
-  // Tạo dữ liệu đơn hàng tạm thời (chỉ sản phẩm này)
-  const order = [{
-    id: product.id,
-    name: product.ten,
-    price: parseFloat(product.gia),
-    img: product.hinh,
-    qty: 1
-  }];
-
-  // Lưu tạm vào localStorage để trang checkout dùng
-  localStorage.setItem("checkoutItems", JSON.stringify(order));
-
-  // Chuyển sang trang thanh toán
-  window.location.href = "checkout.html";
-});
-
+      if (userSection) {
+        if (currentUser) {
+          const displayName = currentUser.hoten || currentUser.name || currentUser.username || "Người dùng";
+          userSection.innerHTML = `
+            <span class="me-3 fw-bold text-success">👋 Xin chào, ${displayName}</span>
+            <button class="btn btn-outline-danger btn-sm" id="logoutBtn">Đăng xuất</button>
+          `;
+          document.getElementById('logoutBtn').addEventListener('click', function () {
+            localStorage.removeItem('currentUser');
+            alert('Bạn đã đăng xuất!');
+            window.location.reload();
+          });
+        } else {
+          userSection.innerHTML = `
+            <a href="user/login.html" class="btn btn-outline-primary btn-sm me-2">Đăng nhập</a>
+            <a href="user/register.html" class="btn btn-primary btn-sm">Đăng ký</a>
+          `;
+        }
+      }
+    });
+  </script>
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    const cartCount = document.getElementById('cartCount');
+    if (cartCount) {
+      cartCount.textContent = cart.length;
+    }
+  });
 </script>
 
 
