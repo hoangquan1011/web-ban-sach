@@ -1,374 +1,634 @@
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quản lý sản phẩm</title>
+  <title>Quản lý sản phẩm - Thức Store</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
   <style>
     body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background: #e9efd6;
-      color: #333;
+      background-color: #f3f8f3;
+      font-family: "Open Sans", sans-serif;
     }
 
-    /* Header */
-    header {
-      background:  #404A3D;
-      color: white;
-      padding: 15px 20px;
-      text-align: center;
-      font-size: 50px;
-      font-weight: bold;
-      font-family: "Times New Roman", Times, serif;
-}
-
-
-    .container {
-      max-width: 1000px;
-      margin: 20px auto;
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      font-family: "Times New Roman", Times, serif;
+    /* ===================== BANNER ===================== */
+    .admin-banner {
+      background: url('../img/banner.jpg') center/cover no-repeat;
+      height: 220px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      overflow: hidden;
     }
 
-    h2, h3 {
-      margin-top: 0;
-      color: #404A3D;
+    /* Lớp phủ xanh dịu để tăng độ tương phản chữ */
+    .admin-banner::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 80, 40, 0.45);
     }
 
-    form div {
+    .admin-banner h1 {
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 3rem;
+      z-index: 2;
+      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
       margin-bottom: 10px;
     }
 
-    label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: bold;
+    .admin-banner p {
+      font-size: 1.1rem;
+      color: #eafbea;
+      z-index: 2;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
     }
 
-    input, textarea, button {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 14px;
+    /* ===================== SIDEBAR ===================== */
+    .sidebar {
+      background-color: #ffffff;
+      border-radius: 1rem;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      padding: 1.5rem;
+      height: 100%;
     }
 
-    button {
-      background: #404A3D;
-      color: white;
-      border: none;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.2s;
+    .sidebar h5 {
+      color: #2d6a4f;
+      font-weight: 700;
+      margin-bottom: 1rem;
     }
 
-    button:hover {
-      background: #404A3D;
-    }
-
-    .delete-btn {
-      background: #d32f2f;
-      margin-top: 5px;
-    }
-    .delete-btn:hover {
-      background: #a62828;
-    }
-
-    /* Danh sách sản phẩm */
-    .product-box {
+    .menu-item {
       display: flex;
       align-items: center;
-      border: 1px solid #ddd;
-      padding: 10px;
+      font-size: 1.1rem;
+      color: #2d6a4f;
+      font-weight: 600;
+      text-decoration: none;
+      margin-bottom: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .menu-item:hover {
+      color: #40916c;
+      transform: translateX(5px);
+    }
+
+    .menu-item.active {
+      color: #1b4332;
+      font-weight: 700;
+    }
+
+    .menu-item span.emoji {
+      font-size: 1.5rem;
+      margin-right: 0.75rem;
+    }
+
+    /* ===================== CONTENT ===================== */
+    .content-area {
+      background: #fff;
+      border-radius: 1rem;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+      padding: 0;
+      min-height: 75vh;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border: none;
+      margin-bottom: 20px;
+    }
+
+    .card-header {
+      background: white;
+      border-bottom: 2px solid #e9ecef;
+      padding: 20px;
+      border-radius: 10px 10px 0 0 !important;
+    }
+
+    .card-title {
+      color: #2d6a4f;
+      font-weight: bold;
+      font-size: 1.2rem;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Form thêm sản phẩm */
+    .form-label {
+      font-weight: 600;
+      color: #495057;
+      margin-bottom: 8px;
+    }
+
+    .form-control, .form-select, textarea {
       border-radius: 8px;
-      margin: 10px 0;
-      background: #fafafa;
+      border: 1px solid #ced4da;
+      padding: 10px 14px;
     }
 
-    .product-box img {
-      max-width: 80px;
-      margin-right: 15px;
-      border-radius: 6px;
+    .form-control:focus, .form-select:focus, textarea:focus {
+      border-color: #2d6a4f;
+      box-shadow: 0 0 0 0.2rem rgba(45, 106, 79, 0.15);
     }
 
-    .product-info {
-      flex: 1;
-    }
-
-    #searchInput {
+    .btn-add-product {
+      background: #2d6a4f;
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s;
       width: 100%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      margin: 10px 0;
     }
 
-/* Lưới sản phẩm */
-/* #productList {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 20px;
-  justify-content: center;   /* 🚀 căn giữa các card */
- 
-#productList .card {
-  width: 180px;      /* cố định để căn chuẩn */
-}
+    .btn-add-product:hover {
+      background: #1b4332;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(45, 106, 79, 0.3);
+    }
 
+    /* Filters */
+    .filter-section {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
 
-#productList {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 12px;
-  justify-content: center;   /* căn giữa các cột */
-  justify-items: center;     /* căn giữa card trong cột */
-  padding: 10px;
-  box-sizing: border-box;
-}
-/* Card sản phẩm */
-.product-box {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background: #fff;
-  padding: 10px;
-  text-align: center;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  width: 175px;  /* 🚀 thêm: đảm bảo mỗi box đủ rộng */
-}
+    /* Product Grid */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
 
-/* Ảnh sản phẩm */
-.product-box img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  border-radius: 6px;
-  margin-bottom: 8px;
-}
+    .product-card {
+      background: white;
+      border: 1px solid #e9ecef;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.3s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
 
-/* Thông tin */
-.product-info {
-  flex: 1;
-  font-size: 14px;
-  margin-bottom: 10px;
-}
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    }
 
-/* Hành động */
-.product-actions {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 nút đều nhau */
-  gap: 4px;
-  margin-top: 8px;
-}
+    .product-card img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      cursor: pointer;
+    }
 
-.product-actions button {
-  width: 100%;        /* ép nút chiếm trọn ô lưới */
-  padding: 5px 0;     /* chiều cao gọn gàng */
-  font-size: 13px;
-  height: 30px;  
-  border-radius: 6px;
-  cursor: pointer;
-  box-sizing: border-box; /* tránh bị tràn do padding */
-  text-align: center;
-  align-items: center; 
-  min-width: 50px;
-  line-height: 30px;  /* căn giữa chữ theo chiều dọc */
-  padding: 0;  
+    .product-card-body {
+      padding: 15px;
+      cursor: pointer;
+    }
 
-}
-/* Riêng nút Xóa */
-.product-actions .delete-btn {
-  height: 29.5px;                 /* giữ đúng chiều cao */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  top: -3.6px;
-  font-size: 13px;
-}
+    .product-name {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #212529;
+      margin-bottom: 8px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
 
+    .product-meta {
+      font-size: 0.8rem;
+      color: #6c757d;
+      margin-bottom: 8px;
+    }
 
+    .product-price {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
 
-/* Nút màu */
-.delete-btn { background: #d32f2f; color: white; }
-.toggle-btn { background: #404A3D; color: white; }
-.edit-btn   { background: #4c6b5f; color: white; }
+    .price-current {
+      font-weight: 700;
+      color: #dc3545;
+      font-size: 1.1rem;
+    }
 
-.delete-btn:hover { background: #a62828; }
-.toggle-btn:hover { background: #5c8468; }
-.edit-btn:hover   { background: #478a72; }
+    .price-original {
+      text-decoration: line-through;
+      color: #6c757d;
+      font-size: 0.9rem;
+    }
 
-    
-/*.product-actions .delete-btn { 
-        background: #e10a0a; 
-        color: #fff; } 
+    .discount-badge {
+      background: #dc3545;
+      color: white;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
 
-.product-actions .delete-btn:hover { 
-            background: #a62828; } /* Nút ẩn/hiện */ 
+    .product-status {
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
 
-/*.product-actions .toggle-btn { 
-                background: #404A3D; 
-                color: #fff; } 
+    .status-visible { color: #28a745; }
+    .status-hidden { color: #dc3545; }
 
-.product-actions .toggle-btn:hover { 
-                    background: #2e352a; } 
-    /* Nút sửa */
-/*.product-actions .edit-btn {
-  background: #1976d2;
-  color: #fff;
-}
-.product-actions .edit-btn:hover {
-  background: #0d47a1;
-}*/
+    .product-actions {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
 
+    .btn-action {
+      padding: 8px 10px;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
 
+    .btn-edit {
+      background: #4c6b5f;
+      color: white;
+    }
 
+    .btn-edit:hover {
+      background: #3a5447;
+    }
 
-.modal {
-  display: none; 
-  position: fixed; 
-  z-index: 1000; 
-  left: 0; top: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.5);
-}
-.modal-content {
-  background: #fff;
-  margin: 5% auto;
-  padding: 20px;
-  border-radius: 10px;
-  width: 500px;
-  max-width: 95%;
-    max-height: 80vh;          
-  overflow-y: auto;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-}
-/* ✅ Tùy chọn: thanh cuộn gọn hơn */
-.modal-content::-webkit-scrollbar {
-  width: 8px;
-}
-.modal-content::-webkit-scrollbar-thumb {
-  background: #ccc;
-  border-radius: 4px;
-}
-.modal-content::-webkit-scrollbar-thumb:hover {
-  background: #999;
-}
-.close {
-  float: right;
-  font-size: 24px;
-  font-weight: bold;
-  cursor: pointer;
-}
-.btn-save {
-  background: #404A3D; color: #fff; border: none;
-  padding: 8px; border-radius: 6px; cursor: pointer; flex:1;
-}
-.btn-cancel {
-  background: #777; color: #fff; border: none;
-  padding: 8px; border-radius: 6px; cursor: pointer; flex:1;
-}
+    .btn-toggle {
+      background: #404A3D;
+      color: white;
+    }
 
+    .btn-toggle:hover {
+      background: #2e352a;
+    }
 
+    .btn-delete {
+      background: #dc3545;
+      color: white;
+    }
 
+    .btn-delete:hover {
+      background: #c82333;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1050;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      overflow: auto;
+    }
+
+    .modal-content {
+      background: white;
+      margin: 3% auto;
+      padding: 0;
+      border-radius: 12px;
+      width: 600px;
+      max-width: 95%;
+      max-height: 90vh;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    }
+
+    .modal-header {
+      background: #2d6a4f;
+      color: white;
+      padding: 20px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h3 {
+      margin: 0;
+      font-size: 1.3rem;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.8rem;
+      cursor: pointer;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: all 0.3s;
+    }
+
+    .modal-close:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    .modal-body {
+      padding: 25px;
+      max-height: calc(90vh - 140px);
+      overflow-y: auto;
+    }
+
+    .modal-body::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .modal-body::-webkit-scrollbar-thumb {
+      background: #ccc;
+      border-radius: 4px;
+    }
+
+    .modal-footer {
+      padding: 20px 25px;
+      border-top: 1px solid #e9ecef;
+      display: flex;
+      gap: 10px;
+      background: #f8f9fa;
+    }
+
+    .btn-modal-save {
+      flex: 1;
+      background: #2d6a4f;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-modal-save:hover {
+      background: #1b4332;
+    }
+
+    .btn-modal-cancel {
+      flex: 1;
+      background: #6c757d;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-modal-cancel:hover {
+      background: #5a6268;
+    }
+
+    #editPreview {
+      max-width: 150px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: 2px solid #e9ecef;
+    }
+
+    @media (max-width: 768px) {
+      .admin-banner h1 {
+        font-size: 2rem;
+      }
+
+      .product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 15px;
+        padding: 15px;
+      }
+    }
   </style>
-
-
-
 </head>
+
 <body>
-  <header>Quản lý sản phẩm</header>
-<div class="container">
-  <h2>Thêm sản phẩm</h2>
+  <div class="container-fluid py-4">
+    <!-- Banner -->
+    <div class="admin-banner">
+      <h1><i class="fas fa-book"></i> Thức Store Admin</h1>
+      <p>Trang quản trị hệ thống - Quản lý Sản phẩm</p>
+    </div>
 
+    <div class="row">
+      <!-- Sidebar -->
+      <div class="col-lg-3 mb-4">
+        <div class="sidebar">
+          <h5>📋 Menu quản lý</h5>
+          <a href="giao-dien-chinh-admin.html" class="menu-item"><span class="emoji">🏠</span> Tổng quan</a>
+          <a href="quanlysanpham.html" class="menu-item active"><span class="emoji">📘</span> Quản lý Sản phẩm</a>
+          <a href="#" class="menu-item"><span class="emoji">🧾</span> Quản lý Đơn hàng</a>
+          <a href="user.html" class="menu-item"><span class="emoji">👤</span> Quản lý Người dùng</a>
+          <a href="stock.html" class="menu-item"><span class="emoji">📦</span> Quản lý Kho</a>
+          <a href="pricing.html" class="menu-item"><span class="emoji">💲</span> Quản lý Giá</a>
+          <a href="import.html" class="menu-item"><span class="emoji">🚚</span> Nhập hàng</a>
+        </div>
+      </div>
 
-    <!-- ✅ Form thêm sản phẩm -->
+      <!-- Content -->
+      <div class="col-lg-9">
+        <div class="content-area">
+          <!-- Card Thêm sản phẩm -->
+          <div class="card">
+            <div class="card-header">
+              <h5 class="card-title"><i class="fas fa-plus-circle"></i> Thêm sản phẩm mới</h5>
+            </div>
+            <div class="card-body p-4">
+              <form id="addProductForm">
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label">Thể loại</label>
+                    <input type="text" class="form-control" id="loai" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Mã sản phẩm</label>
+                    <input type="text" class="form-control" id="ma" required>
+                  </div>
+                  <div class="col-md-12">
+                    <label class="form-label">Tên sách</label>
+                    <input type="text" class="form-control" id="ten" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Tác giả</label>
+                    <input type="text" class="form-control" id="tacgia" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Nhà xuất bản</label>
+                    <input type="text" class="form-control" id="nhaxuatban" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Năm xuất bản</label>
+                    <input type="text" class="form-control" id="namxuatban" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Bìa sách</label>
+                    <input type="file" class="form-control" id="hinh" accept="image/*" required>
+                  </div>
+                  <div class="col-md-12">
+                    <label class="form-label">Mô tả</label>
+                    <textarea class="form-control" id="mota" rows="3"></textarea>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Giá bán</label>
+                    <input type="number" class="form-control" id="gia" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Giá gốc</label>
+                    <input type="number" class="form-control" id="giagoc" required>
+                  </div>
+                </div>
+                <button type="submit" class="btn-add-product mt-3">
+                  <i class="fas fa-plus"></i> Thêm sản phẩm
+                </button>
+              </form>
+            </div>
+          </div>
 
-<form id="addProductForm">
-  <div>
-    <label>Thể loại:</label><br>
-    <input type="text" id="loai" required>
+          <!-- Card Danh sách sản phẩm -->
+          <div class="card">
+            <div class="card-header">
+              <h5 class="card-title"><i class="fas fa-list"></i> Danh sách sản phẩm</h5>
+            </div>
+            <div class="card-body">
+              <!-- Filters -->
+              <div class="filter-section">
+                <div class="row g-3">
+                  <div class="col-md-5">
+                    <input type="text" class="form-control" id="searchInput" placeholder="🔍 Tìm sản phẩm theo tên hoặc mã...">
+                  </div>
+                  <div class="col-md-3">
+                    <select class="form-select" id="categoryFilter">
+                      <option value="">-- Tất cả loại --</option>
+                      <option value="Văn học">Văn học</option>
+                      <option value="Kinh tế">Kinh tế</option>
+                      <option value="Kỹ năng sống">Kỹ năng sống</option>
+                      <option value="Thiếu nhi">Thiếu nhi</option>
+                      <option value="Giáo khoa">Giáo khoa</option>
+                    </select>
+                  </div>
+                  <div class="col-md-4">
+                    <select class="form-select" id="priceFilter">
+                      <option value="">-- Tất cả giá --</option>
+                      <option value="duoi100">Dưới 100.000đ</option>
+                      <option value="100-200">100k - 200.000đ</option>
+                      <option value="tren200">Trên 200.000đ</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Product Grid -->
+              <div class="product-grid" id="productList"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div>
-    <label>Mã sản phẩm:</label><br>
-    <input type="text" id="ma" required>
+  <!-- Modal Sửa sản phẩm -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fas fa-edit"></i> Sửa sản phẩm</h3>
+        <button class="modal-close" id="closeModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="editForm">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Thể loại</label>
+              <input type="text" class="form-control" id="editLoai">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Mã sản phẩm</label>
+              <input type="text" class="form-control" id="editMa" required>
+            </div>
+            <div class="col-md-12">
+              <label class="form-label">Tên sách</label>
+              <input type="text" class="form-control" id="editTen" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Tác giả</label>
+              <input type="text" class="form-control" id="editTacGia">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Nhà xuất bản</label>
+              <input type="text" class="form-control" id="editNXB">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Năm xuất bản</label>
+              <input type="number" class="form-control" id="editNam">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Bìa sách</label>
+              <input type="file" class="form-control" id="editHinh" accept="image/*">
+            </div>
+            <div class="col-md-12">
+              <img id="editPreview" style="display:none;">
+            </div>
+            <div class="col-md-12">
+              <label class="form-label">Mô tả</label>
+              <textarea class="form-control" id="editMota" rows="3"></textarea>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Giá bán</label>
+              <input type="number" class="form-control" id="editGia" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Giá gốc</label>
+              <input type="number" class="form-control" id="editGiagoc" required>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-modal-save" onclick="document.getElementById('editForm').dispatchEvent(new Event('submit'))">
+          <i class="fas fa-save"></i> Lưu thay đổi
+        </button>
+        <button type="button" class="btn-modal-cancel" id="cancelEdit">Hủy</button>
+      </div>
+    </div>
   </div>
 
-  <div>
-    <label>Tên sách:</label><br>
-    <input type="text" id="ten" required>
-  </div>
-
-    <div>
-    <label>Tác giả:</label><br>
-     <input type="text" id="tacgia" required>
-  </div>
-
-    <div>
-    <label>Nhà xuất bản:</label><br>
-    <input type="text" id="nhaxuatban" required>
-  </div>
-
-      <div>
-    <label>Năm xuất bản:</label><br>
-    <input type="text" id="namxuatban" required>
-  </div>
-
-  <div>
-    <label>Bìa sách (chọn file):</label><br>
-    <input type="file" id="hinh" accept="image/*" required>
-  </div>
-
-  <div>
-    <label>Mô tả:</label><br>
-    <textarea id="mota" rows="3"></textarea>
-  </div>
-
-  <div>
-    <label>Giá bán:</label><br>
-    <input type="number" id="gia" required>
-  </div>
-
-  <div>
-    <label>Giá gốc:</label><br>
-    <input type="number" id="giagoc" required>
-  </div>
-
-  <button type="submit">+ Thêm sản phẩm</button>
-</form>
-
-    <hr>
-    <!-- ✅ Danh sách sản phẩm để quản lý -->
-    <h3>Danh sách sản phẩm</h3>
-    <input type="text" id="searchInput" placeholder="🔍 Tìm sản phẩm theo tên hoặc mã...">
-    <select id="categoryFilter">
-  <option value="">-- Tất cả loại --</option>
-  <option value="Văn học">Văn học</option>
-  <option value="Kinh tế">Kinh tế</option>
-  <option value="Kỹ năng sống">Kỹ năng sống</option>
-  <option value="Thiếu nhi">Thiếu nhi</option>
-  <option value="Giáo khoa">Giáo khoa</option>
-</select>
-
-<select id="priceFilter">
-  <option value="">-- Tất cả giá --</option>
-  <option value="duoi100">Dưới 100.000đ</option>
-  <option value="100-200">100k - 200.000đ</option>
-  <option value="tren200">Trên 200.000đ</option>
-</select>
-
-    <div id="productList"></div>
-  </div>
-
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  
   <script>
-
     // ✅ Thêm sản phẩm
     document.getElementById("addProductForm").addEventListener("submit", function(e) {
       e.preventDefault();
@@ -385,13 +645,14 @@
           loai: document.getElementById("loai").value.split(",").map(x => x.trim()),
           ma: document.getElementById("ma").value,
           ten: document.getElementById("ten").value,
+          tacgia: document.getElementById("tacgia").value,
+          nhaxuatban: document.getElementById("nhaxuatban").value,
+          namxuatban: document.getElementById("namxuatban").value,
           hinh: event.target.result,
           mota: document.getElementById("mota").value,
           gia: document.getElementById("gia").value,
           giagoc: document.getElementById("giagoc").value,
-          nhaxuatban: document.getElementById("nhaxuatban").value,
-          namxuatban: document.getElementById("namxuatban").value, 
-        an: false
+          an: false
         };
 
         let products = JSON.parse(localStorage.getItem("products")) || [];
@@ -405,333 +666,224 @@
 
       reader.readAsDataURL(fileInput);
     });
-    
-// ✅ Hàm xoá sản phẩm 
-function deleteProduct(index) 
-{ let products = JSON.parse(localStorage.getItem("products")) || []; 
-if (confirm("Bạn có chắc muốn xoá sản phẩm này?")) 
-{ products.splice(index, 1); localStorage.setItem("products", JSON.stringify(products));
-renderProducts(document.getElementById("searchInput").value); } }
 
-    //hàm ẩn hiện spham
-    function toggleHide(index) {
-    let products = JSON.parse(localStorage.getItem("products")) || [];
-    products[index].an = !products[index].an; // ✅ Đổi true/false
-    localStorage.setItem("products", JSON.stringify(products));
-    renderProducts(document.getElementById("searchInput").value);
+    // ✅ Hàm xoá sản phẩm 
+    function deleteProduct(index) {
+      let products = JSON.parse(localStorage.getItem("products")) || [];
+      if (confirm("Bạn có chắc muốn xoá sản phẩm này?")) {
+        products.splice(index, 1);
+        localStorage.setItem("products", JSON.stringify(products));
+        renderProducts(document.getElementById("searchInput").value);
+      }
     }
 
+    // ✅ Hàm ẩn/hiện sản phẩm
+    function toggleHide(index) {
+      let products = JSON.parse(localStorage.getItem("products")) || [];
+      products[index].an = !products[index].an;
+      localStorage.setItem("products", JSON.stringify(products));
+      renderProducts(document.getElementById("searchInput").value);
+    }
 
-function removeAccents(str) {
-  return str
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/đ/g, "d")
-    .replace(/Đ/g, "D");
-}
+    // ✅ Bỏ dấu tiếng Việt
+    function removeAccents(str) {
+      return str
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/đ/g, "d")
+        .replace(/Đ/g, "D");
+    }
 
-// ✅ Render danh sách sản phẩm trong admin (có filter tìm kiếm)
-function renderProducts(filter = "") {
-  let products = JSON.parse(localStorage.getItem("products")) || [];
-  const productList = document.getElementById("productList");
-  productList.innerHTML = "";
+    // ✅ Render danh sách sản phẩm
+    function renderProducts(filter = "") {
+      let products = JSON.parse(localStorage.getItem("products")) || [];
+      const productList = document.getElementById("productList");
+      productList.innerHTML = "";
 
-  let filterText = removeAccents(filter.toLowerCase().trim());
-  const category = document.getElementById("categoryFilter")?.value || "";
-  const price = document.getElementById("priceFilter")?.value || "";
+      let filterText = removeAccents(filter.toLowerCase().trim());
+      const category = document.getElementById("categoryFilter")?.value || "";
+      const price = document.getElementById("priceFilter")?.value || "";
 
-  products.forEach((p, index) => {
-  let ten = removeAccents((p.ten || "").toLowerCase());
-let ma = removeAccents((p.ma || "").toLowerCase());
+      products.forEach((p, index) => {
+        let ten = removeAccents((p.ten || "").toLowerCase());
+        let ma = removeAccents((p.ma || "").toLowerCase());
 
+        if (!(ten.includes(filterText) || ma.includes(filterText))) return;
 
-    // 🔎 1. Lọc theo tên / mã
-    if (!(ten.includes(filterText) || ma.includes(filterText))) return;
+        let loaiArr = Array.isArray(p.loai) ? p.loai : [p.loai];
+        if (category && !loaiArr.some(l => removeAccents(l.toLowerCase()) === removeAccents(category.toLowerCase()))) return;
 
-    // 🔎 2. Lọc theo loại
-    let loaiArr = Array.isArray(p.loai) ? p.loai : [p.loai];
-    if (
-      category &&
-      !loaiArr.some(
-        (l) =>
-          removeAccents(l.toLowerCase()) ===
-          removeAccents(category.toLowerCase())
-      )
-    )
-      return;
+        let giaNum = parseFloat(p.gia.toString().replace(/\D/g, ""));
+        let giagocNum = parseFloat(p.giagoc.toString().replace(/\D/g, ""));
 
-    // 🔎 3. Xử lý giá (chuẩn hóa chuỗi số có dấu . hoặc đ)
-    let giaNum = parseFloat(p.gia.toString().replace(/\D/g, ""));
-    let giagocNum = parseFloat(p.giagoc.toString().replace(/\D/g, ""));
+        if (price === "duoi100" && giaNum >= 100000) return;
+        if (price === "100-200" && (giaNum < 100000 || giaNum > 200000)) return;
+        if (price === "tren200" && giaNum <= 200000) return;
 
-    // 🔎 Lọc theo giá
-    if (price === "duoi100" && giaNum >= 100000) return;
-    if (price === "100-200" && (giaNum < 100000 || giaNum > 200000)) return;
-    if (price === "tren200" && giaNum <= 200000) return;
+        let giamgia = giagocNum > giaNum ? Math.round(((giagocNum - giaNum) / giagocNum) * 100) : 0;
 
-    // 🔥 Tính phần trăm giảm giá (chỉ hiển thị nếu giagoc > gia)
-    let giamgia = giagocNum > giaNum ? Math.round(((giagocNum - giaNum) / giagocNum) * 100) : 0;
+        const card = document.createElement("div");
+        card.classList.add("product-card");
 
-    // 🧱 Tạo phần tử sản phẩm
-    const div = document.createElement("div");
-    div.classList.add("product-box");
+        card.innerHTML = `
+          <img src="${p.hinh}" alt="${p.ten}">
+          <div class="product-card-body">
+            <div class="product-name">${p.ten}</div>
+            <div class="product-meta">Loại: ${Array.isArray(p.loai) ? p.loai.join(", ") : p.loai} | Mã: ${p.ma}</div>
+            <div class="product-price">
+              <span class="price-current">${giaNum.toLocaleString()}đ</span>
+              ${giagocNum > giaNum ? `<span class="price-original">${giagocNum.toLocaleString()}đ</span>` : ""}
+            </div>
+            ${giamgia > 0 ? `<div class="discount-badge">-${giamgia}%</div>` : ""}
+            <div class="product-status ${p.an ? 'status-hidden' : 'status-visible'}">
+              <i class="fas fa-circle"></i> ${p.an ? "Đang ẩn" : "Đang hiển thị"}
+            </div>
+          </div>
+          <div class="product-actions">
+            <button class="btn-action btn-edit" onclick="openEditModal(${index})">
+              <i class="fas fa-edit"></i> Sửa
+            </button>
+            <button class="btn-action btn-toggle" onclick="toggleHide(${index})">
+              <i class="fas fa-eye${p.an ? '-slash' : ''}"></i> ${p.an ? "Hiện" : "Ẩn"}
+            </button>
+            <button class="btn-action btn-delete" onclick="deleteProduct(${index})">
+              <i class="fas fa-trash"></i> Xóa
+            </button>
+          </div>
+        `;
 
-    div.innerHTML = `
-      <img src="${p.hinh}" alt="${p.ten}" class="product-img" style="cursor:pointer;">
-      <div class="product-info" style="cursor:pointer;">
-        <strong>${p.ten}</strong><br>
-        <small>Loại: ${p.loai} | Mã: ${p.ma}</small><br>
-        <span class="text-danger fw-bold">${giaNum.toLocaleString()}đ</span>
-        <span class="text-muted" style="text-decoration:line-through;">${giagocNum.toLocaleString()}đ</span><br>
-        ${giamgia > 0 ? `<span class="badge bg-danger">-${giamgia}%</span><br>` : ""}
-        <em style="color:${p.an ? "red" : "green"}">${p.an ? "Đang ẩn" : "Đang hiển thị"}</em>
-      </div>
-      <div class="product-actions">
-        <button class="delete-btn" onclick="deleteProduct(${index})">Xoá</button>
-        <button class="toggle-btn" onclick="toggleHide(${index})">${p.an ? "Hiện" : "Ẩn"}</button>
-        <button class="edit-btn" onclick="openEditModal(${index})">Sửa</button>
-      </div>
-    `;
+        card.querySelector("img").addEventListener("click", () => {
+          localStorage.setItem("selectedProduct", JSON.stringify(p));
+          window.location.href = "chitiet.html";
+        });
 
+        card.querySelector(".product-card-body").addEventListener("click", () => {
+          localStorage.setItem("selectedProduct", JSON.stringify(p));
+          window.location.href = "chitiet.html";
+        });
 
+        productList.appendChild(card);
+      });
+    }
 
-    // ✅ Khi click vào ảnh hoặc phần thông tin → lưu sản phẩm & mở trang chi tiết
-    div.querySelector(".product-img").addEventListener("click", () => {
-      localStorage.setItem("selectedProduct", JSON.stringify(p));
-      window.location.href = "chitiet.html";
-    });
-
-    div.querySelector(".product-info").addEventListener("click", () => {
-      localStorage.setItem("selectedProduct", JSON.stringify(p));
-      window.location.href = "chitiet.html";
-    });
-
-    productList.appendChild(div);
-
-
-
-  });
-}
-
-
-
-
-
-
-
-    //hàm sửa spham
-//function editProduct(index) {
-  //localStorage.setItem("editIndex", index);
- // window.location.href = "editProduct.html";
-//}
-
-
-    // ✅ Gắn sự kiện tìm kiếm
+    // ✅ Gắn sự kiện tìm kiếm và lọc
     document.getElementById("searchInput").addEventListener("input", function() {
       renderProducts(this.value);
     });
 
-    // ✅ Khi load admin.html thì render sẵn
+    document.getElementById("categoryFilter").addEventListener("change", () => {
+      renderProducts(document.getElementById("searchInput").value);
+    });
+
+    document.getElementById("priceFilter").addEventListener("change", () => {
+      renderProducts(document.getElementById("searchInput").value);
+    });
+
+    // ✅ Modal Edit
+    let editIndex = null;
+
+    function openEditModal(index) {
+      const products = JSON.parse(localStorage.getItem("products")) || [];
+      const product = products[index];
+      if (!product) return;
+
+      editIndex = index;
+
+      document.getElementById("editLoai").value = Array.isArray(product.loai) ? product.loai.join(", ") : product.loai || "";
+      document.getElementById("editMa").value = product.ma || "";
+      document.getElementById("editTen").value = product.ten || "";
+      document.getElementById("editTacGia").value = product.tacgia || "";
+      document.getElementById("editNXB").value = product.nhaxuatban || "";
+      document.getElementById("editNam").value = product.namxuatban || "";
+      document.getElementById("editMota").value = product.mota || "";
+      document.getElementById("editGia").value = product.gia || "";
+      document.getElementById("editGiagoc").value = product.giagoc || "";
+      document.getElementById("editPreview").src = product.hinh || "";
+      document.getElementById("editPreview").style.display = product.hinh ? "block" : "none";
+
+      document.getElementById("editModal").style.display = "block";
+    }
+
+    function closeEditModal() {
+      document.getElementById("editModal").style.display = "none";
+      editIndex = null;
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      document.getElementById("closeModal").addEventListener("click", closeEditModal);
+      document.getElementById("cancelEdit").addEventListener("click", closeEditModal);
+
+      window.addEventListener("click", function(e) {
+        const modal = document.getElementById("editModal");
+        if (e.target === modal) {
+          closeEditModal();
+        }
+      });
+
+      document.getElementById("editHinh").addEventListener("change", function() {
+        const file = this.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = e => {
+            document.getElementById("editPreview").src = e.target.result;
+            document.getElementById("editPreview").style.display = "block";
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
+      document.getElementById("editForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        let products = JSON.parse(localStorage.getItem("products")) || [];
+        if (editIndex === null || !products[editIndex]) return;
+
+        const loai = document.getElementById("editLoai").value.split(",").map(l => l.trim()).filter(Boolean);
+        const ma = document.getElementById("editMa").value.trim();
+        const ten = document.getElementById("editTen").value.trim();
+        const tacgia = document.getElementById("editTacGia").value.trim();
+        const nhaxuatban = document.getElementById("editNXB").value.trim();
+        const namxuatban = document.getElementById("editNam").value.trim();
+        const mota = document.getElementById("editMota").value.trim();
+        const gia = document.getElementById("editGia").value.trim();
+        const giagoc = document.getElementById("editGiagoc").value.trim();
+        const file = document.getElementById("editHinh").files[0];
+
+        if (!ma || !ten || !gia || !giagoc || !tacgia || !namxuatban || !nhaxuatban) {
+          alert("⚠️ Vui lòng nhập đầy đủ thông tin!");
+          return;
+        }
+
+        const saveProduct = (img) => {
+          products[editIndex] = {
+            ...products[editIndex],
+            loai, ma, ten, mota,
+            gia, giagoc, tacgia, nhaxuatban, namxuatban,
+            hinh: img || products[editIndex].hinh
+          };
+          localStorage.setItem("products", JSON.stringify(products));
+          
+          const selected = JSON.parse(localStorage.getItem("selectedProduct"));
+          if (selected && selected.ma === ma) {
+            localStorage.setItem("selectedProduct", JSON.stringify(products[editIndex]));
+          }
+          
+          alert("✅ Cập nhật thành công!");
+          closeEditModal();
+          renderProducts(document.getElementById("searchInput").value);
+        };
+
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = e => saveProduct(e.target.result);
+          reader.readAsDataURL(file);
+        } else {
+          saveProduct();
+        }
+      });
+    });
+
+    // ✅ Render ban đầu
     renderProducts();
-    // Gắn sự kiện tìm kiếm
-document.getElementById("searchInput").addEventListener("input", function() {
-  renderProducts(this.value);
-});
-
-// Gắn sự kiện lọc loại
-document.getElementById("categoryFilter").addEventListener("change", () => {
-  renderProducts(document.getElementById("searchInput").value);
-});
-
-// Gắn sự kiện lọc giá
-document.getElementById("priceFilter").addEventListener("change", () => {
-  renderProducts(document.getElementById("searchInput").value);
-});
-
-// Khi load admin.html thì render sẵn
-renderProducts();
-
-
-
-let editIndex = null; // khai báo biến toàn cục
-
-// ✅ Mở popup sửa
-function openEditModal(index) {
-  const products = JSON.parse(localStorage.getItem("products")) || [];
-  const product = products[index];
-  if (!product) return;
-
-  editIndex = index;
-
-  // Gán dữ liệu cũ vào form
-  document.getElementById("editLoai").value = Array.isArray(product.loai) ? product.loai.join(", ") : product.loai || "";
-  document.getElementById("editMa").value = product.ma || "";
-  document.getElementById("editTen").value = product.ten || "";
-  document.getElementById("editTacGia").value = product.tacgia || "";
-  document.getElementById("editNXB").value = product.nhaxuatban || "";
-  document.getElementById("editNam").value = product.namxuatban || "";
-  document.getElementById("editMota").value = product.mota || "";
-  document.getElementById("editGia").value = product.gia || "";
-  document.getElementById("editGiagoc").value = product.giagoc || "";
-  document.getElementById("editPreview").src = product.hinh || "";
-  document.getElementById("editPreview").style.display = product.hinh ? "block" : "none";
-
-  document.getElementById("editModal").style.display = "block";
-}
-
-// ✅ Đóng popup
-function closeEditModal() {
-  document.getElementById("editModal").style.display = "none";
-  editIndex = null;
-}
-
-// Sau khi DOM load thì mới gắn event
-document.addEventListener("DOMContentLoaded", function () {
-  document.getElementById("closeModal").addEventListener("click", closeEditModal);
-  document.getElementById("cancelEdit").addEventListener("click", closeEditModal);
-
-  // đóng khi click ngoài modal-content
-  window.addEventListener("click", function(e) {
-    const modal = document.getElementById("editModal");
-    if (e.target === modal) {
-      closeEditModal();
-    }
-  });
-
-  // ✅ Preview ảnh mới
-  document.getElementById("editHinh").addEventListener("change", function() {
-    const file = this.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = e => {
-        document.getElementById("editPreview").src = e.target.result;
-        document.getElementById("editPreview").style.display = "block";
-      };
-      reader.readAsDataURL(file);
-    }
-  });
-
-  // ✅ Submit form sửa
-  document.getElementById("editForm").addEventListener("submit", function(e) {
-    e.preventDefault();
-    let products = JSON.parse(localStorage.getItem("products")) || [];
-    if (editIndex === null || !products[editIndex]) return;
-
-    const loai = document.getElementById("editLoai").value.split(",").map(l => l.trim()).filter(Boolean);
-    const ma = document.getElementById("editMa").value.trim();
-    const ten = document.getElementById("editTen").value.trim();
-      const tacgia = document.getElementById("editTacGia").value.trim();
-  const nhaxuatban = document.getElementById("editNXB").value.trim();
-  const namxuatban = document.getElementById("editNam").value.trim();
-    const mota = document.getElementById("editMota").value.trim();
-    const gia = document.getElementById("editGia").value.trim();
-    const giagoc = document.getElementById("editGiagoc").value.trim();
-    const file = document.getElementById("editHinh").files[0];
-
-    if (!ma || !ten || !gia || !giagoc|| !tacgia|| !namxuatban|| !nhaxuatban) {
-      alert("⚠️ Vui lòng nhập đầy đủ thông tin!");
-      return;
-    }
-
-    const saveProduct = (img) => {
-      products[editIndex] = {
-        ...products[editIndex],
-        loai, ma, ten, mota,
-        gia, giagoc,tacgia, nhaxuatban, namxuatban,
-        hinh: img || products[editIndex].hinh
-      };
-      localStorage.setItem("products", JSON.stringify(products));
-       // ✅ Nếu đang xem trong chitiet.html → cập nhật luôn
-    const selected = JSON.parse(localStorage.getItem("selectedProduct"));
-    if (selected && selected.ma === ma) {
-      localStorage.setItem("selectedProduct", JSON.stringify(products[editIndex]));
-    }
-      alert("✅ Cập nhật thành công!");
-      closeEditModal();
-      if (typeof renderProducts === "function") {
-        renderProducts();
-      } else {
-        location.reload();
-      }
-    };
-
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = e => saveProduct(e.target.result);
-      reader.readAsDataURL(file);
-    } else {
-      saveProduct();
-    }
-  });
-});
-
-// Đóng popup khi bấm Hủy hoặc nút X
-//document.getElementById("cancelEdit").addEventListener("click", closeEditModal);
-//document.getElementById("closeModal").addEventListener("click", closeEditModal);
-
   </script>
-
-
-
-
-  <!-- Modal sửa sản phẩm -->
-<div id="editModal" class="modal">
-  <div class="modal-content">
-    <span class="close" id="closeModal">&times;</span>
-    <h2>Sửa sản phẩm</h2>
-    <form id="editForm">
-      <div>
-        <label>Thể loại:</label>
-        <input type="text" id="editLoai">
-      </div>
-      <div>
-        <label>Mã sản phẩm:</label>
-        <input type="text" id="editMa" required>
-      </div>
-      <div>
-        <label>Tên sách:</label>
-        <input type="text" id="editTen" required>
-      </div>
-      <div>
-  <label>Tác giả:</label><br>
-  <input type="text" id="editTacGia">
-</div>
-
-<div>
-  <label>Nhà xuất bản:</label><br>
-  <input type="text" id="editNXB">
-</div>
-
-<div>
-  <label>Năm xuất bản:</label><br>
-  <input type="number" id="editNam">
-</div>
-
-      <div>
-        <label>Bìa sách:</label>
-        <input type="file" id="editHinh" accept="image/*">
-        <img id="editPreview" style="max-width:120px; margin-top:5px; display:block;">
-      </div>
-      <div>
-        <label>Mô tả:</label>
-        <textarea id="editMota" rows="3"></textarea>
-      </div>
-      <div style="display:flex; gap:10px;">
-        <div style="flex:1;">
-          <label>Giá bán:</label>
-          <input type="number" id="editGia" required>
-        </div>
-        <div style="flex:1;">
-          <label>Giá gốc:</label>
-          <input type="number" id="editGiagoc" required>
-        </div>
-      </div>
-      <div style="margin-top:15px; display:flex; gap:10px;">
-        <button type="submit" class="btn-save">💾 Lưu</button>
-        <button type="button" id="cancelEdit" class="btn-cancel">Hủy</button>
-      </div>
-    </form>
-  </div>
-</div>
 </body>
 </html>
