@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thanh toán - Thức Store</title>
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+  <style>
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar navbar-light bg-light px-4">
+    <a href="trang-chu-user.html" class="navbar-brand">
+      <h2 class="m-0">Thức Store</h2>
+    </a>
+  </nav>
+
+  <div class="container my-5">
+    <h2 class="mb-4 text-center">🛍️ Thanh toán đơn hàng</h2>
+
+    <!-- 🧾 Thông tin sản phẩm -->
+    <div id="checkoutContainer" class="mb-5"></div>
+
+    <!-- 👤 Thông tin khách hàng -->
+    <h4 class="mb-3">Thông tin khách hàng</h4>
+    <form id="checkoutForm" class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Họ tên</label>
+        <input type="text" id="name" class="form-control" required>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Số điện thoại</label>
+        <input type="text" id="phone" class="form-control" required pattern="[0-9]{9,11}">
+      </div>
+
+      <!-- Địa chỉ nhận hàng -->
+      <div class="col-12">
+        <label class="form-label">Địa chỉ nhận hàng</label><br>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="addressOption" id="savedAddress" value="saved" checked>
+          <label class="form-check-label" for="savedAddress">
+            Dùng địa chỉ mặc định từ tài khoản
+          </label>
+        </div>
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="radio" name="addressOption" id="newAddress" value="new">
+          <label class="form-check-label" for="newAddress">
+            Nhập địa chỉ mới
+          </label>
+        </div>
+
+        <!-- Địa chỉ mặc định -->
+        <div id="defaultAddressBox" class="border rounded p-3 mb-3 bg-light">
+          <p class="mb-0" id="defaultAddress">123 Nguyễn Trãi, Quận 1, TP. Hồ Chí Minh</p>
+        </div>
+
+        <!-- Địa chỉ mới -->
+        <div id="newAddressBox" class="border rounded p-3 hidden">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Tỉnh/Thành phố</label>
+              <input type="text" id="city" class="form-control">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Quận/Huyện</label>
+              <input type="text" id="district" class="form-control">
+            </div>
+            <div class="col-md-12">
+              <label class="form-label">Địa chỉ cụ thể</label>
+              <input type="text" id="detailAddress" class="form-control">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hình thức thanh toán -->
+      <div class="col-12">
+        <label class="form-label">Phương thức thanh toán</label>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="paymentMethod" id="cash" value="Tiền mặt" checked>
+          <label class="form-check-label" for="cash">
+            Thanh toán khi nhận hàng (COD)
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="paymentMethod" id="transfer" value="Chuyển khoản">
+          <label class="form-check-label" for="transfer">
+            Chuyển khoản ngân hàng
+          </label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="paymentMethod" id="online" value="Thanh toán trực tuyến">
+          <label class="form-check-label" for="online">
+            Thanh toán trực tuyến (qua ví, thẻ, v.v.)
+          </label>
+        </div>
+      </div>
+
+      <div class="col-12 text-end">
+        <button type="submit" class="btn btn-success px-5 py-2">Xác nhận thanh toán</button>
+      </div>
+    </form>
+
+    <!-- Kết quả xem lại đơn hàng -->
+    <div id="orderSummary" class="mt-5 hidden">
+      <h4 class="mb-3 text-success">✅ Đặt hàng thành công!</h4>
+      <p>Cảm ơn bạn đã mua sắm tại <strong>Thức Store</strong>. Dưới đây là thông tin đơn hàng của bạn:</p>
+      <div id="summaryContent"></div>
+      <div class="text-end mt-3">
+        <a href="trang-chu-user.html" class="btn btn-primary">Quay về trang chủ</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  // 📦 Hiển thị sản phẩm mua ngay
+  const checkoutItems = JSON.parse(localStorage.getItem("checkoutItems")) || [];
+  const container = document.getElementById("checkoutContainer");
+
+  if (checkoutItems.length === 0) {
+    container.innerHTML = `<div class="alert alert-warning text-center">
+      Không có sản phẩm nào để thanh toán. 
+      <a href="product.html" class="alert-link">Quay lại mua hàng</a>
+    </div>`;
+  } else {
+    let total = 0;
+    let html = `
+      <table class="table table-bordered align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>Hình ảnh</th>
+            <th>Tên sản phẩm</th>
+            <th>Giá</th>
+            <th>Số lượng</th>
+            <th>Tổng</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+    checkoutItems.forEach(item => {
+      const sum = item.price * item.qty;
+      total += sum;
+      html += `
+        <tr>
+          <td><img src="${item.img}" width="70"></td>
+          <td>${item.name}</td>
+          <td>${item.price.toLocaleString("vi-VN")}đ</td>
+          <td>${item.qty}</td>
+          <td>${sum.toLocaleString("vi-VN")}đ</td>
+        </tr>
+      `;
+    });
+    html += `
+        </tbody>
+      </table>
+      <div class="text-end fw-bold fs-5">Tổng cộng: 
+        <span class="text-danger">${total.toLocaleString("vi-VN")}đ</span>
+      </div>
+    `;
+    container.innerHTML = html;
+  }
+
+  // 🎯 Chuyển đổi giữa địa chỉ cũ và mới
+  const savedRadio = document.getElementById("savedAddress");
+  const newRadio = document.getElementById("newAddress");
+  const defaultBox = document.getElementById("defaultAddressBox");
+  const newBox = document.getElementById("newAddressBox");
+
+  savedRadio.addEventListener("change", () => {
+    defaultBox.classList.remove("hidden");
+    newBox.classList.add("hidden");
+  });
+  newRadio.addEventListener("change", () => {
+    defaultBox.classList.add("hidden");
+    newBox.classList.remove("hidden");
+  });
+
+  // 🧾 Xử lý thanh toán
+  document.getElementById("checkoutForm").addEventListener("submit", e => {
+    e.preventDefault();
+
+    const name = document.getElementById("name").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const payment = document.querySelector("input[name='paymentMethod']:checked").value;
+    let address = "";
+
+    if (document.getElementById("savedAddress").checked) {
+      address = document.getElementById("defaultAddress").innerText;
+    } else {
+      const city = document.getElementById("city").value.trim();
+      const district = document.getElementById("district").value.trim();
+      const detail = document.getElementById("detailAddress").value.trim();
+      if (!city || !district || !detail) {
+        alert("Vui lòng nhập đầy đủ địa chỉ mới!");
+        return;
+      }
+      address = `${detail}, ${district}, ${city}`;
+    }
+
+    // Tính tổng tiền
+    const total = checkoutItems.reduce((sum, i) => sum + i.price * i.qty, 0);
+
+// Lưu đơn hàng vào danh sách
+const order = {
+  id: Date.now(),
+  customer: { name, phone, address },
+  payment,
+  items: checkoutItems,
+  total,
+  date: new Date().toLocaleString("vi-VN"),
+  status: "chua-xu-ly"
+};
+
+const orders = JSON.parse(localStorage.getItem("orders")) || [];
+orders.push(order);
+localStorage.setItem("orders", JSON.stringify(orders));
+
+// Xóa giỏ hàng tạm
+localStorage.removeItem("checkoutItems");
+
+
+
+    // 🟢 Hiển thị phần xem lại đơn hàng
+    document.getElementById("checkoutForm").classList.add("hidden");
+    const summaryDiv = document.getElementById("orderSummary");
+    const content = document.getElementById("summaryContent");
+
+    content.innerHTML = `
+      <p><strong>Tên:</strong> ${name}</p>
+      <p><strong>SĐT:</strong> ${phone}</p>
+      <p><strong>Địa chỉ giao hàng:</strong> ${address}</p>
+      <p><strong>Phương thức thanh toán:</strong> ${payment}</p>
+      <p><strong>Tổng tiền:</strong> ${total.toLocaleString("vi-VN")}đ</p>
+      <p><strong>Thời gian đặt:</strong> ${order.date}</p>
+    `;
+
+    summaryDiv.classList.remove("hidden");
+  });
+  </script>
+</body>
+</html>
