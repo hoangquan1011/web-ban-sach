@@ -642,6 +642,7 @@
       const reader = new FileReader();
       reader.onload = function(event) {
         let product = {
+          id: Date.now(), // ✅ QUAN TRỌNG: Tạo ID duy nhất
           loai: document.getElementById("loai").value.split(",").map(x => x.trim()),
           ma: document.getElementById("ma").value,
           ten: document.getElementById("ten").value,
