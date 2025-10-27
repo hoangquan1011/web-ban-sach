@@ -1,202 +1,221 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Quản lý khách hàng</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý khách hàng - Thức Store</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
   <style>
-    :root{
-      --bg:#ffffff;
-      --bg-accent:#ecfdf5;
-      --card:#ffffff;
-      --accent:#16a34a;
-      --accent-dark:#059669;
-      --muted:#375a3b;
-      --danger:#ef4444;
-      --radius:12px;
-      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
+    body {
+      background-color: #f3f8f3;
+      font-family: "Open Sans", sans-serif;
     }
-    body{
-      margin:0;
-      background: linear-gradient(180deg,var(--bg),var(--bg-accent));
-      color: #062018;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
+
+    /* ===== Banner ===== */
+    .admin-banner {
+      background: url('../img/banner.jpg') center/cover no-repeat;
+      height: 220px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      overflow: hidden;
     }
-    .app{max-width:1200px;margin:28px auto;padding:20px}
-    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
-    .brand{display:flex;gap:14px;align-items:center}
-    .logo{
-      width:48px;height:48px;border-radius:10px;
-      background:linear-gradient(135deg,var(--accent),var(--accent-dark));
-      display:flex;align-items:center;justify-content:center;color:white;font-weight:700;
-      box-shadow:0 6px 18px rgba(5,102,60,0.12);
+    .admin-banner::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 80, 40, 0.45);
     }
-    h1{font-size:20px;margin:0;color:var(--muted)}
-    .sub{color:rgba(55,90,59,0.75);font-size:13px}
-    .controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-    .btn{
-      background:var(--accent);color:white;padding:8px 12px;border-radius:10px;border:0;cursor:pointer;font-weight:600;font-size:13px;
-      box-shadow:0 6px 18px rgba(6,64,48,0.06);
+    .admin-banner h1 {
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 3rem;
+      z-index: 2;
     }
-    .btn.secondary{
-      background:transparent;color:var(--accent);border:1px solid rgba(22,163,74,0.12);
+    .admin-banner p {
+      color: #eafbea;
+      font-size: 1.1rem;
+      z-index: 2;
     }
-    .input{padding:8px 12px;border-radius:10px;border:1px solid rgba(6,32,24,0.06);width:240px;background:white}
-    table{
-      width:100%;border-collapse:collapse;background:var(--card);border-radius:12px;overflow:hidden;
-      box-shadow:0 6px 18px rgba(6,32,24,0.04);
+
+    /* ===== Sidebar ===== */
+    .sidebar {
+      background-color: #ffffff;
+      border-radius: 1rem;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      padding: 1.5rem;
+      height: 100%;
     }
-    thead{background:linear-gradient(90deg,rgba(22,163,74,0.06),transparent)}
-    th,td{padding:10px 12px;text-align:left;font-size:14px;border-bottom:1px solid rgba(6,32,24,0.04)}
-    th{font-size:13px;color:var(--muted);font-weight:600}
-    tr:hover td{background:linear-gradient(90deg,rgba(22,163,74,0.015),transparent)}
-    .actions{display:flex;flex-wrap:wrap;gap:6px}
-    .pill{padding:4px 8px;border-radius:999px;font-size:12px;border:1px solid rgba(6,32,24,0.06)}
-    .status-active{background:#ecfdf5;color:#065f46;border-color:#bbf7d0}
-    .status-locked{background:#fff7f7;color:#7f1d1d;border-color:#ffd7d7}
-    .modal-backdrop{position:fixed;inset:0;background:rgba(2,6,23,0.25);display:none;align-items:center;justify-content:center;padding:20px}
-    .modal{background:var(--card);width:820px;max-width:100%;border-radius:12px;padding:18px;box-shadow:0 18px 50px rgba(2,6,23,0.2)}
-    .modal h2{margin:0 0 12px 0;color:var(--muted)}
-    .form-row{display:flex;gap:12px}
-    .form-row .col{flex:1}
-    label{display:block;font-size:13px;color:rgba(55,90,59,0.9);margin-bottom:6px}
-    input[type=text], input[type=email], input[type=password], select{
-      width:100%;padding:10px;border-radius:10px;border:1px solid rgba(6,32,24,0.06);background:#fff;
+    .sidebar h5 { color: #2d6a4f; font-weight: 700; margin-bottom: 1rem; }
+    .menu-item { display: flex; align-items: center; color: #2d6a4f; font-weight: 600; text-decoration: none; margin-bottom: 1rem; transition: .3s; }
+    .menu-item:hover { color: #40916c; transform: translateX(5px); }
+    .menu-item.active { color: #1b4332; font-weight: 700; }
+    .menu-item span.emoji { font-size: 1.5rem; margin-right: .75rem; }
+
+    /* ===== Content ===== */
+    .content-area {
+      background: #fff;
+      border-radius: 1rem;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+      padding: 0;
+      min-height: 75vh;
     }
-    .modal-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
-    .small-btn{padding:6px 8px;border-radius:8px;font-size:12px}
-    .pw-mask{font-family:monospace;letter-spacing:2px}
-    @media (max-width:900px){
-      .form-row{flex-direction:column}
-      .controls{justify-content:flex-end}
-      .input{width:160px}
-      table{font-size:13px}
+    table th, table td { vertical-align: middle; font-size: 14px; }
+    .pw-mask { font-family: monospace; letter-spacing: 2px; }
+
+    .status-active {
+      background: #ecfdf5; color: #065f46; border-radius: 999px; padding: 3px 8px; font-size: 12px;
+    }
+    .status-locked {
+      background: #fff7f7; color: #7f1d1d; border-radius: 999px; padding: 3px 8px; font-size: 12px;
+    }
+
+    .btn-sm { font-size: 13px; padding: 4px 8px; }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 14px;
+      color: #6c757d;
+    }
+
+    /* ===== Modal ===== */
+    .modal-backdrop-custom {
+      position: fixed;
+      inset: 0;
+      background: rgba(2,6,23,0.35);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1050;
+    }
+    .modal-inner {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      width: 800px;
+      max-width: 95%;
     }
   </style>
 </head>
+
 <body>
-  <div class="app">
-    <header>
-      <div class="brand">
-        <div class="logo">KH</div>
-        <div>
-          <h1>Quản lý khách hàng</h1>
-          <div class="sub">Thêm, sửa, xóa, reset mật khẩu, khóa/mở tài khoản — hiển thị tài khoản & mật khẩu</div>
+  <div class="container-fluid py-4">
+    <div class="admin-banner">
+      <h1><i class="fas fa-users"></i> Quản lý khách hàng</h1>
+      <p>Trang quản trị hệ thống - Quản lý Người dùng</p>
+    </div>
+
+    <div class="row">
+      <!-- Sidebar -->
+      <div class="col-lg-3 mb-4">
+        <div class="sidebar">
+          <h5>📋 Menu quản lý</h5>
+          <a href="quanlysanpham.html" class="menu-item"><span class="emoji">📘</span> Quản lý Sản phẩm</a>
+          <a href="quanlydonhang.html" class="menu-item"><span class="emoji">🧾</span> Quản lý Đơn hàng</a>
+          <a href="user.html" class="menu-item active"><span class="emoji">👤</span> Quản lý Người dùng</a>
+          <a href="stock.html" class="menu-item"><span class="emoji">📦</span> Quản lý Kho</a>
+          <a href="pricing.html" class="menu-item"><span class="emoji">💲</span> Quản lý Giá</a>
+          <a href="import.html" class="menu-item"><span class="emoji">🚚</span> Nhập hàng</a>
         </div>
       </div>
-      <div class="controls">
-        <input id="search" class="input" placeholder="Tìm khách hàng..." />
-        <button class="btn secondary" id="clearSearch">Xóa</button>
-        <button class="btn secondary" id="openAdd">+ Thêm (Admin)</button>
-      </div>
-    </header>
 
-    <section class="list">
-      <table>
-        <thead>
-          <tr>
-            <th>Họ & tên</th>
-            <th>Email</th>
-            <th>Điện thoại</th>
-            <th>Thành phố</th>
-            <th>Tài khoản</th>
-            <th>Mật khẩu</th>
-            <th>Nguồn</th>
-            <th>Trạng thái</th>
-            <th>Thao tác</th>
-          </tr>
-        </thead>
-        <tbody id="tbody"></tbody>
-      </table>
-    </section>
+      <!-- Content -->
+      <div class="col-lg-9">
+        <div class="content-area p-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <input id="search" class="form-control w-50" placeholder="🔍 Tìm khách hàng...">
+            <div class="d-flex gap-2">
+              <button class="btn btn-outline-success" id="clearSearch">Xóa</button>
+              <button class="btn btn-success" id="openAdd"><i class="fas fa-user-plus"></i> Thêm</button>
+            </div>
+          </div>
+
+          <table class="table table-bordered align-middle">
+            <thead>
+              <tr>
+                <th>Họ & tên</th>
+                <th>Email</th>
+                <th>Điện thoại</th>
+                <th>Thành phố</th>
+                <th>Tài khoản</th>
+                <th>Mật khẩu</th>
+                <th>Nguồn</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
+              </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
 
+  <footer>© 2025 Thức Store Admin – All rights reserved.</footer>
+
   <!-- Modal -->
-  <div class="modal-backdrop" id="modalBackdrop">
-    <div class="modal" role="dialog" aria-modal="true">
-      <h2 id="modalTitle">Thêm khách hàng</h2>
+  <div class="modal-backdrop-custom" id="modalBackdrop">
+    <div class="modal-inner">
+      <h4 id="modalTitle" class="text-success mb-3">Thêm khách hàng</h4>
 
-      <div style="display:flex;gap:12px;align-items:center;margin-bottom:10px;">
-        <div style="flex:1">
-          <label>Chế độ tạo</label>
-          <select id="createdBy" style="padding:9px;border-radius:10px;border:1px solid rgba(6,32,24,0.06);width:100%">
-            <option value="admin">Admin tạo</option>
-            <option value="customer">Khách hàng (đăng ký)</option>
-          </select>
-        </div>
-        <div style="width:180px">
-          <label>Tự sinh mật khẩu</label>
-          <select id="autoPw" style="padding:9px;border-radius:10px;border:1px solid rgba(6,32,24,0.06);width:100%">
-            <option value="no">Không</option>
-            <option value="yes">Có (tự tạo mật khẩu ngẫu nhiên)</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="col">
+      <div class="row g-3">
+        <div class="col-md-6">
           <label>Họ & tên</label>
-          <input id="name" type="text" />
+          <input id="name" class="form-control">
         </div>
-        <div class="col">
+        <div class="col-md-6">
           <label>Email</label>
-          <input id="email" type="email" />
+          <input id="email" class="form-control" type="email">
         </div>
-      </div>
-
-      <div class="form-row" style="margin-top:10px">
-        <div class="col">
-          <label>SĐT</label>
-          <input id="phone" type="text" />
+        <div class="col-md-6">
+          <label>Điện thoại</label>
+          <input id="phone" class="form-control">
         </div>
-        <div class="col">
+        <div class="col-md-6">
           <label>Thành phố</label>
-          <input id="city" type="text" />
+          <input id="city" class="form-control">
         </div>
-      </div>
-
-      <div class="form-row" style="margin-top:10px">
-        <div class="col">
-          <label>Tài khoản (username)</label>
-          <input id="username" type="text" placeholder="vd: nguyenvana" />
+        <div class="col-md-6">
+          <label>Tài khoản</label>
+          <input id="username" class="form-control">
         </div>
-        <div class="col">
+        <div class="col-md-6">
           <label>Mật khẩu</label>
-          <input id="password" type="password" placeholder="Nhập mật khẩu hoặc chọn tự sinh" />
+          <input id="password" class="form-control" type="password">
         </div>
-      </div>
-
-      <div style="margin-top:10px;display:flex;gap:12px;align-items:center;">
-        <div style="flex:1">
+        <div class="col-md-6">
           <label>Trạng thái</label>
-          <select id="status" style="padding:9px;border-radius:10px;border:1px solid rgba(6,32,24,0.06);width:100%">
+          <select id="status" class="form-select">
             <option value="active">Active</option>
             <option value="locked">Locked</option>
           </select>
         </div>
-        <div style="width:200px;text-align:right">
-          <small style="color:#666">* Lưu ý: Đây là demo — mật khẩu được lưu trên localStorage.</small>
-        </div>
       </div>
 
-      <div class="modal-footer">
-        <button class="btn secondary" id="cancel">Hủy</button>
-        <button class="btn" id="saveBtn">Lưu</button>
+      <div class="text-end mt-4">
+        <button class="btn btn-secondary" id="cancel">Hủy</button>
+        <button class="btn btn-success" id="saveBtn">Lưu</button>
       </div>
     </div>
   </div>
 
   <script>
-    // sample data extended with username/password/createdBy
     const sample = [
       {id:1,name:'Nguyễn Văn A',email:'a@example.com',phone:'0901111222',city:'Hà Nội',status:'active',username:'nguvana',password:'12345678',createdBy:'admin'},
       {id:2,name:'Trần Thị B',email:'b@example.com',phone:'0903333444',city:'Hồ Chí Minh',status:'locked',username:'tranb',password:'password',createdBy:'customer'}
     ];
     let data = JSON.parse(localStorage.getItem('khachhang_demo')||'null') || sample.slice();
-    let editingId=null;
     const tbody=document.getElementById('tbody');
     const modal=document.getElementById('modalBackdrop');
+    let editingId=null;
+
+    function maskPw(pw){ return '●'.repeat(Math.min(pw.length, 8)) }
 
     function render(){
       tbody.innerHTML='';
@@ -204,164 +223,74 @@
       data.filter(c=>!q||(c.name+c.email+c.phone+c.city+c.username).toLowerCase().includes(q))
         .forEach(c=>{
           const tr=document.createElement('tr');
-
-          // masked password display, with toggle
-          const pwMasked = maskPw(c.password || '');
           tr.innerHTML=`
-            <td>${escapeHtml(c.name||'')}</td>
-            <td>${escapeHtml(c.email||'')}</td>
-            <td>${escapeHtml(c.phone||'')}</td>
-            <td>${escapeHtml(c.city||'')}</td>
-            <td>${escapeHtml(c.username||'—')}</td>
-            <td><span id="pw-${c.id}" class="pw-mask">${pwMasked}</span> <button class="small-btn" onclick="togglePw(${c.id})">Hiện/Ẩn</button></td>
-            <td>${escapeHtml(c.createdBy || 'admin')}</td>
-            <td><span class="pill ${c.status==='active'?'status-active':'status-locked'}">${c.status}</span></td>
+            <td>${c.name}</td>
+            <td>${c.email}</td>
+            <td>${c.phone}</td>
+            <td>${c.city}</td>
+            <td>${c.username}</td>
             <td>
-              <div class="actions">
-                <button class="btn secondary small-btn" onclick="openEdit(${c.id})">Sửa</button>
-                <button class="btn secondary small-btn" onclick="resetPass(${c.id})">Reset MK</button>
-                <button class="btn small-btn" style="background:${c.status==='active'?'var(--danger)':'var(--accent)'}" onclick="toggleLock(${c.id})">${c.status==='active'?'Khóa':'Mở'}</button>
-                <button class="btn small-btn" style="background:var(--danger)" onclick="remove(${c.id})">Xóa</button>
-              </div>
+              <span id="pw-${c.id}" class="pw-mask">${maskPw(c.password)}</span>
+              <button class="btn btn-sm btn-outline-secondary ms-1" onclick="togglePw(${c.id})">Hiện/Ẩn</button>
             </td>
-          `;
+            <td>${c.createdBy}</td>
+            <td><span class="${c.status==='active'?'status-active':'status-locked'}">${c.status}</span></td>
+            <td>
+              <button class="btn btn-sm btn-outline-primary" onclick="openEdit(${c.id})">Sửa</button>
+              <button class="btn btn-sm btn-outline-danger" onclick="remove(${c.id})">Xóa</button>
+            </td>`;
           tbody.appendChild(tr);
-      });
+        });
       localStorage.setItem('khachhang_demo',JSON.stringify(data));
-    }
-
-    // helpers
-    function maskPw(pw){ if(!pw) return '—'; return '●'.repeat(Math.max(3, Math.min(12, pw.length))); }
-    function escapeHtml(str){ return String(str).replace(/[&<>"']/g, s=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])); }
-
-    // actions
-    window.resetPass=function(id){
-      const u=data.find(x=>x.id===id); if(!u) return;
-      const newPw = prompt(`Reset mật khẩu cho ${u.name}. Nhập mật khẩu mới:`, '');
-      if(newPw===null) return;
-      u.password = newPw;
-      alert(`Mật khẩu của ${u.name} đã được cập nhật (demo).`);
-      render();
     }
 
     window.togglePw=function(id){
       const span=document.getElementById(`pw-${id}`);
-      if(!span) return;
       const u=data.find(x=>x.id===id);
-      if(!u) return;
-      if(span.dataset.shown==='1'){
-        span.textContent = maskPw(u.password||'');
-        span.dataset.shown='0';
+      if(!span||!u)return;
+      if(span.dataset.show==='1'){
+        span.textContent=maskPw(u.password);
+        span.dataset.show='0';
       }else{
-        span.textContent = u.password || '—';
-        span.dataset.shown='1';
+        span.textContent=u.password;
+        span.dataset.show='1';
       }
     }
 
-    window.toggleLock=function(id){
-      const idx=data.findIndex(x=>x.id===id);
-      if(idx<0) return;
-      data[idx].status=data[idx].status==='active'?'locked':'active';
-      render();
-    }
-
-    window.remove=function(id){
-      if(!confirm('Xóa khách hàng này?')) return;
-      data=data.filter(x=>x.id!==id); render();
-    }
-
-    window.openEdit=function(id){
-      const c=data.find(x=>x.id===id); if(!c) return;
+    function openEdit(id){
+      const u=data.find(x=>x.id===id); if(!u) return;
       editingId=id;
       document.getElementById('modalTitle').textContent='Sửa khách hàng';
-      document.getElementById('createdBy').value = c.createdBy || 'admin';
-      document.getElementById('autoPw').value = 'no';
-      document.getElementById('name').value=c.name||'';
-      document.getElementById('email').value=c.email||'';
-      document.getElementById('phone').value=c.phone||'';
-      document.getElementById('city').value=c.city||'';
-      document.getElementById('username').value=c.username||'';
-      document.getElementById('password').value=c.password||'';
-      document.getElementById('status').value=c.status||'active';
+      ['name','email','phone','city','username','password','status'].forEach(f=>{
+        document.getElementById(f).value=u[f];
+      });
       modal.style.display='flex';
     }
 
-    // add admin
     document.getElementById('openAdd').addEventListener('click',()=>{
       editingId=null;
-      document.getElementById('modalTitle').textContent='Thêm khách hàng (Admin)';
-      document.getElementById('createdBy').value='admin';
-      document.getElementById('autoPw').value='no';
+      document.getElementById('modalTitle').textContent='Thêm khách hàng';
       ['name','email','phone','city','username','password'].forEach(id=>document.getElementById(id).value='');
       document.getElementById('status').value='active';
       modal.style.display='flex';
     });
-
-    
-
     document.getElementById('cancel').addEventListener('click',()=>modal.style.display='none');
-
+    modal.addEventListener('click',e=>{if(e.target===modal) modal.style.display='none';});
     document.getElementById('saveBtn').addEventListener('click',()=>{
-      const name=document.getElementById('name').value.trim();
-      if(!name){alert('Nhập tên!');return;}
-      const email=document.getElementById('email').value.trim();
-      const phone=document.getElementById('phone').value.trim();
-      const city=document.getElementById('city').value.trim();
-      const status=document.getElementById('status').value;
-      const createdBy=document.getElementById('createdBy').value;
-      let username=document.getElementById('username').value.trim();
-      let password=document.getElementById('password').value;
-      const autoPw = document.getElementById('autoPw').value === 'yes';
-
-      // if autoPw requested => generate
-      if(autoPw){
-        password = generatePw(10);
-        // if username empty, create from name + random
-        if(!username){
-          username = makeUsernameFromName(name);
-        }
-      }
-
-      // if username provided but duplicate -> append id
-      if(!username){
-        username = makeUsernameFromName(name);
-      }
-      // ensure username uniqueness (simple)
-      let base = username;
-      let i=1;
-      while(data.some(u=>u.username===username && u.id!==editingId)){
-        username = base + i;
-        i++;
-      }
-
+      const formFields=['name','email','phone','city','username','password','status'];
+      const vals={};
+      formFields.forEach(f=>vals[f]=document.getElementById(f).value.trim());
       if(editingId){
         const idx=data.findIndex(x=>x.id===editingId);
-        if(idx>=0) data[idx]={...data[idx],name,email,phone,city,status,username,password,createdBy};
+        if(idx>=0) data[idx]={...data[idx],...vals};
       }else{
-        data.unshift({id:Date.now(),name,email,phone,city,status,username,password,createdBy});
+        data.push({...vals,id:Date.now(),createdBy:'admin'});
       }
-
-      modal.style.display='none';
-      render();
-      // if auto generated password, show to admin
-      if(autoPw){
-        alert(`Tài khoản: ${username}\nMật khẩu (tự sinh): ${password}\n(Lưu ý: đây là demo, mật khẩu lưu trên localStorage)`);
-      }
+      modal.style.display='none'; render();
     });
-
-    function generatePw(len=8){
-      const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%";
-      let s='';
-      for(let i=0;i<len;i++) s += chars[Math.floor(Math.random()*chars.length)];
-      return s;
-    }
-    function makeUsernameFromName(name){
-      return name.toLowerCase().replace(/[^a-z0-9]+/g,'').slice(0,10) || 'user'+Math.floor(Math.random()*1000);
-    }
-
     document.getElementById('search').addEventListener('input',render);
     document.getElementById('clearSearch').addEventListener('click',()=>{document.getElementById('search').value='';render();});
-    modal.addEventListener('click',e=>{if(e.target===modal) modal.style.display='none'});
+    window.remove=function(id){if(!confirm('Xóa khách hàng này?'))return; data=data.filter(x=>x.id!==id);render();}
     render();
   </script>
 </body>

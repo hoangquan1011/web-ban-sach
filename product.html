@@ -455,12 +455,12 @@
             const id = btn.getAttribute("data-id");
             if (!id) return;
 
-            const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-            if (!currentUser) {
-                alert("⚠️ Bạn cần đăng nhập để sử dụng chức năng giỏ hàng!");
-                window.location.href = "user/login.html";
-                return;
-            }
+            //const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+            //if (!currentUser) {
+            //    alert("⚠️ Bạn cần đăng nhập để sử dụng chức năng giỏ hàng!");
+            //    window.location.href = "user/login.html";
+            //    return;
+            //}
 
             const products = JSON.parse(localStorage.getItem("products")) || [];
             const product = products.find(p => p.id == id);
