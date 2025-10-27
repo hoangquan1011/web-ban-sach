@@ -45,32 +45,24 @@
         <div class="content-area">
           <h4 class="text-success">Quản lý Số Lượng Tồn</h4>
 
+          <!-- Quick search by product code: show only Mã - Tên - Tồn -->
+          <div class="row">
+            <div class="col-12">
+              <div class="card mb-3">
+                <div class="card-body">
+                  <h6>Tìm theo Mã sản phẩm</h6>
+                  <div class="d-flex">
+                    <input id="qStock" class="form-control me-2" placeholder="Tìm theo mã sản phẩm...">
+                    <button id="btnStockSearch" class="btn btn-outline-success">Tìm</button>
+                  </div>
+                  <div id="stockSearchResult" class="mt-3"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div class="row g-3 mt-3">
             <div class="col-md-6">
-              <div class="card mb-3">
-                <div class="card-body">
-                  <h6>Tra cứu tồn tại một thời điểm</h6>
-                  <div class="d-flex gap-2">
-                    <select id="prodSelect" class="form-select"></select>
-                    <input id="atDate" type="datetime-local" class="form-control" />
-                    <button id="computeAt" class="btn btn-success">Tính tồn</button>
-                  </div>
-                  <div id="stockAtResult" class="mt-2 text-muted"></div>
-                </div>
-              </div>
-
-              <div class="card mb-3">
-                <div class="card-body">
-                  <h6>Tồn theo Loại tại một thời điểm</h6>
-                  <div class="d-flex gap-2">
-                    <select id="catAtSelect" class="form-select"></select>
-                    <input id="catAtDate" type="datetime-local" class="form-control" />
-                    <button id="catAtCompute" class="btn btn-success">Xem tồn</button>
-                  </div>
-                  <div id="catAtResult" class="mt-2"></div>
-                </div>
-              </div>
-
               <div class="card">
                 <div class="card-body">
                   <h6>Cảnh báo sắp hết hàng (hiện tại)</h6>
@@ -81,44 +73,7 @@
             </div>
 
             <div class="col-md-6">
-              <div class="card mb-3">
-                <div class="card-body">
-                  <h6>Lịch sử Nhập - Xuất (khoảng thời gian)</h6>
-                  <div class="d-flex gap-2">
-                    <select id="histProd" class="form-select"></select>
-                    <input id="fromDate" type="date" class="form-control" />
-                    <input id="toDate" type="date" class="form-control" />
-                    <button id="getHist" class="btn btn-success">Xem</button>
-                  </div>
-                  <div id="histResult" class="mt-2"></div>
-                </div>
-              </div>
-
-              <div class="card">
-                <div class="card-body">
-                  <h6>Tổng hợp theo Loại (khoảng thời gian)</h6>
-                  <div class="d-flex gap-2">
-                    <select id="catHistSelect" class="form-select"></select>
-                    <input id="catFromDate" type="date" class="form-control" />
-                    <input id="catToDate" type="date" class="form-control" />
-                    <button id="catGet" class="btn btn-success">Xem</button>
-                  </div>
-                  <div id="catHistResult" class="mt-2"></div>
-                </div>
-              </div>
-
-              <div class="card">
-                <div class="card-body">
-                  <h6>Mô phỏng Bán hàng (giảm tồn)</h6>
-                  <div class="d-flex gap-2 align-items-end">
-                    <select id="saleProd" class="form-select"></select>
-                    <input id="saleQty" type="number" class="form-control" min="1" value="1" />
-                    <input id="saleDate" type="datetime-local" class="form-control" />
-                    <button id="doSale" class="btn btn-success">Ghi bán</button>
-                  </div>
-                  <div class="text-muted small mt-2">Ghi bán sẽ tạo bản ghi xuất (sales) và giảm tồn ngay lập tức.</div>
-                </div>
-              </div>
+              <!-- Removed: Lịch sử Nhập - Xuất, Tổng hợp theo Loại, Mô phỏng Bán hàng per request -->
             </div>
           </div>
 
@@ -143,98 +98,35 @@
 
     const $ = s => document.querySelector(s);
     const $$ = s => Array.from(document.querySelectorAll(s));
-  const prodSelect = $('#prodSelect'), atDate = $('#atDate'), computeAt = $('#computeAt'), stockAtResult = $('#stockAtResult');
-  const catAtSelect = $('#catAtSelect'), catAtDate = $('#catAtDate'), catAtCompute = $('#catAtCompute'), catAtResult = $('#catAtResult');
   const lowStockList = $('#lowStockList'), refreshLow = $('#refreshLow');
-  const histProd = $('#histProd'), fromDate = $('#fromDate'), toDate = $('#toDate'), getHist = $('#getHist'), histResult = $('#histResult');
-  const catHistSelect = $('#catHistSelect'), catFromDate = $('#catFromDate'), catToDate = $('#catToDate'), catGet = $('#catGet'), catHistResult = $('#catHistResult');
-    const saleProd = $('#saleProd'), saleQty = $('#saleQty'), saleDate = $('#saleDate'), doSale = $('#doSale');
     const btnRefresh = $('#btnRefresh');
+    // Stock quick-search controls
+    const qStock = $('#qStock'), btnStockSearch = $('#btnStockSearch'), stockSearchResult = $('#stockSearchResult');
 
     function read(k){ return JSON.parse(localStorage.getItem(k) || 'null'); }
     function write(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
 
-    function loadProductSelectors(){
-      const prods = read(K.prods) || [];
-      [prodSelect, histProd, saleProd].forEach(sel => {
-        sel.innerHTML = '';
-        prods.forEach(p => {
-          const opt = document.createElement('option');
-          opt.value = p.id; opt.textContent = `${p.title} (Tồn hiện tại: ${p.stock})`;
-          sel.appendChild(opt);
-        });
-      });
+    // product selectors removed (no longer needed)
+
+    // Quick search: look up products by code from both 'book_prods' and admin 'products'
+    function renderStockSearch(filter = ''){
+      const q = (filter || '').toLowerCase().trim();
+      // load both sources
+      const base = read(K.prods) || [];
+      const adminRaw = JSON.parse(localStorage.getItem('products') || 'null') || [];
+      const admin = adminRaw.map((p,i) => ({ id: p.ma || ('admin_'+i), ma: p.ma || '', title: p.ten || '', stock: Number(p.stock||0) }));
+      const all = [...base.map(p=>({ id:p.id, ma: p.ma||p.id, title: p.title, stock: Number(p.stock||0)})), ...admin];
+      const filtered = q ? all.filter(p => (p.ma || '').toLowerCase().includes(q)) : all;
+      if (!stockSearchResult) return;
+      if (filtered.length === 0) { stockSearchResult.innerHTML = '<div class="text-muted">Không tìm thấy sản phẩm theo mã.</div>'; return; }
+      let html = '<div class="table-responsive"><table class="table table-sm"><thead class="table-light"><tr><th>Mã</th><th>Tên</th><th>Tồn</th></tr></thead><tbody>';
+      filtered.forEach(p => { html += `<tr><td>${p.ma || p.id}</td><td>${p.title}</td><td>${p.stock}</td></tr>`; });
+      html += '</tbody></table></div>';
+      stockSearchResult.innerHTML = html;
     }
 
-    function loadCategorySelectors(){
-      const cats = read(K.cats) || [];
-      [catAtSelect, catHistSelect].forEach(sel => {
-        if (!sel) return;
-        sel.innerHTML = '';
-        cats.forEach(c => {
-          const o = document.createElement('option');
-          o.value = c.id; o.textContent = c.name; sel.appendChild(o);
-        });
-      });
-    }
-
-    function computeStockAt(productId, isoDate) {
-      const prods = read(K.prods) || [];
-      const receipts = read(K.receipts) || [];
-      const sales = read(K.sales) || [];
-      const product = prods.find(p=>p.id===productId);
-      if (!product) return null;
-      const at = new Date(isoDate);
-      let stock = Number(product.initialStock || 0);
-      receipts.forEach(r=>{
-        const rDate = new Date(r.date);
-        if (rDate <= at && r.status === 'completed') {
-          r.lines.forEach(li=> { if (li.productId === productId) stock += Number(li.qty||0); });
-        }
-      });
-      sales.forEach(s=> {
-        const sDate = new Date(s.date);
-        if (sDate <= at && s.productId === productId) stock -= Number(s.qty||0);
-      });
-      return stock;
-    }
-
-    computeAt.onclick = () => {
-      const pid = prodSelect.value;
-      const dt = atDate.value ? new Date(atDate.value).toISOString() : new Date().toISOString();
-      const stock = computeStockAt(pid, dt);
-      const p = (read(K.prods) || []).find(x=>x.id===pid);
-      stockAtResult.innerHTML = `<strong>${p.title}</strong> tồn vào <em>${new Date(dt).toLocaleString()}</em>: <span class="fs-5">${stock}</span>`;
-    };
-
-    // Category stock at a time
-    function computeCategoryStockAt(catId, isoDate){
-      const prods = read(K.prods) || [];
-      const list = prods.filter(p=>p.categoryId===catId);
-      if (list.length === 0) return { rows: [], total: 0 };
-      let total = 0;
-      const rows = list.map(p => {
-        const s = computeStockAt(p.id, isoDate);
-        total += Number(s||0);
-        return { title: p.title, stock: s };
-      });
-      return { rows, total };
-    }
-    catAtCompute.onclick = () => {
-      const catId = catAtSelect.value;
-      const dt = catAtDate.value ? new Date(catAtDate.value).toISOString() : new Date().toISOString();
-      const cats = read(K.cats) || [];
-      const cat = cats.find(c=>c.id===catId);
-      const res = computeCategoryStockAt(catId, dt);
-      let html = `<div class="mb-2">Loại: <strong>${cat?cat.name:catId}</strong> — Thời điểm: <em>${new Date(dt).toLocaleString()}</em></div>`;
-      if (res.rows.length === 0) html += '<div class="text-muted">Không có sản phẩm trong loại này.</div>';
-      else {
-        html += '<div class="table-responsive"><table class="table table-sm"><thead class="table-light"><tr><th>Sản phẩm</th><th>Tồn</th></tr></thead><tbody>';
-        res.rows.forEach(r=>{ html += `<tr><td>${r.title}</td><td>${r.stock}</td></tr>`; });
-        html += `</tbody><tfoot><tr><th>Tổng</th><th>${res.total}</th></tr></tfoot></table></div>`;
-      }
-      catAtResult.innerHTML = html;
-    };
+    if (btnStockSearch) btnStockSearch.onclick = () => renderStockSearch(qStock.value);
+    if (qStock) qStock.addEventListener('input', e => renderStockSearch(e.target.value));
 
     function refreshLowStock(){
       const prods = read(K.prods) || [];
@@ -250,132 +142,11 @@
       lowStockList.appendChild(ul);
     }
 
-    function getHistory(productId, fromIso, toIso){
-      const receipts = read(K.receipts) || [];
-      const sales = read(K.sales) || [];
-      const from = new Date(fromIso), to = new Date(toIso);
-      const recs = [];
-      receipts.forEach(r=>{
-        const d = new Date(r.date);
-        if (d >= from && d <= to && r.status === 'completed') {
-          r.lines.forEach(li=> { if (li.productId === productId) recs.push({ type:'in', date:r.date, qty:li.qty, price:li.price, ref:r.id }); });
-        }
-      });
-      sales.forEach(s=>{
-        const d = new Date(s.date);
-        if (d >= from && d <= to && s.productId === productId) recs.push({ type:'out', date:s.date, qty:s.qty, ref:s.id, note:s.note||'' });
-      });
-      recs.sort((a,b)=> new Date(a.date) - new Date(b.date));
-      return recs;
-    }
+    // Removed history/aggregation/sale simulation handlers per request
 
-    getHist.onclick = () => {
-      const pid = histProd.value;
-      const f = fromDate.value ? new Date(fromDate.value).toISOString() : new Date('1970-01-01').toISOString();
-      const t = toDate.value ? new Date(toDate.value+'T23:59:59').toISOString() : new Date().toISOString();
-      const recs = getHistory(pid, f, t);
-      const p = (read(K.prods) || []).find(x=>x.id===pid);
-      if (!p) return;
-      let html = `<h6>Lịch sử ${p.title} từ ${new Date(f).toLocaleString()} đến ${new Date(t).toLocaleString()}</h6>`;
-      if (recs.length === 0) html += '<div class="text-muted">Không có giao dịch trong khoảng thời gian này.</div>';
-      else {
-        html += `<div class="table-responsive"><table class="table table-sm"><thead class="table-light"><tr><th>Ngày</th><th>Loại</th><th>SL</th><th>Tham chiếu</th><th>Ghi chú / Giá</th></tr></thead><tbody>`;
-        recs.forEach(r=>{
-          html += `<tr>
-            <td>${new Date(r.date).toLocaleString()}</td>
-            <td>${r.type==='in' ? 'Nhập' : 'Xuất'}</td>
-            <td>${r.qty}</td>
-            <td>${r.ref}</td>
-            <td>${r.type==='in' ? (r.price + ' VND') : (r.note||'')}</td>
-          </tr>`;
-        });
-        html += `</tbody></table></div>`;
-        const totalIn = recs.filter(r=>r.type==='in').reduce((s,r)=>s + Number(r.qty||0),0);
-        const totalOut = recs.filter(r=>r.type==='out').reduce((s,r)=>s + Number(r.qty||0),0);
-        const beginStock = computeStockAt(pid, f);
-        const endStock = computeStockAt(pid, t);
-        html += `<div class="text-muted">Tổng nhập: ${totalIn} — Tổng xuất: ${totalOut} — Chênh: ${totalIn - totalOut}</div>`;
-        html += `<div class="text-muted">Tồn đầu kỳ: ${beginStock} — Tồn cuối kỳ: ${endStock}</div>`;
-      }
-      histResult.innerHTML = html;
-    };
-
-    // Category aggregation over a date range
-    function aggregateCategory(catId, fromIso, toIso){
-      const prods = read(K.prods) || [];
-      const receipts = read(K.receipts) || [];
-      const sales = read(K.sales) || [];
-      const from = new Date(fromIso), to = new Date(toIso);
-      const list = prods.filter(p=>p.categoryId===catId);
-      const rows = [];
-      let tIn = 0, tOut = 0;
-      list.forEach(p => {
-        let inQty = 0, outQty = 0;
-        receipts.forEach(r=>{
-          const d = new Date(r.date);
-          if (d >= from && d <= to && r.status==='completed'){
-            r.lines.forEach(li=>{ if (li.productId===p.id) inQty += Number(li.qty||0); });
-          }
-        });
-        sales.forEach(s=>{
-          const d = new Date(s.date);
-          if (d >= from && d <= to && s.productId===p.id) outQty += Number(s.qty||0);
-        });
-        const endStock = computeStockAt(p.id, toIso);
-        rows.push({ title:p.title, inQty, outQty, delta: inQty - outQty, endStock });
-        tIn += inQty; tOut += outQty;
-      });
-      return { rows, totalIn: tIn, totalOut: tOut };
-    }
-    catGet.onclick = () => {
-      const catId = catHistSelect.value;
-      const f = catFromDate.value ? new Date(catFromDate.value).toISOString() : new Date('1970-01-01').toISOString();
-      const t = catToDate.value ? new Date(catToDate.value+'T23:59:59').toISOString() : new Date().toISOString();
-      const cats = read(K.cats) || [];
-      const cat = cats.find(c=>c.id===catId);
-      const res = aggregateCategory(catId, f, t);
-      let html = `<div class="mb-2">Loại: <strong>${cat?cat.name:catId}</strong> — Từ ${new Date(f).toLocaleString()} đến ${new Date(t).toLocaleString()}</div>`;
-      if (res.rows.length === 0) html += '<div class="text-muted">Không có sản phẩm thuộc loại này.</div>';
-      else {
-        html += '<div class="table-responsive"><table class="table table-sm"><thead class="table-light"><tr><th>Sản phẩm</th><th>Nhập</th><th>Xuất</th><th>Chênh</th><th>Tồn cuối kỳ</th></tr></thead><tbody>';
-        res.rows.forEach(r=>{ html += `<tr><td>${r.title}</td><td>${r.inQty}</td><td>${r.outQty}</td><td>${r.delta}</td><td>${r.endStock}</td></tr>`; });
-        const totalDelta = res.totalIn - res.totalOut;
-        html += `</tbody><tfoot><tr><th>Tổng</th><th>${res.totalIn}</th><th>${res.totalOut}</th><th>${totalDelta}</th><th>-</th></tr></tfoot></table></div>`;
-      }
-      catHistResult.innerHTML = html;
-    };
-
-    doSale.onclick = () => {
-      const pid = saleProd.value;
-      const qty = Math.max(1, Math.floor(Number(saleQty.value) || 1));
-      const dateIso = saleDate.value ? new Date(saleDate.value).toISOString() : new Date().toISOString();
-      if (!pid || qty <= 0) return alert('Chọn sản phẩm và số lượng >=1.');
-      const prods = read(K.prods) || [];
-      const p = prods.find(x=>x.id===pid);
-      if (!p) return alert('Sản phẩm không tồn tại.');
-      if (p.stock < qty) {
-        if (!confirm(`Tồn hiện tại (${p.stock}) nhỏ hơn số bán (${qty}). Tiếp tục?`)) return;
-      }
-      const sales = read(K.sales) || [];
-      const id = 'S' + Date.now();
-      const srec = { id, productId: pid, qty, date: dateIso, note: 'Bán mô phỏng' };
-      sales.unshift(srec);
-      write(K.sales, sales);
-      p.stock = Number(p.stock || 0) - qty;
-      write(K.prods, prods);
-      loadProductSelectors();
-      refreshLowStock();
-      alert('Đã ghi bán và giảm tồn.');
-    };
-
-  btnRefresh.onclick = () => { ensure(); loadProductSelectors(); loadCategorySelectors(); refreshLowStock(); alert('Làm mới xong'); };
+  btnRefresh.onclick = () => { ensure(); refreshLowStock(); alert('Làm mới xong'); };
 
     function init(){
-      loadProductSelectors();
-      loadCategorySelectors();
-      atDate.value = new Date().toISOString().slice(0,16);
-      if (catAtDate) catAtDate.value = new Date().toISOString().slice(0,16);
-      saleDate.value = new Date().toISOString().slice(0,16);
       refreshLowStock();
     }
     init();

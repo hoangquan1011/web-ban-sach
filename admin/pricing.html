@@ -68,7 +68,7 @@
             <div class="col-md-7">
               <div>
                 <div class="d-flex mb-2">
-                  <input id="qProduct" class="form-control me-2" placeholder="Tìm theo tên sản phẩm...">
+                  <input id="qProduct" class="form-control me-2" placeholder="Tìm theo mã sản phẩm...">
                   <button id="btnSearch" class="btn btn-outline-success">Tìm</button>
                 </div>
                 <div class="table-responsive">
@@ -140,15 +140,36 @@
     }
 
     function renderProducts(){
-      const prods = read(K.prods) || [];
+      // Load products from both older 'book_prods' namespace and admin product manager ('products')
+      const prodsA = read(K.prods) || [];
+      const rawB = JSON.parse(localStorage.getItem('products') || 'null') || [];
+      // Map products from admin manager to the shape used by pricing page
+      const prodsB = rawB.map((p, i) => ({
+        id: p.ma || ('p_admin_' + i),
+        ma: p.ma || '',
+        title: p.ten || '',
+        categoryId: Array.isArray(p.loai) ? p.loai[0] : (p.loai || ''),
+        cost: Number(p.giagoc) || Number(p.gia) || 0,
+        stock: p.stock || 0,
+        threshold: p.threshold || 0,
+        initialStock: p.initialStock || 0,
+        productProfit: p.productProfit ?? null,
+        _raw: p // keep raw for additional info like tacgia, nhaxuatban
+      }));
+
+      const prods = [...prodsA, ...prodsB];
       const q = (qProduct.value||'').toLowerCase().trim();
       productsTable.innerHTML = '';
       prods.forEach(p => {
-        if (q && !p.title.toLowerCase().includes(q)) return;
+        // Tìm theo mã sản phẩm (nếu có trường 'ma' thì dùng 'ma', nếu không dùng 'id')
+        const code = ((p.ma || p.id) + '').toLowerCase();
+        if (q && !code.includes(q)) return;
         const calc = calculateSelling(p);
         const tr = document.createElement('tr');
+        // show extra metadata when available (from _raw)
+        const extra = p._raw ? `<div class="text-muted small">Mã: ${p.ma || p.id} | Tác giả: ${p._raw.tacgia || '-'} | NXB: ${p._raw.nhaxuatban || '-'}</div>` : `<div class="text-muted small">Mã: ${p.ma || p.id} | Loại: ${p.categoryId || '-'}</div>`;
         tr.innerHTML = `
-          <td>${p.title}<div class="text-muted small">Loại: ${p.categoryId}</div></td>
+          <td>${p.title}${extra}</td>
           <td>${(p.cost||0).toLocaleString()} VND</td>
           <td>
             <input data-id="${p.id}" class="form-control form-control-sm prodProfit" style="width:100px" value="${p.productProfit ?? ''}" placeholder="inherit">

@@ -184,8 +184,9 @@
       productSelect.innerHTML = '';
       prods.forEach(p=>{
         const opt = document.createElement('option');
-        opt.value = p.id;
-        opt.textContent = `${p.title} (Tồn: ${p.stock})`;
+        // use mã sản phẩm nếu có, fallback về id
+        opt.value = p.ma || p.id;
+        opt.textContent = `${p.title} | Mã: ${p.ma || p.id} (Tồn: ${p.stock})`;
         productSelect.appendChild(opt);
       });
     }
@@ -220,12 +221,14 @@
     }
 
     addLineBtn.onclick = () => {
-      const pid = productSelect.value;
+      const pid = productSelect.value; // this is mã hoặc id
       const prods = read(K.prods) || [];
-      const p = prods.find(x=>x.id===pid);
+      // find by id or mã
+      const p = prods.find(x=> x.id===pid || (x.ma && x.ma===pid));
       if (!p) return alert('Chọn sản phẩm hợp lệ.');
       const qty = Math.max(1, Math.floor(Number(itemQty.value) || 1));
       const price = Math.max(0, Number(itemPrice.value) || 0);
+      // store productId as the mã (or id) selected so we can match on mã when applying receipt
       currentLines.push({ productId: pid, title: p.title, qty, price });
       renderLineItems();
     };
@@ -245,7 +248,8 @@
       const prods = read(K.prods) || [];
       let changed = false;
       receipt.lines.forEach(li => {
-        const p = prods.find(x=>x.id===li.productId);
+        // match product by id OR mã (ma)
+        const p = prods.find(x=> x.id===li.productId || (x.ma && x.ma===li.productId));
         if (!p) return;
         const incomingQty = Number(li.qty)||0;
         const incomingPrice = Number(li.price)||0;
