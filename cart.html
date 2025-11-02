@@ -127,15 +127,14 @@
               <span>Tạm tính:</span>
               <span id="subtotal" class="fw-bold">0₫</span>
             </div>
-            </div>
             <hr>
             <div class="d-flex justify-content-between mb-4">
               <h5>Tổng cộng:</h5>
               <h5 id="total" class="text-primary">0₫</h5>
             </div>
             <button id="checkoutBtn" class="btn btn-primary w-100 py-3 rounded-pill">
-  <i class="fa fa-shopping-cart me-2"></i>Thanh toán
-</button>
+              <i class="fa fa-shopping-cart me-2"></i>Thanh toán
+            </button>
             <a href="product.html" class="btn btn-outline-secondary w-100 mt-2 py-3 rounded-pill">
               <i class="fa fa-arrow-left me-2"></i>Tiếp tục mua hàng
             </a>
@@ -168,6 +167,42 @@
     window.addEventListener('load', () => {
       document.getElementById('spinner').classList.remove('show');
     });
+
+    // ✅ Khởi tạo giỏ hàng với 2 sản phẩm cố định (CHỈ khi chưa có giỏ hàng)
+    (function initDefaultCart() {
+      // XÓA giỏ hàng cũ để test (sau khi test xong có thể bỏ dòng này)
+      // localStorage.removeItem('cart');
+      
+      // Kiểm tra xem đã có giỏ hàng chưa
+      const existingCart = localStorage.getItem('cart');
+      
+      console.log("🔍 Kiểm tra giỏ hàng hiện tại:", existingCart);
+      
+      // Nếu chưa có giỏ hàng, tạo mới với 2 sản phẩm mặc định
+      if (!existingCart || existingCart === 'null' || existingCart === '[]') {
+        const defaultCart = [
+          {
+            id: Date.now() + 1,
+            name: "GOOD ENERGY - NĂNG LƯỢNG TỐT",
+            price: 85000,
+            qty: 1,
+            img: "img/38.jpg"
+          },
+          {
+            id: Date.now() + 2,
+            name: "RUỒI TRÂU (TÁI BẢN 2018)",
+            price: 96000,
+            qty: 1,
+            img: "img/26.jpg"
+          }
+        ];
+        
+        localStorage.setItem('cart', JSON.stringify(defaultCart));
+        console.log("✅ Đã khởi tạo giỏ hàng với 2 sản phẩm mặc định:", defaultCart);
+      } else {
+        console.log("ℹ️ Giỏ hàng đã tồn tại:", JSON.parse(existingCart));
+      }
+    })();
 
     document.addEventListener('DOMContentLoaded', renderCart);
 
@@ -247,20 +282,21 @@
         };
       });
     }
+
     document.getElementById("checkoutBtn").addEventListener("click", () => {
-  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-  if (cart.length === 0) {
-    alert("Giỏ hàng của bạn đang trống!");
-    return;
-  }
+      if (cart.length === 0) {
+        alert("Giỏ hàng của bạn đang trống!");
+        return;
+      }
 
-  // Lưu danh sách sản phẩm để thanh toán
-  localStorage.setItem("checkoutItems", JSON.stringify(cart));
+      // Lưu danh sách sản phẩm để thanh toán
+      localStorage.setItem("checkoutItems", JSON.stringify(cart));
 
-  // Chuyển sang trang thanh toán
-  window.location.href = "checkout.html";
-});
+      // Chuyển sang trang thanh toán
+      window.location.href = "checkout.html";
+    });
   </script>
 </body>
 </html>
