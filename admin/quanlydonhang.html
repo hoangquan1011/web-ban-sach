@@ -1,3 +1,4 @@
+<!-- File: quanlydonhang.html -->
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -11,16 +12,13 @@
 
   <style>
     body { background-color: #f3f8f3; font-family: "Open Sans", sans-serif; }
-
-    /* Banner */
     .admin-banner {
       background: url('../img/banner.jpg') center/cover no-repeat;
       height: 220px; display: flex; align-items: center; justify-content: center;
       position: relative; border-radius: 12px; margin-bottom: 2rem; overflow: hidden;
     }
     .admin-banner::after {
-      content: ""; position: absolute; inset: 0;
-      background: rgba(0, 80, 40, 0.45);
+      content: ""; position: absolute; inset: 0; background: rgba(0, 80, 40, 0.45);
     }
     .admin-banner h1 {
       position: relative; color: #fff; font-weight: 800;
@@ -31,9 +29,6 @@
       color: #eafbea; z-index: 2;
     }
 
-
-
-    /* ===== Sidebar ===== */
     .sidebar {
       background-color: #ffffff;
       border-radius: 1rem;
@@ -41,13 +36,9 @@
       padding: 1.5rem;
       height: 100%;
     }
-    .sidebar h5 { color: #2d6a4f; font-weight: 700; margin-bottom: 1rem; }
     .menu-item { display: flex; align-items: center; color: #2d6a4f; font-weight: 600; text-decoration: none; margin-bottom: 1rem; transition: .3s; }
     .menu-item:hover { color: #40916c; transform: translateX(5px); }
     .menu-item.active { color: #1b4332; font-weight: 700; }
-    .menu-item span.emoji { font-size: 1.5rem; margin-right: .75rem; }
-
-    /* Content */
     .content-area {
       background: #fff; border-radius: 1rem;
       box-shadow: 0 3px 8px rgba(0,0,0,0.05);
@@ -63,18 +54,15 @@
 
 <body>
   <div class="container-fluid py-4">
-    <!-- Banner -->
     <div class="admin-banner">
       <h1>Thức Store Admin</h1>
       <p>Quản lý Đơn hàng</p>
     </div>
 
-      <div class="row">
-      <!-- Sidebar -->
+    <div class="row">
       <div class="col-lg-3 mb-4">
         <div class="sidebar">
           <h5>📋 Menu quản lý</h5>
-        
           <a href="quanlysanpham.html" class="menu-item"><span class="emoji">📘</span> Quản lý Sản phẩm</a>
           <a href="quanlydonhang.html" class="menu-item active"><span class="emoji">🧾</span> Quản lý Đơn hàng</a>
           <a href="user.html" class="menu-item"><span class="emoji">👤</span> Quản lý Người dùng</a>
@@ -84,8 +72,6 @@
         </div>
       </div>
 
-
-      <!-- Content -->
       <div class="col-lg-9">
         <div class="content-area">
           <div class="d-flex justify-content-between align-items-center mb-4">
@@ -93,34 +79,6 @@
             <button class="btn btn-sm btn-success">Đăng xuất</button>
           </div>
 
-          <!-- Bộ lọc -->
-          <div class="border rounded p-3 mb-4 bg-light">
-            <div class="row g-3 align-items-end">
-              <div class="col-md-4">
-                <label class="form-label fw-semibold">Từ ngày:</label>
-                <input type="date" id="fromDate" class="form-control">
-              </div>
-              <div class="col-md-4">
-                <label class="form-label fw-semibold">Đến ngày:</label>
-                <input type="date" id="toDate" class="form-control">
-              </div>
-              <div class="col-md-3">
-                <label class="form-label fw-semibold">Tình trạng:</label>
-                <select id="statusFilter" class="form-select">
-                  <option value="">Tất cả</option>
-                  <option value="chua-xu-ly">Chưa xử lý</option>
-                  <option value="dang-giao">Đang giao</option>
-                  <option value="hoan-thanh">Hoàn thành</option>
-                  <option value="da-huy">Đã hủy</option>
-                </select>
-              </div>
-              <div class="col-md-1 text-center">
-                <button class="btn btn-success w-100">Lọc</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Bảng đơn hàng -->
           <table class="table table-bordered table-striped align-middle text-center">
             <thead class="table-success">
               <tr>
@@ -133,60 +91,46 @@
                 <th>Chi tiết</th>
               </tr>
             </thead>
-            <tbody id="orderTable">
-              <!-- Dữ liệu đơn hàng sẽ hiển thị tại đây -->
-            </tbody>
+            <tbody id="orderTable"></tbody>
           </table>
         </div>
       </div>
     </div>
   </div>
+
 <script>
-const orders = JSON.parse(localStorage.getItem("orders")) || [];
-const table = document.getElementById("orderTable");
-
-if (orders.length === 0) {
-  table.innerHTML = `<tr><td colspan="7" class="text-center text-muted">Chưa có đơn hàng nào</td></tr>`;
-} else {
- table.innerHTML = orders.map((order, index) => `
-  <tr>
-    <td>${index + 1}</td>
-    <td>${order.id}</td>
-    <td>${order.customer?.name || "Không rõ"}</td>
-    <td>${order.date}</td>
-    <td>${order.status || "Chưa xử lý"}</td>
-    <td>${order.address || "Không có địa chỉ"}</td>
-    <td><a href="chitietdonhang.html?id=${order.id}" class="btn-view">Xem</a></td>
-  </tr>
-`).join("");
-}
-
-function convertStatus(status) {
-  switch (status) {
-    case "chua-xu-ly": return "Chưa xử lý";
-    case "dang-giao": return "Đang giao";
-    case "hoan-thanh": return "Hoàn thành";
-    case "da-huy": return "Đã hủy";
-    default: return "Không xác định";
-  }
-}
-
-function viewDetail(id) {
   const orders = JSON.parse(localStorage.getItem("orders")) || [];
-  const order = orders.find(o => o.id === id);
-  if (!order) return;
+  const table = document.getElementById("orderTable");
 
-  alert(`
-Mã đơn: ${order.id}
-Khách: ${order.customer.name}
-SĐT: ${order.customer.phone}
-Địa chỉ: ${order.customer.address}
-Phương thức: ${order.payment}
-Tổng tiền: ${order.total.toLocaleString("vi-VN")}đ
-Sản phẩm:
-${order.items.map(i => ` - ${i.name} (${i.qty} x ${i.price.toLocaleString("vi-VN")}đ)`).join("\n")}
-  `);
-}
+  const renderOrders = () => {
+    if (orders.length === 0) {
+      table.innerHTML = `<tr><td colspan="7" class="text-center text-muted">Chưa có đơn hàng nào</td></tr>`;
+      return;
+    }
+    table.innerHTML = orders.map((order, index) => `
+      <tr>
+        <td>${index + 1}</td>
+        <td>${order.id}</td>
+        <td>${order.customer?.name || "Không rõ"}</td>
+        <td>${order.date}</td>
+        <td>${convertStatus(order.status)}</td>
+        <td>${order.customer?.address || "Không có địa chỉ"}</td>
+        <td><a href="chitietdonhang.html?id=${order.id}" class="btn-view">Xem</a></td>
+      </tr>
+    `).join("");
+  };
+
+  const convertStatus = (status) => {
+    switch (status) {
+      case "chua-xu-ly": return "Chưa xử lý"; 
+      case "dang-giao": return "Đang giao"; 
+      case "hoan-thanh": return "Hoàn thành"; 
+      case "da-huy": return "Đã hủy";
+      default: return "Không xác định"; 
+    }
+  };
+
+  renderOrders();
 </script>
 </body>
 </html>

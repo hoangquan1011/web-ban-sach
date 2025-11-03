@@ -66,16 +66,17 @@
             <div class="col-md-5">
               <div class="card">
                 <div class="card-body">
-                  <h6>Thiết lập % lợi nhuận theo Loại</h6>
+                  <h6>Thiết lập % lợi nhuận theo Sản phẩm</h6>
                   <div class="mb-3">
-                    <label class="form-label">Chọn Loại</label>
-                    <select id="catSelect" class="form-select"></select>
+                    <label class="form-label">Chọn sản phẩm</label>
+                    <input id="productProfitInput" class="form-control" placeholder="Nhập mã hoặc tên sản phẩm..." list="productProfitList">
+                    <datalist id="productProfitList"></datalist>
                   </div>
                   <div class="mb-3">
                     <label class="form-label">% Lợi nhuận (ví dụ 20)</label>
-                    <input id="catProfit" class="form-control" type="number" step="0.1" placeholder="Nhập %">
+                    <input id="productProfitValue" class="form-control" type="number" step="0.1" placeholder="Nhập %">
                   </div>
-                  <button id="saveCatProfit" class="btn btn-success">Lưu thiết lập</button>
+                  <button id="saveProductProfit" class="btn btn-success">Lưu thiết lập</button>
                 </div>
               </div>
             </div>
@@ -117,34 +118,79 @@
     ensureSample();
     const $ = s => document.querySelector(s);
     const $$ = s => Array.from(document.querySelectorAll(s));
-    const catSelect = $('#catSelect'), catProfit = $('#catProfit'), saveCatProfit = $('#saveCatProfit');
+  const productProfitInput = $('#productProfitInput'), productProfitList = $('#productProfitList'), productProfitValue = $('#productProfitValue'), saveProductProfit = $('#saveProductProfit');
     const productsTable = $('#productsTable'), qProduct = $('#qProduct'), btnLoad = $('#btnLoad'), btnExport = $('#btnExport'), btnSearch = $('#btnSearch');
 
     function read(k){ return JSON.parse(localStorage.getItem(k) || 'null'); }
     function write(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
 
-    function loadCats(){
-      const cats = read(K.cats) || [];
-      catSelect.innerHTML = '';
-      cats.forEach(c => { const o = document.createElement('option'); o.value = c.id; o.textContent = c.name; catSelect.appendChild(o); });
-      const cp = read('book_category_profit') || {};
-      catProfit.value = cp[catSelect.value] ?? '';
+
+    // Tự động gợi ý sản phẩm cho input
+    function updateProductProfitList() {
+      const prodsA = read(K.prods) || [];
+      const rawB = JSON.parse(localStorage.getItem('products') || 'null') || [];
+      const prodsB = rawB.map((p, i) => ({
+        id: p.ma || ('p_admin_' + i),
+        ma: p.ma || '',
+        title: p.ten || '',
+      }));
+      const prods = [...prodsA, ...prodsB];
+      productProfitList.innerHTML = '';
+      prods.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = (p.ma || p.id) + ' - ' + p.title;
+        productProfitList.appendChild(opt);
+      });
     }
 
-    catSelect.onchange = ()=> {
-      const cp = read('book_category_profit') || {};
-      catProfit.value = cp[catSelect.value] ?? '';
+    // Khi chọn sản phẩm, tự động điền % lợi nhuận nếu đã có
+    productProfitInput.oninput = function() {
+      const val = productProfitInput.value.trim().toLowerCase();
+      if (!val) { productProfitValue.value = ''; return; }
+      const prodsA = read(K.prods) || [];
+      const rawB = JSON.parse(localStorage.getItem('products') || 'null') || [];
+      const prodsB = rawB.map((p, i) => ({
+        id: p.ma || ('p_admin_' + i),
+        ma: p.ma || '',
+        title: p.ten || '',
+        productProfit: p.productProfit ?? null
+      }));
+      const prods = [...prodsA, ...prodsB];
+      let found = prods.find(p => val === (p.ma || p.id).toLowerCase() || val === (p.title || '').toLowerCase() || val === ((p.ma || p.id) + ' - ' + p.title).toLowerCase());
+      if (found && found.productProfit != null) productProfitValue.value = found.productProfit;
+      else productProfitValue.value = '';
     };
 
-    saveCatProfit.onclick = () => {
-      const v = Number(catProfit.value);
+    saveProductProfit.onclick = function() {
+      const val = productProfitInput.value.trim().toLowerCase();
+      if (!val) return alert('Nhập mã hoặc tên sản phẩm.');
+      const v = Number(productProfitValue.value);
       if (isNaN(v)) return alert('Nhập % hợp lệ.');
-      const cp = read('book_category_profit') || {};
-      cp[catSelect.value] = v;
-      write('book_category_profit', cp);
-      alert('Đã lưu % lợi nhuận cho loại.');
-      renderProducts();
+      // Tìm sản phẩm trong cả 2 nguồn
+      let prods = read(K.prods) || [];
+      let p = prods.find(x => val === (x.ma || x.id).toLowerCase() || val === (x.title || '').toLowerCase() || val === ((x.ma || x.id) + ' - ' + x.title).toLowerCase());
+      if (p) {
+        p.productProfit = v;
+        write(K.prods, prods);
+        alert('Đã lưu % lợi nhuận cho sản phẩm.');
+        renderProducts();
+        return;
+      }
+      // Nếu không có trong prodsA thì thử admin products
+      let rawB = JSON.parse(localStorage.getItem('products') || 'null') || [];
+      let idx = rawB.findIndex(x => val === (x.ma || '').toLowerCase() || val === (x.ten || '').toLowerCase() || val === ((x.ma || '') + ' - ' + (x.ten || '')).toLowerCase());
+      if (idx !== -1) {
+        rawB[idx].productProfit = v;
+        localStorage.setItem('products', JSON.stringify(rawB));
+        alert('Đã lưu % lợi nhuận cho sản phẩm.');
+        renderProducts();
+        return;
+      }
+      alert('Không tìm thấy sản phẩm này.');
     };
+
+    // Cập nhật datalist khi trang tải xong
+    updateProductProfitList();
 
     function calculateSelling(product){
       const catProf = read('book_category_profit') || {};

@@ -37,6 +37,17 @@
   </style>
 </head>
 <body>
+  <!-- Toast notification -->
+  <div class="position-fixed top-0 end-0 p-3" style="z-index: 9999">
+    <div id="successToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body">
+          Đã lưu thành công
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
+  </div>
   <div class="container-fluid py-4">
     <div class="admin-banner">
       <div class="text-center">
@@ -52,6 +63,7 @@
           <h5 class="text-success">📋 Menu quản lý</h5>
           <a href="quanlysanpham.html" class="menu-item"><span class="me-2">📘</span> Quản lý Sản phẩm</a>
           <a href="quanlydonhang.html" class="menu-item"><span class="me-2">🧾</span> Quản lý Đơn hàng</a>
+          <a href="user.html" class="menu-item"><span class="me-2">👤</span> Quản lý Người dùng</a>
           <a href="pricing.html" class="menu-item"><span class="me-2">💲</span> Quản lý Giá</a>
           <a href="stock.html" class="menu-item"><span class="me-2">📦</span> Quản lý Kho</a>
           <a href="import.html" class="menu-item active"><span class="me-2">🚚</span> Nhập hàng</a>
@@ -96,8 +108,8 @@
 
                   <div class="row g-2 align-items-end">
                     <div class="col-md-6">
-                      <label class="form-label">Sản phẩm</label>
-                      <select id="productSelect" class="form-select"></select>
+                      <label class="form-label">Sản phẩm (nhập mã hoặc tên)</label>
+                      <input id="productInput" class="form-control" placeholder="Nhập mã hoặc tên sản phẩm">
                     </div>
                     <div class="col-md-2">
                       <label class="form-label">Số lượng</label>
@@ -132,7 +144,7 @@
             <div class="table-responsive">
               <table class="table table-hover align-middle">
                 <thead class="table-light">
-                  <tr><th>ID</th><th>Ngày</th><th>Trạng thái</th><th>Số dòng</th><th>Tổng SL</th><th>Hành động</th></tr>
+                  <tr><th>Mã</th><th>Tên</th><th>Số dòng</th><th>Tổng SL</th><th>Tồn hiện tại</th><th>Trạng thái</th><th>Hành động</th></tr>
                 </thead>
                 <tbody id="receiptsTable"></tbody>
               </table>
@@ -189,17 +201,7 @@
     function read(k){ return JSON.parse(localStorage.getItem(k) || 'null'); }
     function write(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
 
-    function loadProducts(){
-      const prods = read(K.prods) || [];
-      productSelect.innerHTML = '';
-      prods.forEach(p=>{
-        const opt = document.createElement('option');
-        // use mã sản phẩm nếu có, fallback về id
-        opt.value = p.ma || p.id;
-        opt.textContent = `${p.title} | Mã: ${p.ma || p.id} (Tồn: ${p.stock})`;
-        productSelect.appendChild(opt);
-      });
-    }
+    // No longer needed: loadProducts()
 
     function renderLineItems(){
       if (currentLines.length === 0) { lineItems.innerHTML = '<div class="text-muted">Chưa có dòng hàng.</div>'; return; }
@@ -231,15 +233,20 @@
     }
 
     addLineBtn.onclick = () => {
-      const pid = productSelect.value; // this is mã hoặc id
-      const prods = read(K.prods) || [];
-      // find by id or mã
-      const p = prods.find(x=> x.id===pid || (x.ma && x.ma===pid));
-      if (!p) return alert('Chọn sản phẩm hợp lệ.');
+      const input = document.getElementById('productInput');
+      const keyword = (input.value || '').trim().toLowerCase();
+      if (!keyword) return alert('Vui lòng nhập mã hoặc tên sản phẩm.');
+      const baseProds = read(K.prods) || [];
+      const adminProds = JSON.parse(localStorage.getItem('products') || 'null') || [];
+      // Tìm theo mã hoặc tên (ưu tiên mã)
+      let p = baseProds.find(x=> (x.ma||x.id||'').toString().toLowerCase() === keyword || (x.title||'').toLowerCase() === keyword);
+      if (!p) p = adminProds.find(x=> (x.ma||x.id||'').toString().toLowerCase() === keyword || (x.title||x.ten||'').toLowerCase() === keyword);
+      if (!p) return alert('Không tìm thấy sản phẩm với mã hoặc tên này.');
+      const pid = p.ma || p.id;
       const qty = Math.max(1, Math.floor(Number(itemQty.value) || 1));
       const price = Math.max(0, Number(itemPrice.value) || 0);
-      // store productId as the mã (or id) selected so we can match on mã when applying receipt
-      currentLines.push({ productId: pid, title: p.title, qty, price });
+      const title = p.title || p.ten || '';
+      currentLines.push({ productId: pid, title, qty, price });
       renderLineItems();
     };
 
@@ -291,17 +298,30 @@
         receipts[idx].lines = JSON.parse(JSON.stringify(currentLines));
         receipts[idx].updatedAt = new Date().toISOString();
         if (status === 'completed') applyReceiptCompletion(receipts[idx]);
-        write(K.receipts, receipts);
-        loadReceiptsTable();
-        resetForm();
+  write(K.receipts, receipts);
+  loadReceiptsTable();
+  showSuccessToast();
+  resetForm();
       } else {
         const id = 'R' + Date.now();
         const rec = { id, date: dateVal, status, note: receiptNote.value, lines: JSON.parse(JSON.stringify(currentLines)), createdAt: new Date().toISOString() };
         receipts.unshift(rec);
-        write(K.receipts, receipts);
-        if (status === 'completed') applyReceiptCompletion(rec);
-        loadReceiptsTable();
-        resetForm();
+  write(K.receipts, receipts);
+  if (status === 'completed') applyReceiptCompletion(rec);
+  loadReceiptsTable();
+  showSuccessToast();
+    // Toast notification logic
+    function showSuccessToast() {
+      const toastEl = document.getElementById('successToast');
+      if (window.bootstrap && window.bootstrap.Toast) {
+        const toast = window.bootstrap.Toast.getOrCreateInstance(toastEl);
+        toast.show();
+      } else {
+        // fallback: show as alert if Bootstrap Toast not loaded
+        alert('Đã lưu thành công');
+      }
+    }
+  resetForm();
       }
     }
 
@@ -309,8 +329,74 @@
       const receipts = read(K.receipts) || [];
       receiptsTable.innerHTML = '';
       const f = (filter||'').toLowerCase().trim();
+
+      // Build arrays of known products from both K.prods and admin products
+      const baseProds = read(K.prods) || [];
+      const adminProds = JSON.parse(localStorage.getItem('products') || 'null') || [];
+
+      // If filter partially matches any known code, treat as product-code search (partial match)
+      const allCodes = [...baseProds.map(p=>((p.ma||p.id)||'').toString().toLowerCase()), ...adminProds.map(p=>((p.ma||p.id)||'').toString().toLowerCase())];
+      // Show aggregated product list when no filter provided (so user sees all products from product manager)
+      const isProductFilter = (f === '') || (f && allCodes.some(code => code.includes(f)));
+
+      if (isProductFilter) {
+        // Always show all products, but highlight/move matches to top if filter is present
+        const ag = {};
+  const allKnown = [...baseProds.map(p=>({ code: (p.ma||p.id)||'', title: p.title||p.ten||'' })), ...adminProds.map(p=>({ code: (p.ma||p.id)||'', title: p.title||p.ten||'' }))];
+  allKnown.forEach(a=>{ if (a.code && !ag[a.code]) ag[a.code] = { code: a.code, title: a.title, totalLines:0, totalQty:0, completed:0, draft:0, receipts: [] }; });
+        receipts.forEach(r => {
+          r.lines.forEach(li => {
+            const linePidRaw = (li.productId || '').toString();
+            const prod = baseProds.find(p => (p.id === li.productId) || (p.ma === li.productId)) || adminProds.find(p => (p.id === li.productId) || (p.ma === li.productId));
+            const prodCode = prod ? ((prod.ma || prod.id)||'').toString() : linePidRaw;
+            const prodTitle = prod ? (prod.title || prod.ten || '') : (li.title || '');
+            if (!ag[prodCode]) ag[prodCode] = { code: prodCode, title: prodTitle, totalLines: 0, totalQty: 0, completed:0, draft:0, receipts: [] };
+            ag[prodCode].totalLines += 1;
+            ag[prodCode].totalQty += Number(li.qty||0);
+            if (r.status === 'completed') ag[prodCode].completed += 1; else ag[prodCode].draft += 1;
+            ag[prodCode].receipts.push({ id: r.id, qty: Number(li.qty||0), date: r.date, status: r.status });
+          });
+        });
+
+        let rows = Object.values(ag);
+        if (f) {
+          // Only show products whose code matches filter
+          rows = rows.filter(item => item.code.toLowerCase().includes(f));
+        }
+        if (rows.length === 0) { receiptsTable.innerHTML = '<tr><td colspan="7" class="text-muted">Không tìm thấy sản phẩm.</td></tr>'; return; }
+        rows.forEach(item => {
+          const tr = document.createElement('tr');
+          const stockRec = baseProds.find(p => ((p.ma||p.id)||'') == item.code);
+          const currentStock = stockRec ? Number(stockRec.stock||0) : '';
+          tr.innerHTML = `
+            <td>${item.code}</td>
+            <td>${item.title}</td>
+            <td>${item.totalLines}</td>
+            <td>${item.totalQty}</td>
+            <td>${currentStock}</td>
+            <td>Hoàn thành: ${item.completed} / Draft: ${item.draft}</td>
+            <td><button class="btn btn-sm btn-outline-primary view-product" data-code="${item.code}">Xem</button></td>
+          `;
+          receiptsTable.appendChild(tr);
+        });
+        $$('.view-product').forEach(b=> b.onclick = e => viewReceiptsForProduct(e.currentTarget.dataset.code));
+        return;
+      }
+
+      // Default: search by receipt id, note, date or product title as before
       receipts.forEach(r=>{
-        if (f && !(r.id.toLowerCase().includes(f) || (r.note||'').toLowerCase().includes(f) || r.date.toLowerCase().includes(f) || r.lines.some(li=>li.title.toLowerCase().includes(f)))) return;
+        const matchesProductTitle = r.lines.some(li => {
+          const title = (li.title || '').toString().toLowerCase();
+          if (title.includes(f)) return true;
+          // also check if li.productId maps to a product whose mã or id includes the filter
+          const prod = baseProds.find(p=>p.id===li.productId || p.ma===li.productId) || adminProds.find(p=>p.id===li.productId || p.ma===li.productId);
+          if (prod) {
+            const code = ((prod.ma || prod.id) || '').toString().toLowerCase();
+            if (code.includes(f)) return true;
+          }
+          return false;
+        });
+        if (f && !(r.id.toLowerCase().includes(f) || (r.note||'').toLowerCase().includes(f) || r.date.toLowerCase().includes(f) || matchesProductTitle)) return;
         const totalQty = r.lines.reduce((s,li)=>s + Number(li.qty||0),0);
         const tr = document.createElement('tr');
         tr.innerHTML = `
@@ -385,7 +471,6 @@
 
     // init
     function init(){
-      loadProducts();
       resetForm();
       loadReceiptsTable();
       receiptDate.value = new Date().toISOString().slice(0,16);
