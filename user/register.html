@@ -79,8 +79,7 @@
       <form id="registerForm">
         <input id="regName" class="form-control mb-3" type="text" placeholder="Họ và tên" required>
         <input id="regEmail" class="form-control mb-3" type="email" placeholder="Email" required>
-        <input id="regPhone" class="form-control mb-3" type="text" placeholder="Số điện thoại" required>
-        <input id="regCity" class="form-control mb-3" type="text" placeholder="Thành phố" required>
+        <input id="regPhone" class="form-control mb-3" type="text" placeholder="Số điện thoại">
         <input id="regUsername" class="form-control mb-3" type="text" placeholder="Tài khoản" required>
         <input id="regPassword" class="form-control mb-3" type="password" placeholder="Mật khẩu" required>
         <input id="regPassword2" class="form-control mb-3" type="password" placeholder="Xác nhận mật khẩu" required>
@@ -98,29 +97,35 @@
   <script>
     document.getElementById('registerForm').addEventListener('submit', function(e){
       e.preventDefault();
-      const name = regName.value.trim();
-      const email = regEmail.value.trim();
-      const phone = regPhone.value.trim();
-      const city = regCity.value.trim();
-      const username = regUsername.value.trim();
-      const pass = regPassword.value;
-      const pass2 = regPassword2.value;
+      const regName = document.getElementById('regName').value.trim();
+      const regEmail = document.getElementById('regEmail').value.trim();
+      const regPhone = document.getElementById('regPhone').value.trim();
+      const regUsername = document.getElementById('regUsername').value.trim();
+      const regPassword = document.getElementById('regPassword').value;
+      const regPassword2 = document.getElementById('regPassword2').value;
 
-      if (pass !== pass2) {
-        regPassword2.classList.add('is-invalid');
+      if (regPassword !== regPassword2) {
         alert('Mật khẩu xác nhận không khớp!');
         return;
       }
-      regPassword2.classList.remove('is-invalid');
 
-      // Lưu tài khoản vào localStorage (demo)
-      const user = { name, email, phone, city, username, password: pass, role: 'customer' };
+      const user = {
+        id: Date.now(),
+        name: regName,
+        email: regEmail,
+        phone: regPhone,
+        username: regUsername,
+        password: regPassword,
+        status: 'active',
+        role: 'customer',
+        createdBy: 'customer'
+      };
+
       let users = JSON.parse(localStorage.getItem('users') || '[]');
       users.push(user);
       localStorage.setItem('users', JSON.stringify(users));
 
-      // Hiện thông báo
-      registerMsg.style.display = 'block';
+      document.getElementById('registerMsg').style.display = 'block';
       setTimeout(() => {
         window.location.href = 'login.html';
       }, 1500);

@@ -42,13 +42,9 @@
 
     <p class="mt-3 text-center">Chưa có tài khoản? <a href="register.html">Đăng ký</a></p>
 
-    <div id="loginError" class="alert alert-danger mt-3 text-center" style="display:none;">
-      ❌ Tài khoản hoặc mật khẩu không đúng!
-    </div>
-
-    <div id="loginSuccess" class="alert alert-success mt-3 text-center" style="display:none;">
-      ✅ Đăng nhập thành công! Đang chuyển hướng...
-    </div>
+    <!-- Hiển thị thông báo -->
+    <div id="loginError" class="alert alert-danger mt-3 text-center" style="display:none;"></div>
+    <div id="loginSuccess" class="alert alert-success mt-3 text-center" style="display:none;"></div>
   </div>
 
   <script>
@@ -58,29 +54,44 @@
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value.trim();
 
-      // 🔹 Đọc danh sách khách hàng đã đăng ký từ localStorage
-      const users = JSON.parse(localStorage.getItem('khachhang_demo') || '[]');
+      // 🔹 Lấy danh sách KH/ND từ phần admin: localStorage.users
+      const users = JSON.parse(localStorage.getItem('users') || '[]');
 
-      // 🔹 Tìm người dùng khớp username và password
       const foundUser = users.find(u => u.username === username && u.password === password);
 
-      if (foundUser) {
-        // ✅ Nếu đăng nhập đúng
-        document.getElementById('loginError').style.display = 'none';
-        document.getElementById('loginSuccess').style.display = 'block';
+      const loginError = document.getElementById('loginError');
+      const loginSuccess = document.getElementById('loginSuccess');
 
-        // 🔹 Lưu người dùng hiện tại
-        localStorage.setItem('currentUser', JSON.stringify(foundUser));
-
-        // 🔹 Chuyển hướng sang trang giỏ hàng (product.html ở ngoài thư mục user)
-        setTimeout(() => {
-          window.location.href = '../product.html';
-        }, 1000);
-      } else {
-        // ❌ Sai tài khoản hoặc mật khẩu
-        document.getElementById('loginError').style.display = 'block';
-        document.getElementById('loginSuccess').style.display = 'none';
+      if (!foundUser) {
+        loginError.style.display = 'block';
+        loginSuccess.style.display = 'none';
+        loginError.textContent = '❌ Tài khoản hoặc mật khẩu không đúng!';
+        return;
       }
+
+      if (foundUser.status === 'locked') {
+        loginError.style.display = 'block';
+        loginSuccess.style.display = 'none';
+        loginError.textContent = '🔒 Tài khoản đã bị khóa! Vui lòng liên hệ admin.';
+        return;
+      }
+
+      // ✅ Nếu đăng nhập đúng
+      loginError.style.display = 'none';
+      loginSuccess.style.display = 'block';
+      loginSuccess.textContent = '✅ Đăng nhập thành công! Đang chuyển hướng...';
+
+      // 🔹 Lưu người dùng hiện tại
+      localStorage.setItem('currentUser', JSON.stringify(foundUser));
+
+      // 🔹 Điều hướng theo role
+      setTimeout(() => {
+        if (foundUser.role === 'admin') {
+          window.location.href = '../admin/user.html';
+        } else {
+          window.location.href = '../product.html';
+        }
+      }, 1000);
     });
   </script>
 </body>

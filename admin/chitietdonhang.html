@@ -1,21 +1,21 @@
-<!--chitietdonhang.html-->
+<!-- chitietdonhang.html (phiên bản form hoàn chỉnh) -->
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Chi tiết Đơn hàng - Thức Store</title>
 
   <!-- Bootstrap & Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
 
   <style>
     body { background-color: #f3f8f3; font-family: "Open Sans", sans-serif; }
 
     /* Banner */
     .admin-banner {
-      background: url('../img/banner.jpg') center/cover no-repeat;
+      background: url('img/banner.jpg') center/cover no-repeat;
       height: 220px; display: flex; align-items: center; justify-content: center;
       position: relative; border-radius: 12px; margin-bottom: 2rem; overflow: hidden;
     }
@@ -49,6 +49,10 @@
       box-shadow: 0 3px 8px rgba(0,0,0,0.05);
       padding: 2rem; min-height: 75vh;
     }
+
+    .table thead th { white-space: nowrap; }
+    .form-text-sm { font-size: .85rem; color: #6c757d; }
+    .currency { text-align: right; }
   </style>
 </head>
 
@@ -79,63 +83,31 @@
         <div class="content-area">
           <div class="d-flex justify-content-between align-items-center mb-4">
             <h4 class="text-success fw-bold">Chi tiết Đơn hàng</h4>
-            <a href="quanlydonhang.html" class="btn btn-outline-success btn-sm">
-              <i class="fa fa-arrow-left"></i> Quay lại
-            </a>
+            <div class="d-flex gap-2">
+              <a href="quanlydonhang.html" class="btn btn-outline-success btn-sm">
+                <i class="fa fa-arrow-left"></i> Quay lại
+              </a>
+              <button id="btnSave" class="btn btn-success btn-sm">
+                <i class="fa fa-save me-1"></i> Lưu đơn hàng
+              </button>
+            </div>
           </div>
 
           <!-- Thông tin đơn hàng -->
           <div class="mb-4">
             <h5 class="fw-bold text-secondary mb-3">🧾 Thông tin đơn hàng</h5>
             <div class="row g-3">
-              <div class="col-md-6">
-                <label class="form-label fw-semibold">Mã đơn hàng:</label>
+              <div class="col-md-4">
+                <label class="form-label fw-semibold">Mã đơn hàng</label>
                 <input type="text" class="form-control" id="orderId" readonly>
+                <div class="form-text-sm">Tự sinh nếu tạo mới.</div>
               </div>
-              <div class="col-md-6">
-                <label class="form-label fw-semibold">Ngày đặt:</label>
-                <input type="text" class="form-control" id="orderDate" readonly>
+              <div class="col-md-4">
+                <label class="form-label fw-semibold">Ngày đặt</label>
+                <input type="date" class="form-control" id="orderDate">
               </div>
-              <div class="col-md-6">
-                <label class="form-label fw-semibold">Người đặt:</label>
-                <input type="text" class="form-control" id="customerName" readonly>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label fw-semibold">Địa chỉ giao hàng:</label>
-                <input type="text" class="form-control" id="address" readonly>
-              </div>
-            </div>
-          </div>
-
-          <hr>
-
-          <!-- Danh sách sản phẩm -->
-          <div class="mb-4">
-            <h5 class="fw-bold text-secondary mb-3">📦 Sản phẩm trong đơn hàng</h5>
-            <table class="table table-bordered text-center align-middle">
-              <thead class="table-success">
-                <tr>
-                  <th>STT</th>
-                  <th>Tên sản phẩm</th>
-                  <th>Số lượng</th>
-                  <th>Đơn giá</th>
-                  <th>Thành tiền</th>
-                </tr>
-              </thead>
-              <tbody id="productList">
-                <!-- Dữ liệu sản phẩm sẽ hiển thị ở đây -->
-              </tbody>
-            </table>
-          </div>
-
-          <hr>
-
-          <!-- Cập nhật tình trạng -->
-          <div class="mb-4">
-            <h5 class="fw-bold text-secondary mb-3">⚙️ Cập nhật tình trạng đơn hàng</h5>
-            <div class="row g-3 align-items-center">
-              <div class="col-md-6">
-                <label class="form-label fw-semibold">Tình trạng hiện tại:</label>
+              <div class="col-md-4">
+                <label class="form-label fw-semibold">Tình trạng</label>
                 <select class="form-select" id="orderStatus">
                   <option value="moi-dat">Mới đặt</option>
                   <option value="da-xu-ly">Đã xử lý</option>
@@ -143,92 +115,289 @@
                   <option value="huy">Hủy</option>
                 </select>
               </div>
+
+              <div class="col-12"><hr class="my-3"></div>
+
+              <div class="col-md-6">
+                <label class="form-label fw-semibold">Họ tên khách hàng</label>
+                <input type="text" class="form-control" id="customerName" placeholder="Nguyễn Văn A" required>
+              </div>
               <div class="col-md-3">
-                <button class="btn btn-success w-100" onclick="updateStatus()">Cập nhật</button>
+                <label class="form-label fw-semibold">Số điện thoại</label>
+                <input type="tel" class="form-control" id="customerPhone" placeholder="09xxxxxxxx">
+              </div>
+              <div class="col-md-3">
+                <label class="form-label fw-semibold">Email</label>
+                <input type="email" class="form-control" id="customerEmail" placeholder="name@email.com">
+              </div>
+              <div class="col-md-12">
+                <label class="form-label fw-semibold">Địa chỉ giao hàng</label>
+                <input type="text" class="form-control" id="address" placeholder="Số nhà, đường, phường, quận, tỉnh/thành">
+              </div>
+            </div>
+          </div>
+
+          <!-- Danh sách sản phẩm -->
+          <div class="mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <h5 class="fw-bold text-secondary">📦 Sản phẩm trong đơn hàng</h5>
+              <button id="btnAddItem" class="btn btn-outline-success btn-sm"><i class="fa fa-plus"></i> Thêm dòng</button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="table table-bordered align-middle text-center">
+                <thead class="table-success">
+                  <tr>
+                    <th style="width:60px">STT</th>
+                    <th>Tên sản phẩm</th>
+                    <th style="width:120px">Số lượng</th>
+                    <th style="width:160px">Đơn giá (đ)</th>
+                    <th style="width:160px">Thành tiền (đ)</th>
+                    <th style="width:60px">Xóa</th>
+                  </tr>
+                </thead>
+                <tbody id="productList"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Tổng tiền -->
+          <div class="row g-3">
+            <div class="col-lg-6">
+              <label class="form-label fw-semibold">Ghi chú</label>
+              <textarea id="note" class="form-control" rows="3" placeholder="(Tuỳ chọn)"></textarea>
+            </div>
+            <div class="col-lg-6">
+              <div class="bg-light rounded p-3">
+                <div class="d-flex justify-content-between mb-2">
+                  <span>Tạm tính</span>
+                  <strong id="subtotal">0đ</strong>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                  <span>Phí vận chuyển</span>
+                  <input type="number" id="shipping" class="form-control form-control-sm w-50 text-end" value="30000" min="0" />
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                  <span>Giảm giá</span>
+                  <input type="number" id="discount" class="form-control form-control-sm w-50 text-end" value="0" min="0" />
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between">
+                  <h5>Tổng cộng</h5>
+                  <h5 id="grandTotal" class="text-success">0đ</h5>
+                </div>
               </div>
             </div>
           </div>
 
           <div id="statusMessage" class="text-success fw-semibold mt-3"></div>
-
         </div>
       </div>
     </div>
   </div>
-<script>
-  // 1. Lấy ID đơn hàng từ URL
-  const params = new URLSearchParams(window.location.search);
-  const orderId = params.get('id');
 
-  // 2. Lấy danh sách đơn hàng từ localStorage
-  const orders = JSON.parse(localStorage.getItem("orders")) || [];
-  const order = orders.find(o => o.id === orderId);
+  <script>
+    // ====== TIỆN ÍCH ======
+    const fmt = (n) => (Number(n) || 0).toLocaleString('vi-VN') + 'đ';
+    const parseNum = (v) => Math.max(0, Number(v) || 0);
 
-  // 3. Tham chiếu các input và bảng sản phẩm
-  const orderIdInput = document.getElementById("orderId");
-  const orderDateInput = document.getElementById("orderDate");
-  const customerNameInput = document.getElementById("customerName");
-  const addressInput = document.getElementById("address");
-  const productListTbody = document.getElementById("productList");
-  const orderStatusSelect = document.getElementById("orderStatus");
-  const statusMessage = document.getElementById("statusMessage");
+    // Map trạng thái UI <-> nội bộ (tương thích trang cũ)
+    const uiToInternal = { 'moi-dat': 'chua-xu-ly', 'da-xu-ly': 'hoan-thanh', 'da-giao': 'dang-giao', 'huy': 'da-huy' };
+    const internalToUi = { 'chua-xu-ly': 'moi-dat', 'hoan-thanh': 'da-xu-ly', 'dang-giao': 'da-giao', 'da-huy': 'huy' };
 
-  // 4. Kiểm tra đơn hàng có tồn tại không
-  if (!order) {
-    orderIdInput.value = "Không tìm thấy đơn hàng";
-    statusMessage.innerText = "Không tìm thấy đơn hàng với ID này.";
-  } else {
-// Hiển thị thông tin đơn hàng
-orderIdInput.value = order.id;
-orderDateInput.value = order.date || "";
-customerNameInput.value = order.customer?.name || order.name || "Không có thông tin";
-addressInput.value = order.customer?.address || order.address || "Không có thông tin";
+    // ====== DOM ELEMENTS ======
+    const orderIdInput = document.getElementById('orderId');
+    const orderDateInput = document.getElementById('orderDate');
+    const orderStatusSelect = document.getElementById('orderStatus');
+    const nameInput = document.getElementById('customerName');
+    const phoneInput = document.getElementById('customerPhone');
+    const emailInput = document.getElementById('customerEmail');
+    const addressInput = document.getElementById('address');
+    const noteInput = document.getElementById('note');
+    const tbody = document.getElementById('productList');
+    const subtotalEl = document.getElementById('subtotal');
+    const grandEl = document.getElementById('grandTotal');
+    const shippingInput = document.getElementById('shipping');
+    const discountInput = document.getElementById('discount');
+    const statusMessage = document.getElementById('statusMessage');
+    const btnAddItem = document.getElementById('btnAddItem');
+    const btnSave = document.getElementById('btnSave');
 
-    // Thiết lập trạng thái hiện tại
-    const statusMap = {
-      "chua-xu-ly": "moi-dat",
-      "dang-giao": "da-giao",
-      "hoan-thanh": "da-xu-ly",
-      "da-huy": "huy"
-    };
-    orderStatusSelect.value = statusMap[order.status] || "moi-dat";
+    // ====== STATE ======
+    let orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    let order = null;
 
-    // Hiển thị danh sách sản phẩm
-    productListTbody.innerHTML = order.items.map((i, index) => `
-      <tr>
-        <td>${index + 1}</td>
-        <td>${i.name}</td>
-        <td>${i.qty}</td>
-        <td>${i.price.toLocaleString("vi-VN")}đ</td>
-        <td>${(i.qty * i.price).toLocaleString("vi-VN")}đ</td>
-      </tr>
-    `).join("");
-  }
+    // ====== KHỞI TẠO ======
+    (function init() {
+      const params = new URLSearchParams(window.location.search);
+      const orderIdParam = params.get('id');
 
-  // 5. Hàm cập nhật trạng thái và lưu vào localStorage
-  function updateStatus() {
-    if (!order) return;
+      if (orderIdParam) {
+        order = orders.find(o => String(o.id) === String(orderIdParam)) || null;
+      }
 
-    const newStatus = orderStatusSelect.value;
-    let message = "";
+      if (!order) {
+        // Tạo mới
+        order = {
+          id: `ORD-${Date.now()}`,
+          date: new Date().toISOString().slice(0,10),
+          customer: { name: '', phone: '', email: '', address: '' },
+          items: [],
+          note: '',
+          status: 'chua-xu-ly',
+          totals: { subtotal: 0, shipping: 30000, discount: 0, total: 0 }
+        };
+      }
 
-    switch (newStatus) {
-      case "moi-dat": message = "Đơn hàng được đặt lại trạng thái: Mới đặt."; order.status = "chua-xu-ly"; break;
-      case "da-xu-ly": message = "Đơn hàng đã được xử lý."; order.status = "hoan-thanh"; break;
-      case "da-giao": message = "Đơn hàng đã được giao thành công."; order.status = "dang-giao"; break;
-      case "huy": message = "Đơn hàng đã bị hủy."; order.status = "da-huy"; break;
+      // Render form
+      orderIdInput.value = order.id;
+      orderDateInput.value = order.date || new Date().toISOString().slice(0,10);
+      orderStatusSelect.value = internalToUi[order.status] || 'moi-dat';
+      nameInput.value = order.customer?.name || '';
+      phoneInput.value = order.customer?.phone || '';
+      emailInput.value = order.customer?.email || '';
+      addressInput.value = order.customer?.address || '';
+      noteInput.value = order.note || '';
+      shippingInput.value = order.totals?.shipping ?? 30000;
+      discountInput.value = order.totals?.discount ?? 0;
+
+      renderItems();
+      recalcTotals();
+    })();
+
+    // ====== SẢN PHẨM ======
+    function renderItems() {
+      if (!order.items || order.items.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="text-muted">Chưa có sản phẩm. Nhấn <strong>Thêm dòng</strong> để bắt đầu.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = '';
+      order.items.forEach((it, idx) => tbody.appendChild(makeRow(it, idx)));
     }
 
-    // Cập nhật lại localStorage
-    const index = orders.findIndex(o => o.id === order.id);
-    if (index !== -1) {
-      orders[index] = order;
-      localStorage.setItem("orders", JSON.stringify(orders));
+    function makeRow(item, idx) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${idx + 1}</td>
+        <td><input type="text" class="form-control" value="${item.name || ''}" placeholder="Tên sản phẩm" /></td>
+        <td><input type="number" class="form-control text-end" min="1" value="${item.qty || 1}" /></td>
+        <td><input type="number" class="form-control text-end" min="0" value="${item.price || 0}" /></td>
+        <td class="currency">${fmt((item.qty || 1) * (item.price || 0))}</td>
+        <td><button class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i></button></td>
+      `;
+
+      const [nameEl, qtyEl, priceEl] = [tr.children[1].firstElementChild, tr.children[2].firstElementChild, tr.children[3].firstElementChild];
+      const totalCell = tr.children[4];
+      const delBtn = tr.children[5].firstElementChild;
+
+      const onChange = () => {
+        item.name = nameEl.value.trim();
+        item.qty = parseNum(qtyEl.value) || 1;
+        item.price = parseNum(priceEl.value);
+        totalCell.textContent = fmt(item.qty * item.price);
+        recalcTotals();
+      };
+
+      nameEl.addEventListener('input', onChange);
+      qtyEl.addEventListener('input', onChange);
+      priceEl.addEventListener('input', onChange);
+
+      delBtn.addEventListener('click', () => {
+        order.items.splice(idx, 1);
+        renderItems();
+        recalcTotals();
+      });
+
+      return tr;
     }
 
-    statusMessage.innerText = message;
-  }
-</script>
+    btnAddItem.addEventListener('click', () => {
+      if (!order.items) order.items = [];
+      order.items.push({ name: '', qty: 1, price: 0 });
+      renderItems();
+      recalcTotals();
+    });
 
+    // ====== TÍNH TIỀN ======
+    function recalcTotals() {
+      const subtotal = (order.items || []).reduce((s, it) => s + (parseNum(it.qty) * parseNum(it.price)), 0);
+      const shipping = parseNum(shippingInput.value);
+      const discount = parseNum(discountInput.value);
+      const total = Math.max(0, subtotal + shipping - discount);
+
+      order.totals = { subtotal, shipping, discount, total };
+      order.date = orderDateInput.value || new Date().toISOString().slice(0,10);
+
+      subtotalEl.textContent = fmt(subtotal);
+      grandEl.textContent = fmt(total);
+    }
+
+    shippingInput.addEventListener('input', recalcTotals);
+    discountInput.addEventListener('input', recalcTotals);
+
+    // ====== LƯU ======
+    btnSave.addEventListener('click', () => {
+      // Validate tối thiểu
+      if (!nameInput.value.trim()) {
+        alert('Vui lòng nhập tên khách hàng');
+        nameInput.focus();
+        return;
+      }
+
+      // Đồng bộ state từ form -> object
+      order.id = String(orderIdInput.value).trim();
+      order.date = orderDateInput.value || new Date().toISOString().slice(0,10);
+      order.status = uiToInternal[orderStatusSelect.value] || 'chua-xu-ly';
+      order.customer = {
+        name: nameInput.value.trim(),
+        phone: phoneInput.value.trim(),
+        email: emailInput.value.trim(),
+        address: addressInput.value.trim(),
+      };
+      order.note = noteInput.value.trim();
+
+      // Lọc bỏ dòng sản phẩm trống
+      order.items = (order.items || []).filter(it => (it.name || '').trim() !== '' && parseNum(it.qty) > 0);
+
+      // Không cho lưu nếu chưa có sản phẩm
+      if (order.items.length === 0) {
+        alert('Vui lòng thêm ít nhất 1 sản phẩm.');
+        return;
+      }
+
+      // Cập nhật totals
+      recalcTotals();
+
+      // Ghi vào localStorage
+      const idx = orders.findIndex(o => String(o.id) === String(order.id));
+      if (idx === -1) {
+        orders.push(order);
+      } else {
+        orders[idx] = order;
+      }
+      localStorage.setItem('orders', JSON.stringify(orders));
+
+      statusMessage.textContent = 'Đã lưu đơn hàng thành công!';
+      setTimeout(() => statusMessage.textContent = '', 2500);
+    });
+
+    // ====== ĐỒNG BỘ TRẠNG THÁI UI -> TOTALS khi sửa trực tiếp ======
+    orderStatusSelect.addEventListener('change', () => {
+      order.status = uiToInternal[orderStatusSelect.value] || 'chua-xu-ly';
+    });
+
+    // Lắng nghe thay đổi để cập nhật object khi chỉnh sửa trường text
+    ;[nameInput, phoneInput, emailInput, addressInput, noteInput].forEach(el => {
+      el.addEventListener('input', () => {
+        order.customer = order.customer || {};
+        order.customer.name = nameInput.value.trim();
+        order.customer.phone = phoneInput.value.trim();
+        order.customer.email = emailInput.value.trim();
+        order.customer.address = addressInput.value.trim();
+        order.note = noteInput.value.trim();
+      });
+    });
+  </script>
 </body>
 </html>
