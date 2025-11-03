@@ -144,6 +144,14 @@
     </div>
   </div>
 
+  <!-- Order History Section -->
+  <div class="container-xxl py-5" id="order-history-section" style="display:none;">
+    <div class="container">
+      <h3 class="mb-4">Lịch sử đơn hàng</h3>
+      <div id="order-history"></div>
+    </div>
+  </div>
+
   <!-- Footer -->
   <div class="container-fluid bg-dark footer mt-5 py-5 wow fadeIn" data-wow-delay="0.1s">
     <div class="container py-5">
@@ -168,17 +176,17 @@
       document.getElementById('spinner').classList.remove('show');
     });
 
-    // ✅ Khởi tạo giỏ hàng với 2 sản phẩm cố định (CHỈ khi chưa có giỏ hàng)
+    // Giả lập người dùng hiện tại (lưu trong localStorage)
+    const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {
+      name: "Nguyễn Văn A",
+      phone: "0909123456",
+      address: "Hà Nội"
+    };
+    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+    // Khởi tạo giỏ hàng mặc định nếu chưa có
     (function initDefaultCart() {
-      // XÓA giỏ hàng cũ để test (sau khi test xong có thể bỏ dòng này)
-      // localStorage.removeItem('cart');
-      
-      // Kiểm tra xem đã có giỏ hàng chưa
       const existingCart = localStorage.getItem('cart');
-      
-      console.log("🔍 Kiểm tra giỏ hàng hiện tại:", existingCart);
-      
-      // Nếu chưa có giỏ hàng, tạo mới với 2 sản phẩm mặc định
       if (!existingCart || existingCart === 'null' || existingCart === '[]') {
         const defaultCart = [
           {
@@ -196,15 +204,14 @@
             img: "img/26.jpg"
           }
         ];
-        
         localStorage.setItem('cart', JSON.stringify(defaultCart));
-        console.log("✅ Đã khởi tạo giỏ hàng với 2 sản phẩm mặc định:", defaultCart);
-      } else {
-        console.log("ℹ️ Giỏ hàng đã tồn tại:", JSON.parse(existingCart));
       }
     })();
 
-    document.addEventListener('DOMContentLoaded', renderCart);
+    document.addEventListener('DOMContentLoaded', () => {
+      renderCart();
+      renderOrderHistory();
+    });
 
     function renderCart() {
       const cart = JSON.parse(localStorage.getItem('cart') || '[]');
@@ -262,7 +269,6 @@
       document.getElementById('subtotal').textContent = subtotal.toLocaleString('vi-VN') + '₫';
       document.getElementById('total').textContent = (subtotal + 30000).toLocaleString('vi-VN') + '₫';
 
-      // Thay đổi số lượng
       document.querySelectorAll('#cart-items input[type=number]').forEach((input, index) => {
         input.onchange = () => {
           cart[index].qty = Number(input.value);
@@ -271,7 +277,6 @@
         };
       });
 
-      // Xóa sản phẩm
       document.querySelectorAll('#cart-items .btn-danger').forEach((btn, index) => {
         btn.onclick = () => {
           if (confirm('Bạn có chắc muốn xóa sản phẩm này?')) {
@@ -283,6 +288,47 @@
       });
     }
 
+    function renderOrderHistory() {
+      const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+      const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+      const orderHistorySection = document.getElementById('order-history-section');
+      const orderHistoryContainer = document.getElementById('order-history');
+
+      if (!currentUser.phone) {
+        console.warn("Không có thông tin người dùng hiện tại!");
+        return;
+      }
+
+      const userOrders = orders.filter(order => order.customer?.phone === currentUser.phone);
+
+      if (userOrders.length === 0) {
+        orderHistorySection.style.display = 'block';
+        orderHistoryContainer.innerHTML = `<p class="text-muted">Bạn chưa có đơn hàng nào.</p>`;
+        return;
+      }
+
+      orderHistorySection.style.display = 'block';
+      orderHistoryContainer.innerHTML = '';
+
+      userOrders.forEach((order, index) => {
+        let itemsList = '';
+        order.items.forEach(item => {
+          itemsList += `<li>${item.name} (x${item.qty}) - ${item.price.toLocaleString('vi-VN')}₫</li>`;
+        });
+
+        const orderHTML = `
+          <div class="bg-light rounded p-4 mb-3">
+            <h5 class="mb-2">Đơn hàng #${index + 1}</h5>
+            <p><strong>Ngày đặt:</strong> ${new Date(order.date).toLocaleString('vi-VN')}</p>
+            <p><strong>Sản phẩm:</strong></p>
+            <ul>${itemsList}</ul>
+            <p><strong>Tổng tiền:</strong> ${order.total.toLocaleString('vi-VN')}₫</p>
+          </div>`;
+      
+        orderHistoryContainer.insertAdjacentHTML('beforeend', orderHTML);
+      });
+    }
+
     document.getElementById("checkoutBtn").addEventListener("click", () => {
       const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
@@ -291,12 +337,22 @@
         return;
       }
 
-      // Lưu danh sách sản phẩm để thanh toán
-      localStorage.setItem("checkoutItems", JSON.stringify(cart));
+      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+      const order = {
+        date: Date.now(),
+        items: cart,
+        total: cart.reduce((sum, item) => sum + item.qty * item.price, 0) + 30000,
+        customer: currentUser
+      };
 
-      // Chuyển sang trang thanh toán
+      const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+      orders.push(order);
+      localStorage.setItem('orders', JSON.stringify(orders));
+      localStorage.removeItem('cart');
+
       window.location.href = "checkout.html";
     });
   </script>
 </body>
+
 </html>

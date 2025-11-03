@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,9 +8,12 @@
   <link href="css/bootstrap.min.css" rel="stylesheet">
   <link href="css/style.css" rel="stylesheet">
   <style>
-    .hidden { display: none; }
+    .hidden {
+      display: none;
+    }
   </style>
 </head>
+
 <body>
   <!-- Navbar -->
   <nav class="navbar navbar-light bg-light px-4">
@@ -29,11 +33,20 @@
     <form id="checkoutForm" class="row g-3">
       <div class="col-md-6">
         <label class="form-label">Họ tên</label>
-        <input type="text" id="name" class="form-control" required>
+        <input type="text" id="name" class="form-control" required disabled>
       </div>
       <div class="col-md-6">
         <label class="form-label">Số điện thoại</label>
-        <input type="text" id="phone" class="form-control" required pattern="[0-9]{9,11}">
+        <input type="text" id="phone" class="form-control" required pattern="[0-9]{9,11}" disabled>
+      </div>
+
+      <div class="col-12">
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="checkbox" id="editInfoToggle">
+          <label class="form-check-label" for="editInfoToggle">
+            Nhập lại thông tin khách hàng
+          </label>
+        </div>
       </div>
 
       <!-- Địa chỉ nhận hàng -->
@@ -54,7 +67,7 @@
 
         <!-- Địa chỉ mặc định -->
         <div id="defaultAddressBox" class="border rounded p-3 mb-3 bg-light">
-          <p class="mb-0" id="defaultAddress">123 Nguyễn Trãi, Quận 1, TP. Hồ Chí Minh</p>
+          <p class="mb-0" id="defaultAddress">Không có địa chỉ</p>
         </div>
 
         <!-- Địa chỉ mới -->
@@ -94,7 +107,7 @@
         <div class="form-check">
           <input class="form-check-input" type="radio" name="paymentMethod" id="online" value="Thanh toán trực tuyến">
           <label class="form-check-label" for="online">
-            Thanh toán trực tuyến (qua ví, thẻ, v.v.)
+            Thanh toán trực tuyến (ví, thẻ)
           </label>
         </div>
       </div>
@@ -116,129 +129,146 @@
   </div>
 
   <script>
-  // 📦 Hiển thị sản phẩm mua ngay
-  const checkoutItems = JSON.parse(localStorage.getItem("checkoutItems")) || [];
-  const container = document.getElementById("checkoutContainer");
+    // 🧑‍💼 Lấy thông tin người dùng từ localStorage
+    const userInfo = JSON.parse(localStorage.getItem("userInfo")) || {};
 
-  if (checkoutItems.length === 0) {
-    container.innerHTML = `<div class="alert alert-warning text-center">
-      Không có sản phẩm nào để thanh toán. 
-      <a href="product.html" class="alert-link">Quay lại mua hàng</a>
-    </div>`;
-  } else {
-    let total = 0;
-    let html = `
-      <table class="table table-bordered align-middle">
-        <thead class="table-light">
-          <tr>
-            <th>Hình ảnh</th>
-            <th>Tên sản phẩm</th>
-            <th>Giá</th>
-            <th>Số lượng</th>
-            <th>Tổng</th>
-          </tr>
-        </thead>
-        <tbody>
-    `;
-    checkoutItems.forEach(item => {
-      const sum = item.price * item.qty;
-      total += sum;
-      html += `
-        <tr>
-          <td><img src="${item.img}" width="70"></td>
-          <td>${item.name}</td>
-          <td>${item.price.toLocaleString("vi-VN")}đ</td>
-          <td>${item.qty}</td>
-          <td>${sum.toLocaleString("vi-VN")}đ</td>
-        </tr>
-      `;
+    // Gán giá trị mặc định từ user đã đăng nhập
+    document.getElementById("name").value = userInfo.name || "";
+    document.getElementById("phone").value = userInfo.phone || "";
+    document.getElementById("defaultAddress").textContent = userInfo.address || "Chưa có địa chỉ mặc định";
+
+    const nameInput = document.getElementById("name");
+    const phoneInput = document.getElementById("phone");
+
+    // Cho phép nhập lại thông tin
+    document.getElementById("editInfoToggle").addEventListener("change", (e) => {
+      const isEditing = e.target.checked;
+      nameInput.disabled = !isEditing;
+      phoneInput.disabled = !isEditing;
     });
-    html += `
-        </tbody>
-      </table>
-      <div class="text-end fw-bold fs-5">Tổng cộng: 
-        <span class="text-danger">${total.toLocaleString("vi-VN")}đ</span>
-      </div>
-    `;
-    container.innerHTML = html;
-  }
 
-  // 🎯 Chuyển đổi giữa địa chỉ cũ và mới
-  const savedRadio = document.getElementById("savedAddress");
-  const newRadio = document.getElementById("newAddress");
-  const defaultBox = document.getElementById("defaultAddressBox");
-  const newBox = document.getElementById("newAddressBox");
+    // Hiển thị giỏ hàng
+    const checkoutItems = JSON.parse(localStorage.getItem("checkoutItems")) || [];
+    const container = document.getElementById("checkoutContainer");
 
-  savedRadio.addEventListener("change", () => {
-    defaultBox.classList.remove("hidden");
-    newBox.classList.add("hidden");
-  });
-  newRadio.addEventListener("change", () => {
-    defaultBox.classList.add("hidden");
-    newBox.classList.remove("hidden");
-  });
-
-  // 🧾 Xử lý thanh toán
-  document.getElementById("checkoutForm").addEventListener("submit", e => {
-    e.preventDefault();
-
-    const name = document.getElementById("name").value.trim();
-    const phone = document.getElementById("phone").value.trim();
-    const payment = document.querySelector("input[name='paymentMethod']:checked").value;
-    let address = "";
-
-    if (document.getElementById("savedAddress").checked) {
-      address = document.getElementById("defaultAddress").innerText;
+    if (checkoutItems.length === 0) {
+      container.innerHTML = `<div class="alert alert-warning text-center">
+          Không có sản phẩm nào để thanh toán. 
+          <a href="product.html" class="alert-link">Quay lại mua hàng</a>
+        </div>`;
     } else {
-      const city = document.getElementById("city").value.trim();
-      const district = document.getElementById("district").value.trim();
-      const detail = document.getElementById("detailAddress").value.trim();
-      if (!city || !district || !detail) {
-        alert("Vui lòng nhập đầy đủ địa chỉ mới!");
-        return;
-      }
-      address = `${detail}, ${district}, ${city}`;
+      let total = 0;
+      let html = `
+        <table class="table table-bordered align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Hình ảnh</th>
+              <th>Tên sản phẩm</th>
+              <th>Giá</th>
+              <th>Số lượng</th>
+              <th>Tổng</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+      checkoutItems.forEach(item => {
+        const sum = item.price * item.qty;
+        total += sum;
+        html += `
+          <tr>
+            <td><img src="${item.img}" width="70"></td>
+            <td>${item.name}</td>
+            <td>${item.price.toLocaleString("vi-VN")}đ</td>
+            <td>${item.qty}</td>
+            <td>${sum.toLocaleString("vi-VN")}đ</td>
+          </tr>
+        `;
+      });
+      html += `
+          </tbody>
+        </table>
+        <div class="text-end fw-bold fs-5">Tổng cộng: 
+          <span class="text-danger">${total.toLocaleString("vi-VN")}đ</span>
+        </div>
+      `;
+      container.innerHTML = html;
     }
 
-    // Tính tổng tiền
-    const total = checkoutItems.reduce((sum, i) => sum + i.price * i.qty, 0);
+    // Chọn dạng địa chỉ
+    const savedRadio = document.getElementById("savedAddress");
+    const newRadio = document.getElementById("newAddress");
+    const defaultBox = document.getElementById("defaultAddressBox");
+    const newBox = document.getElementById("newAddressBox");
 
-// Lưu đơn hàng vào danh sách
-const order = {
-  id: Date.now(),
-  customer: { name, phone, address },
-  payment,
-  items: checkoutItems,
-  total,
-  date: new Date().toLocaleString("vi-VN"),
-  status: "chua-xu-ly"
-};
+    savedRadio.addEventListener("change", () => {
+      defaultBox.classList.remove("hidden");
+      newBox.classList.add("hidden");
+    });
+    newRadio.addEventListener("change", () => {
+      defaultBox.classList.add("hidden");
+      newBox.classList.remove("hidden");
+    });
 
-const orders = JSON.parse(localStorage.getItem("orders")) || [];
-orders.push(order);
-localStorage.setItem("orders", JSON.stringify(orders));
+    // Xử lý thanh toán
+    document.getElementById("checkoutForm").addEventListener("submit", e => {
+      e.preventDefault();
 
-// Xóa giỏ hàng tạm
-localStorage.removeItem("checkoutItems");
+      const name = document.getElementById("name").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const payment = document.querySelector("input[name='paymentMethod']:checked").value;
+      let address = "";
 
+      // Lấy địa chỉ
+      if (savedRadio.checked) {
+        address = document.getElementById("defaultAddress").innerText;
+      } else {
+        const city = document.getElementById("city").value.trim();
+        const district = document.getElementById("district").value.trim();
+        const detail = document.getElementById("detailAddress").value.trim();
+        if (!city || !district || !detail) {
+          alert("Vui lòng nhập đầy đủ địa chỉ mới!");
+          return;
+        }
+        address = `${detail}, ${district}, ${city}`;
+      }
 
+      const total = checkoutItems.reduce((sum, i) => sum + i.price * i.qty, 0);
 
-    // 🟢 Hiển thị phần xem lại đơn hàng
-    document.getElementById("checkoutForm").classList.add("hidden");
-    const summaryDiv = document.getElementById("orderSummary");
-    const content = document.getElementById("summaryContent");
+      // Lưu đơn hàng
+      const order = {
+        id: Date.now(),
+        customer: { name, phone, address },
+        payment,
+        items: checkoutItems,
+        total,
+        date: new Date().toLocaleString("vi-VN"),
+        status: "chua-xu-ly"
+      };
 
-    content.innerHTML = `
-      <p><strong>Tên:</strong> ${name}</p>
-      <p><strong>SĐT:</strong> ${phone}</p>
-      <p><strong>Địa chỉ giao hàng:</strong> ${address}</p>
-      <p><strong>Phương thức thanh toán:</strong> ${payment}</p>
-      <p><strong>Tổng tiền:</strong> ${total.toLocaleString("vi-VN")}đ</p>
-      <p><strong>Thời gian đặt:</strong> ${order.date}</p>
-    `;
+      const orders = JSON.parse(localStorage.getItem("orders")) || [];
+      orders.push(order);
+      localStorage.setItem("orders", JSON.stringify(orders));
 
-    summaryDiv.classList.remove("hidden");
-  });
+      // Xóa giỏ hàng tạm
+      localStorage.removeItem("checkoutItems");
+
+      document.getElementById("checkoutForm").classList.add("hidden");
+
+      const summaryDiv = document.getElementById("orderSummary");
+      const content = document.getElementById("summaryContent");
+
+      content.innerHTML = `
+        <p><strong>Tên:</strong> ${name}</p>
+        <p><strong>SĐT:</strong> ${phone}</p>
+        <p><strong>Địa chỉ giao hàng:</strong> ${address}</p>
+        <p><strong>Phương thức thanh toán:</strong> ${payment}</p>
+        <p><strong>Tổng tiền:</strong> ${total.toLocaleString("vi-VN")}đ</p>
+        <p><strong>Thời gian đặt:</strong> ${order.date}</p>
+      `;
+
+      summaryDiv.classList.remove("hidden");
+    });
   </script>
 </body>
+
 </html>
