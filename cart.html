@@ -67,6 +67,39 @@
     .cart-btn i {
       font-size: 18px;
     }
+
+    .user-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .user-dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      background-color: white;
+      min-width: 200px;
+      box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+      border-radius: 8px;
+      z-index: 1;
+      margin-top: 8px;
+    }
+
+    .user-dropdown:hover .user-dropdown-content {
+      display: block;
+    }
+
+    .user-dropdown-content a {
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+      transition: background 0.3s;
+    }
+
+    .user-dropdown-content a:hover {
+      background-color: #f1f1f1;
+    }
   </style>
 </head>
 
@@ -99,8 +132,23 @@
       </div>
        <!-- 🔹 Khu vực người dùng -->
         <div id="userSection" class="ms-3">
-            <a href="user/login.html" class="btn btn-outline-primary btn-sm me-2" id="loginBtn">Đăng nhập</a>
-            <a href="user/register.html" class="btn btn-primary btn-sm" id="registerBtn">Đăng ký</a>
+            <!-- Khi chưa đăng nhập -->
+            <div id="guestSection">
+                <a href="user/login.html" class="btn btn-outline-primary btn-sm me-2">Đăng nhập</a>
+                <a href="user/register.html" class="btn btn-primary btn-sm">Đăng ký</a>
+            </div>
+            
+            <!-- Khi đã đăng nhập -->
+            <div id="loggedInSection" style="display: none;" class="user-dropdown">
+                <button class="btn btn-primary btn-sm">
+                    <i class="fa fa-user me-2"></i><span id="userName">User</span>
+                </button>
+                <div class="user-dropdown-content">
+                    <a href="user/profile.html"><i class="fa fa-user me-2"></i>Tài khoản</a>
+                    <a href="user/orders.html"><i class="fa fa-box me-2"></i>Đơn hàng</a>
+                    <a href="#" id="logoutBtn"><i class="fa fa-sign-out-alt me-2"></i>Đăng xuất</a>
+                </div>
+            </div>
         </div>
     </div>
   </nav>
@@ -132,6 +180,10 @@
               <span>Tạm tính:</span>
               <span id="subtotal" class="fw-bold">0₫</span>
             </div>
+            <div class="d-flex justify-content-between mb-3">
+              <span>Phí vận chuyển:</span>
+              <span class="fw-bold">30,000₫</span>
+            </div>
             <hr>
             <div class="d-flex justify-content-between mb-4">
               <h5>Tổng cộng:</h5>
@@ -152,7 +204,10 @@
   <!-- Order History Section -->
   <div class="container-xxl py-5" id="order-history-section" style="display:none;">
     <div class="container">
-      <h3 class="mb-4">Lịch sử đơn hàng</h3>
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3>📦 Lịch sử đơn hàng của bạn</h3>
+        <span id="orderCount" class="badge bg-primary fs-6">0 đơn hàng</span>
+      </div>
       <div id="order-history"></div>
     </div>
   </div>
@@ -181,13 +236,45 @@
       document.getElementById('spinner').classList.remove('show');
     });
 
-    // Giả lập người dùng hiện tại (lưu trong localStorage)
-    const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {
-      name: "Nguyễn Văn A",
-      phone: "0909123456",
-      address: "Hà Nội"
-    };
-    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    // ====== QUẢN LÝ TRẠNG THÁI ĐĂNG NHẬP ======
+    function checkLoginStatus() {
+      const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+      const guestSection = document.getElementById('guestSection');
+      const loggedInSection = document.getElementById('loggedInSection');
+      const userNameSpan = document.getElementById('userName');
+
+      if (currentUser && (currentUser.username || currentUser.name)) {
+        // Đã đăng nhập
+        guestSection.style.display = 'none';
+        loggedInSection.style.display = 'inline-block';
+        
+        const displayName = currentUser.hoten || currentUser.name || currentUser.username;
+        userNameSpan.textContent = displayName;
+        
+        console.log('✅ Người dùng đã đăng nhập:', displayName);
+        console.log('📝 Username:', currentUser.username);
+      } else {
+        // Chưa đăng nhập
+        guestSection.style.display = 'inline-block';
+        loggedInSection.style.display = 'none';
+        console.log('❌ Chưa đăng nhập');
+      }
+    }
+
+    // Xử lý đăng xuất
+    document.addEventListener('DOMContentLoaded', () => {
+      const logoutBtn = document.getElementById('logoutBtn');
+      if (logoutBtn) {
+        logoutBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          if (confirm('Bạn có chắc muốn đăng xuất?')) {
+            localStorage.removeItem('currentUser');
+            alert('Đăng xuất thành công!');
+            window.location.href = 'trang-chu-user.html';
+          }
+        });
+      }
+    });
 
     // Khởi tạo giỏ hàng mặc định nếu chưa có
     (function initDefaultCart() {
@@ -214,6 +301,7 @@
     })();
 
     document.addEventListener('DOMContentLoaded', () => {
+      checkLoginStatus();
       renderCart();
       renderOrderHistory();
     });
@@ -298,42 +386,109 @@
       const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
       const orderHistorySection = document.getElementById('order-history-section');
       const orderHistoryContainer = document.getElementById('order-history');
+      const orderCountBadge = document.getElementById('orderCount');
 
-      if (!currentUser.phone) {
-        console.warn("Không có thông tin người dùng hiện tại!");
+      // Lấy username để so sánh
+      const currentUsername = currentUser.username || currentUser.email || currentUser.phone;
+      
+      if (!currentUsername) {
+        console.log("⚠️ Người dùng chưa đăng nhập, không hiển thị lịch sử");
+        orderHistorySection.style.display = 'none';
         return;
       }
 
-      const userOrders = orders.filter(order => order.customer?.phone === currentUser.phone);
+      console.log('🔍 Tìm đơn hàng cho username:', currentUsername);
+      console.log('📦 Tổng số đơn hàng trong hệ thống:', orders.length);
+
+      // Lọc đơn hàng của user hiện tại theo USERNAME
+      const userOrders = orders.filter(order => {
+        const orderUsername = order.username || order.customer?.email || order.customer?.phone;
+        const isMatch = orderUsername === currentUsername;
+        
+        if (isMatch) {
+          console.log('✅ Tìm thấy đơn hàng:', order.id, 'của', orderUsername);
+        }
+        
+        return isMatch;
+      });
+
+      console.log(`📊 Tổng số đơn hàng của ${currentUsername}:`, userOrders.length);
 
       if (userOrders.length === 0) {
         orderHistorySection.style.display = 'block';
-        orderHistoryContainer.innerHTML = `<p class="text-muted">Bạn chưa có đơn hàng nào.</p>`;
+        orderCountBadge.textContent = '0 đơn hàng';
+        orderHistoryContainer.innerHTML = `
+          <div class="alert alert-info">
+            <i class="fa fa-info-circle me-2"></i>
+            Bạn chưa có đơn hàng nào. Hãy <a href="product.html" class="alert-link">mua sắm ngay</a>!
+          </div>`;
         return;
       }
 
       orderHistorySection.style.display = 'block';
+      orderCountBadge.textContent = `${userOrders.length} đơn hàng`;
       orderHistoryContainer.innerHTML = '';
 
       userOrders.forEach((order, index) => {
         let itemsList = '';
-        order.items.forEach(item => {
-          itemsList += `<li>${item.name} (x${item.qty}) - ${item.price.toLocaleString('vi-VN')}₫</li>`;
+        (order.items || []).forEach(item => {
+          itemsList += `<li>${item.name} (x${item.qty}) - ${(item.price * item.qty).toLocaleString('vi-VN')}₫</li>`;
         });
 
+        const totalAmount = order.totals?.total || order.total || 0;
+        const orderDate = order.date ? new Date(order.date).toLocaleString('vi-VN') : 'Không rõ';
+
         const orderHTML = `
-          <div class="bg-light rounded p-4 mb-3">
-            <h5 class="mb-2">Đơn hàng #${index + 1}</h5>
-            <p><strong>Ngày đặt:</strong> ${new Date(order.date).toLocaleString('vi-VN')}</p>
-            <p><strong>Sản phẩm:</strong></p>
-            <ul>${itemsList}</ul>
-            <p><strong>Tổng tiền:</strong> ${order.total.toLocaleString('vi-VN')}₫</p>
+          <div class="bg-white border rounded p-4 mb-3 shadow-sm">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="mb-0 text-primary">
+                <i class="fa fa-receipt me-2"></i>Đơn hàng #${order.id || (index + 1)}
+              </h5>
+              <span class="badge ${getStatusClass(order.status)}">${getStatusText(order.status)}</span>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <p class="mb-2"><strong><i class="fa fa-calendar me-2"></i>Ngày đặt:</strong> ${orderDate}</p>
+                <p class="mb-2"><strong><i class="fa fa-user me-2"></i>Người đặt:</strong> ${order.customer?.name || 'Không có thông tin'}</p>
+              </div>
+              <div class="col-md-6">
+                <p class="mb-2"><strong><i class="fa fa-map-marker-alt me-2"></i>Địa chỉ:</strong> ${order.customer?.address || 'Không có'}</p>
+                <p class="mb-2"><strong><i class="fa fa-phone me-2"></i>SĐT:</strong> ${order.customer?.phone || 'Không có'}</p>
+              </div>
+            </div>
+            <p class="mb-2"><strong><i class="fa fa-box me-2"></i>Sản phẩm:</strong></p>
+            <ul class="mb-3">${itemsList}</ul>
+            <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+              <span><strong>Tổng tiền:</strong></span>
+              <span class="text-primary fw-bold fs-5">${totalAmount.toLocaleString('vi-VN')}₫</span>
+            </div>
           </div>`;
       
         orderHistoryContainer.insertAdjacentHTML('beforeend', orderHTML);
       });
     }
 
+    function getStatusText(status) {
+      const statusMap = {
+        'chua-xu-ly': 'Chưa xử lý',
+        'dang-giao': 'Đang giao',
+        'hoan-thanh': 'Hoàn thành',
+        'da-huy': 'Đã hủy'
+      };
+      return statusMap[status] || 'Chưa xác định';
+    }
+
+    function getStatusClass(status) {
+      const classMap = {
+        'chua-xu-ly': 'bg-warning',
+        'dang-giao': 'bg-info',
+        'hoan-thanh': 'bg-success',
+        'da-huy': 'bg-danger'
+      };
+      return classMap[status] || 'bg-secondary';
+    }
+
+    // ====== THANH TOÁN ======
     document.getElementById("checkoutBtn").addEventListener("click", () => {
       const cart = JSON.parse(localStorage.getItem("cart")) || [];
 
@@ -342,20 +497,61 @@
         return;
       }
 
+      // Kiểm tra đăng nhập
       const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+      if (!currentUser || !(currentUser.username || currentUser.name)) {
+        if (confirm("Bạn cần đăng nhập để thanh toán. Chuyển đến trang đăng nhập?")) {
+          window.location.href = "user/login.html";
+        }
+        return;
+      }
+
+      // Tính toán
+      const subtotal = cart.reduce((sum, item) => sum + item.qty * item.price, 0);
+      const shipping = 30000;
+      const discount = 0;
+      const total = subtotal + shipping - discount;
+
+      // Tạo đơn hàng với USERNAME
       const order = {
-        date: Date.now(),
-        items: cart,
-        total: cart.reduce((sum, item) => sum + item.qty * item.price, 0) + 30000,
-        customer: currentUser
+        id: `ORD-${Date.now()}`,
+        date: new Date().toISOString().slice(0, 10),
+        username: currentUser.username || currentUser.email || currentUser.phone, // USERNAME ĐỂ LỌC
+        customer: {
+          name: currentUser.hoten || currentUser.name || 'Không có tên',
+          phone: currentUser.phone || '',
+          email: currentUser.email || '',
+          address: currentUser.address || ''
+        },
+        items: cart.map(item => ({
+          name: item.name,
+          qty: item.qty,
+          price: item.price
+        })),
+        note: '',
+        status: 'chua-xu-ly',
+        totals: {
+          subtotal: subtotal,
+          shipping: shipping,
+          discount: discount,
+          total: total
+        }
       };
 
+      console.log('📦 Tạo đơn hàng mới:', order);
+
+      // Lưu vào orders
       const orders = JSON.parse(localStorage.getItem('orders') || '[]');
       orders.push(order);
       localStorage.setItem('orders', JSON.stringify(orders));
+
+      // Xóa giỏ hàng
       localStorage.removeItem('cart');
 
-      window.location.href = "checkout.html";
+      alert('✅ Đặt hàng thành công!\n\nMã đơn: ' + order.id + '\nTổng tiền: ' + total.toLocaleString('vi-VN') + '₫');
+      
+      // Reload để cập nhật lịch sử
+      window.location.reload();
     });
   </script>
 </body>

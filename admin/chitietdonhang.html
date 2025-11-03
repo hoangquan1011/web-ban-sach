@@ -1,4 +1,4 @@
-<!-- chitietdonhang.html (phiên bản form hoàn chỉnh) -->
+<!-- chitietdonhang.html (phiên bản fixed - hiển thị sản phẩm từ cart) -->
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -15,7 +15,7 @@
 
     /* Banner */
     .admin-banner {
-      background: url('img/banner.jpg') center/cover no-repeat;
+      background: url('../img/banner.jpg') center/cover no-repeat;
       height: 220px; display: flex; align-items: center; justify-content: center;
       position: relative; border-radius: 12px; margin-bottom: 2rem; overflow: hidden;
     }
@@ -232,8 +232,12 @@
       const params = new URLSearchParams(window.location.search);
       const orderIdParam = params.get('id');
 
+      console.log('🔍 Loading order:', orderIdParam);
+      console.log('📦 All orders:', orders);
+
       if (orderIdParam) {
         order = orders.find(o => String(o.id) === String(orderIdParam)) || null;
+        console.log('✅ Found order:', order);
       }
 
       if (!order) {
@@ -247,6 +251,41 @@
           status: 'chua-xu-ly',
           totals: { subtotal: 0, shipping: 30000, discount: 0, total: 0 }
         };
+      } else {
+        // Chuẩn hóa dữ liệu đơn hàng từ cart
+        if (!order.items) order.items = [];
+        
+        // Xử lý trường hợp items có thể là products hoặc cartItems
+        if (!order.items.length && order.products) {
+          console.log('🔄 Converting products to items');
+          order.items = order.products;
+        }
+        if (!order.items.length && order.cartItems) {
+          console.log('🔄 Converting cartItems to items');
+          order.items = order.cartItems;
+        }
+        
+        // Chuẩn hóa cấu trúc từng item (xử lý nhiều định dạng khác nhau)
+        order.items = order.items.map(item => {
+          console.log('🔧 Processing item:', item);
+          return {
+            name: item.name || item.productName || item.title || '',
+            qty: item.qty || item.quantity || item.amount || 1,
+            price: item.price || item.unitPrice || item.pricePerUnit || 0
+          };
+        });
+
+        console.log('✅ Normalized items:', order.items);
+
+        // Chuẩn hóa totals
+        if (!order.totals) {
+          order.totals = {
+            subtotal: order.subtotal || 0,
+            shipping: order.shipping || 30000,
+            discount: order.discount || 0,
+            total: order.total || order.totalAmount || 0
+          };
+        }
       }
 
       // Render form
@@ -267,6 +306,8 @@
 
     // ====== SẢN PHẨM ======
     function renderItems() {
+      console.log('🎨 Rendering items:', order.items);
+      
       if (!order.items || order.items.length === 0) {
         tbody.innerHTML = `<tr><td colspan="6" class="text-muted">Chưa có sản phẩm. Nhấn <strong>Thêm dòng</strong> để bắt đầu.</td></tr>`;
         return;
@@ -377,6 +418,8 @@
         orders[idx] = order;
       }
       localStorage.setItem('orders', JSON.stringify(orders));
+
+      console.log('💾 Saved order:', order);
 
       statusMessage.textContent = 'Đã lưu đơn hàng thành công!';
       setTimeout(() => statusMessage.textContent = '', 2500);

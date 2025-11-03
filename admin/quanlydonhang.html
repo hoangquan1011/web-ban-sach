@@ -36,7 +36,11 @@
       padding: 1.5rem;
       height: 100%;
     }
-    .menu-item { display: flex; align-items: center; color: #2d6a4f; font-weight: 600; text-decoration: none; margin-bottom: 1rem; transition: .3s; }
+    .menu-item { 
+      display: flex; align-items: center; color: #2d6a4f; 
+      font-weight: 600; text-decoration: none; margin-bottom: 1rem; 
+      transition: .3s; 
+    }
     .menu-item:hover { color: #40916c; transform: translateX(5px); }
     .menu-item.active { color: #1b4332; font-weight: 700; }
     .content-area {
@@ -49,6 +53,29 @@
       padding: 4px 10px; border-radius: 4px; text-decoration: none;
     }
     .btn-view:hover { background: #1b4332; color: #fff; }
+    
+    .status-badge {
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .status-chua-xu-ly { background: #fff3cd; color: #856404; }
+    .status-dang-giao { background: #cfe2ff; color: #084298; }
+    .status-hoan-thanh { background: #d1e7dd; color: #0f5132; }
+    .status-da-huy { background: #f8d7da; color: #842029; }
+
+    .username-display {
+      font-weight: 600;
+      color: #2d6a4f;
+    }
+    
+    .filter-section {
+      background: #f8f9fa;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+    }
   </style>
 </head>
 
@@ -79,15 +106,79 @@
             <button class="btn btn-sm btn-success">Đăng xuất</button>
           </div>
 
+          <!-- Bộ lọc -->
+          <div class="filter-section">
+            <div class="row g-3 align-items-end">
+              <div class="col-md-3">
+                <label class="form-label fw-semibold">Tìm theo mã đơn</label>
+                <input type="text" id="searchOrderId" class="form-control" placeholder="ORD-...">
+              </div>
+              <div class="col-md-3">
+                <label class="form-label fw-semibold">Tìm theo username</label>
+                <input type="text" id="searchUsername" class="form-control" placeholder="Nhập username">
+              </div>
+              <div class="col-md-2">
+                <label class="form-label fw-semibold">Trạng thái</label>
+                <select id="filterStatus" class="form-select">
+                  <option value="">Tất cả</option>
+                  <option value="chua-xu-ly">Chưa xử lý</option>
+                  <option value="dang-giao">Đang giao</option>
+                  <option value="hoan-thanh">Hoàn thành</option>
+                  <option value="da-huy">Đã hủy</option>
+                </select>
+              </div>
+              <div class="col-md-2">
+                <button id="btnFilter" class="btn btn-primary w-100">
+                  <i class="fa fa-filter me-2"></i>Lọc
+                </button>
+              </div>
+              <div class="col-md-2">
+                <button id="btnReset" class="btn btn-outline-secondary w-100">
+                  <i class="fa fa-redo me-2"></i>Đặt lại
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Thống kê nhanh -->
+          <div class="row mb-4">
+            <div class="col-md-3">
+              <div class="bg-warning bg-opacity-25 p-3 rounded text-center">
+                <h5 class="mb-0" id="countChuaXuLy">0</h5>
+                <small>Chưa xử lý</small>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="bg-info bg-opacity-25 p-3 rounded text-center">
+                <h5 class="mb-0" id="countDangGiao">0</h5>
+                <small>Đang giao</small>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="bg-success bg-opacity-25 p-3 rounded text-center">
+                <h5 class="mb-0" id="countHoanThanh">0</h5>
+                <small>Hoàn thành</small>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="bg-danger bg-opacity-25 p-3 rounded text-center">
+                <h5 class="mb-0" id="countDaHuy">0</h5>
+                <small>Đã hủy</small>
+              </div>
+            </div>
+          </div>
+
           <table class="table table-bordered table-striped align-middle text-center">
             <thead class="table-success">
               <tr>
                 <th>STT</th>
                 <th>Mã đơn</th>
-                <th>Người đặt</th>
+                <th>Tài khoản</th>
+                <th>Họ tên</th>
                 <th>Ngày đặt</th>
                 <th>Tình trạng</th>
                 <th>Địa chỉ</th>
+                <th>Tổng tiền</th>
                 <th>Chi tiết</th>
               </tr>
             </thead>
@@ -99,38 +190,120 @@
   </div>
 
 <script>
-  const orders = JSON.parse(localStorage.getItem("orders")) || [];
+  let allOrders = JSON.parse(localStorage.getItem("orders")) || [];
+  let filteredOrders = [...allOrders];
   const table = document.getElementById("orderTable");
 
-  const renderOrders = () => {
-    if (orders.length === 0) {
-      table.innerHTML = `<tr><td colspan="7" class="text-center text-muted">Chưa có đơn hàng nào</td></tr>`;
+  // Render bảng đơn hàng
+  const renderOrders = (ordersToRender = filteredOrders) => {
+    if (ordersToRender.length === 0) {
+      table.innerHTML = `<tr><td colspan="9" class="text-center text-muted">Chưa có đơn hàng nào</td></tr>`;
       return;
     }
-    table.innerHTML = orders.map((order, index) => `
-      <tr>
-        <td>${index + 1}</td>
-        <td>${order.id}</td>
-        <td>${order.customer?.name || "Không rõ"}</td>
-        <td>${order.date}</td>
-        <td>${convertStatus(order.status)}</td>
-        <td>${order.customer?.address || "Không có địa chỉ"}</td>
-        <td><a href="chitietdonhang.html?id=${order.id}" class="btn-view">Xem</a></td>
-      </tr>
-    `).join("");
+
+    table.innerHTML = ordersToRender.map((order, index) => {
+      const username = order.username || order.customer?.email || order.customer?.phone || "Không rõ";
+      const customerName = order.customer?.name || "Không có thông tin";
+      const totalAmount = order.totals?.total || order.total || 0;
+      
+      return `
+        <tr>
+          <td>${index + 1}</td>
+          <td><strong>${order.id}</strong></td>
+          <td><span class="username-display">${username}</span></td>
+          <td>${customerName}</td>
+          <td>${formatDate(order.date)}</td>
+          <td>${getStatusBadge(order.status)}</td>
+          <td>${order.customer?.address || "Không có địa chỉ"}</td>
+          <td><strong class="text-primary">${totalAmount.toLocaleString('vi-VN')}₫</strong></td>
+          <td><a href="chitietdonhang.html?id=${order.id}" class="btn-view">Xem</a></td>
+        </tr>
+      `;
+    }).join("");
   };
 
-  const convertStatus = (status) => {
-    switch (status) {
-      case "chua-xu-ly": return "Chưa xử lý"; 
-      case "dang-giao": return "Đang giao"; 
-      case "hoan-thanh": return "Hoàn thành"; 
-      case "da-huy": return "Đã hủy";
-      default: return "Không xác định"; 
-    }
+  // Format ngày tháng
+  const formatDate = (dateString) => {
+    if (!dateString) return "Không rõ";
+    const date = new Date(dateString);
+    if (isNaN(date)) return dateString;
+    return date.toLocaleDateString('vi-VN');
   };
 
+  // Convert status sang badge
+  const getStatusBadge = (status) => {
+    const statusMap = {
+      'chua-xu-ly': { text: 'Chưa xử lý', class: 'status-chua-xu-ly' },
+      'dang-giao': { text: 'Đang giao', class: 'status-dang-giao' },
+      'hoan-thanh': { text: 'Hoàn thành', class: 'status-hoan-thanh' },
+      'da-huy': { text: 'Đã hủy', class: 'status-da-huy' }
+    };
+    const statusInfo = statusMap[status] || { text: 'Không xác định', class: '' };
+    return `<span class="status-badge ${statusInfo.class}">${statusInfo.text}</span>`;
+  };
+
+  // Thống kê số lượng đơn theo trạng thái
+  const updateStatistics = (orders = filteredOrders) => {
+    const stats = {
+      'chua-xu-ly': 0,
+      'dang-giao': 0,
+      'hoan-thanh': 0,
+      'da-huy': 0
+    };
+
+    orders.forEach(order => {
+      if (stats.hasOwnProperty(order.status)) {
+        stats[order.status]++;
+      }
+    });
+
+    document.getElementById('countChuaXuLy').textContent = stats['chua-xu-ly'];
+    document.getElementById('countDangGiao').textContent = stats['dang-giao'];
+    document.getElementById('countHoanThanh').textContent = stats['hoan-thanh'];
+    document.getElementById('countDaHuy').textContent = stats['da-huy'];
+  };
+
+  // Bộ lọc
+  const applyFilter = () => {
+    const searchOrderId = document.getElementById('searchOrderId').value.toLowerCase().trim();
+    const searchUsername = document.getElementById('searchUsername').value.toLowerCase().trim();
+    const filterStatus = document.getElementById('filterStatus').value;
+
+    filteredOrders = allOrders.filter(order => {
+      const matchOrderId = !searchOrderId || (order.id || '').toLowerCase().includes(searchOrderId);
+      
+      const username = (order.username || order.customer?.email || order.customer?.phone || '').toLowerCase();
+      const matchUsername = !searchUsername || username.includes(searchUsername);
+      
+      const matchStatus = !filterStatus || order.status === filterStatus;
+
+      return matchOrderId && matchUsername && matchStatus;
+    });
+
+    renderOrders(filteredOrders);
+    updateStatistics(filteredOrders);
+  };
+
+  // Reset bộ lọc
+  const resetFilter = () => {
+    document.getElementById('searchOrderId').value = '';
+    document.getElementById('searchUsername').value = '';
+    document.getElementById('filterStatus').value = '';
+    
+    filteredOrders = [...allOrders];
+    renderOrders(filteredOrders);
+    updateStatistics(filteredOrders);
+  };
+
+  // Event listeners
+  document.getElementById('btnFilter').addEventListener('click', applyFilter);
+  document.getElementById('btnReset').addEventListener('click', resetFilter);
+
+  // Khởi tạo
   renderOrders();
+  updateStatistics();
+  
+  console.log('📦 Loaded orders:', allOrders);
 </script>
 </body>
 </html>
