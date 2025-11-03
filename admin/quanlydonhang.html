@@ -31,20 +31,21 @@
       color: #eafbea; z-index: 2;
     }
 
-    /* Sidebar */
+
+
+    /* ===== Sidebar ===== */
     .sidebar {
-      background-color: #fff; border-radius: 1rem;
+      background-color: #ffffff;
+      border-radius: 1rem;
       box-shadow: 0 3px 10px rgba(0,0,0,0.1);
       padding: 1.5rem;
+      height: 100%;
     }
-    .menu-item {
-      display: flex; align-items: center;
-      font-size: 1.1rem; color: #2d6a4f; font-weight: 600;
-      text-decoration: none; margin-bottom: 1rem;
-      transition: all 0.3s ease;
-    }
+    .sidebar h5 { color: #2d6a4f; font-weight: 700; margin-bottom: 1rem; }
+    .menu-item { display: flex; align-items: center; color: #2d6a4f; font-weight: 600; text-decoration: none; margin-bottom: 1rem; transition: .3s; }
     .menu-item:hover { color: #40916c; transform: translateX(5px); }
-    .menu-item span { font-size: 1.5rem; margin-right: 0.75rem; }
+    .menu-item.active { color: #1b4332; font-weight: 700; }
+    .menu-item span.emoji { font-size: 1.5rem; margin-right: .75rem; }
 
     /* Content */
     .content-area {
@@ -74,8 +75,8 @@
         <div class="sidebar">
           <h5>📋 Menu quản lý</h5>
         
-          <a href="quanlysanpham.html" class="menu-item active"><span class="emoji">📘</span> Quản lý Sản phẩm</a>
-          <a href="quanlydonhang.html" class="menu-item"><span class="emoji">🧾</span> Quản lý Đơn hàng</a>
+          <a href="quanlysanpham.html" class="menu-item"><span class="emoji">📘</span> Quản lý Sản phẩm</a>
+          <a href="quanlydonhang.html" class="menu-item active"><span class="emoji">🧾</span> Quản lý Đơn hàng</a>
           <a href="user.html" class="menu-item"><span class="emoji">👤</span> Quản lý Người dùng</a>
           <a href="stock.html" class="menu-item"><span class="emoji">📦</span> Quản lý Kho</a>
           <a href="pricing.html" class="menu-item"><span class="emoji">💲</span> Quản lý Giá</a>

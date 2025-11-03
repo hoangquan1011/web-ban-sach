@@ -15,6 +15,21 @@
     .sidebar { background:#fff; border-radius:1rem; padding:1.5rem; box-shadow:0 3px 10px rgba(0,0,0,0.08); }
     .menu-item{ display:flex; align-items:center; color:#2d6a4f; font-weight:600; text-decoration:none; margin-bottom:0.8rem; }
     .content-area{ background:#fff; padding:1.5rem; border-radius:1rem; box-shadow:0 3px 8px rgba(0,0,0,0.04); min-height:65vh; }
+  
+    /* ===== Sidebar ===== */
+    .sidebar {
+      background-color: #ffffff;
+      border-radius: 1rem;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      padding: 1.5rem;
+      height: 100%;
+    }
+    .sidebar h5 { color: #2d6a4f; font-weight: 700; margin-bottom: 1rem; }
+    .menu-item { display: flex; align-items: center; color: #2d6a4f; font-weight: 600; text-decoration: none; margin-bottom: 1rem; transition: .3s; }
+    .menu-item:hover { color: #40916c; transform: translateX(5px); }
+    .menu-item.active { color: #1b4332; font-weight: 700; }
+    .menu-item span.emoji { font-size: 1.5rem; margin-right: .75rem; }
+  
   </style>
 </head>
 <body>
@@ -27,16 +42,16 @@
     </div>
 
     <div class="row g-4">
-      <div class="col-lg-3">
+      <!-- Sidebar -->
+      <div class="col-lg-3 mb-4">
         <div class="sidebar">
-          <h5 class="text-success">📋 Menu quản lý</h5>
-          <a href="giao-dien-chinh-admin.html" class="menu-item"><span class="me-2">🏠</span> Trang chủ Admin</a>
-          <a href="pricing.html" class="menu-item"><span class="me-2">💲</span> Quản lý Giá</a>
-          <hr>
-          <div class="mt-3">
-            <button id="btnLoad" class="btn btn-outline-success btn-sm">Làm mới</button>
-            <div class="text-muted small mt-2">Thiết lập kế thừa % theo loại hoặc % theo sản phẩm</div>
-          </div>
+          <h5>📋 Menu quản lý</h5>
+          <a href="quanlysanpham.html" class="menu-item"><span class="emoji">📘</span> Quản lý Sản phẩm</a>
+          <a href="quanlydonhang.html" class="menu-item ><span class="emoji">🧾</span> Quản lý Đơn hàng</a>
+          <a href="user.html" class="menu-item"><span class="emoji">👤</span> Quản lý Người dùng</a>
+          <a href="stock.html" class="menu-item"><span class="emoji">📦</span> Quản lý Kho</a>
+          <a href="pricing.html" class="menu-item active"><span class="emoji">💲</span> Quản lý Giá</a>
+          <a href="import.html" class="menu-item"><span class="emoji">🚚</span> Nhập hàng</a>
         </div>
       </div>
 
