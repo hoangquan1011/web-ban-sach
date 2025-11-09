@@ -728,18 +728,18 @@
             </div>
             ${giamgia > 0 ? `<div class="discount-badge">-${giamgia}%</div>` : ""}
             <div class="product-status ${p.an ? 'status-hidden' : 'status-visible'}">
-              <i class="fas fa-circle"></i> ${p.an ? "Đang ẩn" : "Đang hiển thị"}
+               ${p.an ? "Đang ẩn" : "Đang hiển thị"}
             </div>
           </div>
           <div class="product-actions">
             <button class="btn-action btn-edit" onclick="openEditModal(${index})">
-              <i class="fas fa-edit"></i> Sửa
+               Sửa
             </button>
             <button class="btn-action btn-toggle" onclick="toggleHide(${index})">
-              <i class="fas fa-eye${p.an ? '-slash' : ''}"></i> ${p.an ? "Hiện" : "Ẩn"}
+             ${p.an ? "Hiện" : "Ẩn"}
             </button>
             <button class="btn-action btn-delete" onclick="deleteProduct(${index})">
-              <i class="fas fa-trash"></i> Xóa
+               Xóa
             </button>
           </div>
         `;
