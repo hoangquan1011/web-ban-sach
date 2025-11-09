@@ -75,7 +75,7 @@
               </div>
               <div class="col-md-4">
                 <label class="form-label fw-semibold">Ngày đặt</label>
-                <input type="date" class="form-control" id="orderDate">
+                <input type="datetime-local" class="form-control" id="orderDate">
               </div>
               <div class="col-md-4">
                 <label class="form-label fw-semibold">Tình trạng</label>
@@ -171,6 +171,18 @@
     // ====== TIỆN ÍCH ======
     const fmt = (n) => (Number(n) || 0).toLocaleString('vi-VN') + 'đ';
     const parseNum = (v) => Math.max(0, Number(v) || 0);
+    const pad2 = (value) => String(value).padStart(2, '0');
+    const toDatetimeLocalValue = (value) => {
+      if (!value) return '';
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return '';
+      return `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())}T${pad2(date.getHours())}:${pad2(date.getMinutes())}`;
+    };
+    const inputValueToISO = (value) => {
+      if (!value) return new Date().toISOString();
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? new Date().toISOString() : date.toISOString();
+    };
 
     // Map trạng thái UI <-> nội bộ (tương thích trang cũ)
     const uiToInternal = { 'moi-dat': 'chua-xu-ly', 'da-xu-ly': 'hoan-thanh', 'da-giao': 'dang-giao', 'huy': 'da-huy' };
@@ -215,7 +227,7 @@
         // Tạo mới
         order = {
           id: `ORD-${Date.now()}`,
-          date: new Date().toISOString().slice(0,10),
+          date: new Date().toISOString(),
           customer: { name: '', phone: '', email: '', address: '' },
           items: [],
           note: '',
@@ -259,9 +271,12 @@
         }
       }
 
+      const parsedDate = order.date ? new Date(order.date) : new Date();
+      order.date = Number.isNaN(parsedDate.getTime()) ? new Date().toISOString() : parsedDate.toISOString();
+
       // Render form
       orderIdInput.value = order.id;
-      orderDateInput.value = order.date || new Date().toISOString().slice(0,10);
+      orderDateInput.value = toDatetimeLocalValue(order.date) || toDatetimeLocalValue(new Date().toISOString());
       orderStatusSelect.value = internalToUi[order.status] || 'moi-dat';
       nameInput.value = order.customer?.name || '';
       phoneInput.value = order.customer?.phone || '';
@@ -339,7 +354,7 @@
       const total = Math.max(0, subtotal + shipping - discount);
 
       order.totals = { subtotal, shipping, discount, total };
-      order.date = orderDateInput.value || new Date().toISOString().slice(0,10);
+      order.date = inputValueToISO(orderDateInput.value);
 
       subtotalEl.textContent = fmt(subtotal);
       grandEl.textContent = fmt(total);
@@ -359,7 +374,7 @@
 
       // Đồng bộ state từ form -> object
       order.id = String(orderIdInput.value).trim();
-      order.date = orderDateInput.value || new Date().toISOString().slice(0,10);
+      order.date = inputValueToISO(orderDateInput.value);
       order.status = uiToInternal[orderStatusSelect.value] || 'chua-xu-ly';
       order.customer = {
         name: nameInput.value.trim(),

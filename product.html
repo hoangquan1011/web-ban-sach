@@ -506,15 +506,11 @@
             }
 
             if (btn.classList.contains("mua-ngay-btn")) {
-                const order = [{
-                    id: product.id,
-                    name: product.ten,
-                    price: parseFloat(product.gia),
-                    img: product.hinh,
-                    qty: 1
-                }];
-                localStorage.setItem("checkoutItems", JSON.stringify(order));
-                window.location.href = "checkout.html";
+                sessionStorage.setItem(
+                  "redirectFromBuyNow",
+                  JSON.stringify({ productId: product.id, at: Date.now() })
+                );
+                window.location.href = "cart.html";
             }
         });
 

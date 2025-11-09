@@ -197,7 +197,7 @@
     if (!dateString) return "Không rõ";
     const date = new Date(dateString);
     if (isNaN(date)) return dateString;
-    return date.toLocaleDateString('vi-VN');
+    return date.toLocaleString('vi-VN');
   };
 
   // Convert status sang badge

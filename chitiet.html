@@ -437,7 +437,6 @@
 
         // ✅ Mua ngay
         function buyNow() {
-            // Kiểm tra đăng nhập
             const currentUser = JSON.parse(localStorage.getItem('currentUser'));
             if (!currentUser) {
                 alert('⚠️ Bạn cần đăng nhập để mua hàng!');
@@ -445,19 +444,13 @@
                 return;
             }
 
+            addToCart();
             const product = JSON.parse(localStorage.getItem('selectedProduct'));
-            const qty = parseInt(document.getElementById('quantity').value);
-
-            const order = [{
-                id: product.id,
-                name: product.ten,
-                price: parseFloat(product.gia),
-                img: product.hinh,
-                qty: qty
-            }];
-
-            localStorage.setItem('checkoutItems', JSON.stringify(order));
-            window.location.href = 'checkout.html';
+            sessionStorage.setItem(
+                'redirectFromBuyNow',
+                JSON.stringify({ productId: product?.id, at: Date.now() })
+            );
+            window.location.href = 'cart.html';
         }
 
         // ✅ Hiển thị toast thông báo

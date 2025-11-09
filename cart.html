@@ -155,7 +155,21 @@
         <div class="col-lg-8"></div>
         <div class="col-lg-4">
           <div class="bg-light rounded p-4">
-            <h5 class="mb-3">Tóm tắt đơn hàng</h5>
+            <h5 class="mb-3 text-success">Thông tin thanh toán</h5>
+            <div class="mb-3">
+              <small class="text-muted text-uppercase">Khách hàng</small>
+              <div class="fw-semibold" id="summaryName">Chưa đăng nhập</div>
+            </div>
+            <div class="mb-3">
+              <small class="text-muted text-uppercase">Số điện thoại</small>
+              <div class="fw-semibold" id="summaryPhone">---</div>
+            </div>
+            <div class="mb-4">
+              <label for="summaryAddress" class="form-label">Địa chỉ giao hàng</label>
+              <textarea id="summaryAddress" class="form-control" rows="2" placeholder="Nhập địa chỉ nhận hàng"></textarea>
+              <div class="form-text" id="addressHint">Nhập địa chỉ nhận hàng cho đơn này.</div>
+            </div>
+            <h6 class="mb-3">Tóm tắt đơn hàng</h6>
             <div class="d-flex justify-content-between mb-3">
               <span>Tạm tính:</span>
               <span id="subtotal" class="fw-bold">0₫</span>
@@ -308,6 +322,8 @@
     document.addEventListener('DOMContentLoaded', () => {
       checkLoginStatus();
       renderCart();
+      renderCheckoutInfoCard();
+      handleBuyNowRedirect();
       renderOrderHistory();
     });
 
@@ -386,6 +402,43 @@
       });
     }
 
+    function renderCheckoutInfoCard() {
+      const nameEl = document.getElementById('summaryName');
+      const phoneEl = document.getElementById('summaryPhone');
+      const addressInput = document.getElementById('summaryAddress');
+      const addressHint = document.getElementById('addressHint');
+      if (!nameEl || !phoneEl || !addressInput) return;
+
+      const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+      const isLoggedIn = Boolean(currentUser && (currentUser.username || currentUser.name));
+
+      if (isLoggedIn) {
+        nameEl.textContent = currentUser.hoten || currentUser.name || currentUser.username || 'Khách hàng';
+        phoneEl.textContent = currentUser.phone || 'Chưa cập nhật';
+        addressInput.disabled = false;
+        if (!addressInput.dataset.dirty) {
+          addressInput.value = currentUser.address || '';
+        }
+        addressInput.placeholder = 'Nhập địa chỉ nhận hàng';
+        if (addressHint) {
+          addressHint.textContent = 'Bạn có thể cập nhật địa chỉ giao hàng cho đơn này.';
+        }
+      } else {
+        nameEl.textContent = 'Chưa đăng nhập';
+        phoneEl.textContent = '---';
+        addressInput.value = '';
+        addressInput.disabled = true;
+        addressInput.placeholder = 'Đăng nhập để nhập địa chỉ';
+        if (addressHint) {
+          addressHint.textContent = 'Vui lòng đăng nhập để nhập địa chỉ giao hàng.';
+        }
+      }
+
+      addressInput.addEventListener('input', () => {
+        addressInput.dataset.dirty = 'true';
+      }, { once: true });
+    }
+
     function renderOrderHistory() {
       const orders = JSON.parse(localStorage.getItem('orders') || '[]');
       const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
@@ -454,7 +507,7 @@
             <div class="row mb-3">
               <div class="col-md-6">
                 <p class="mb-2"><strong><i class="fa fa-calendar me-2"></i>Ngày đặt:</strong> ${orderDate}</p>
-                <p class="mb-2"><strong><i class="fa fa-user me-2"></i>Người đặt:</strong> ${order.customer?.name || 'Không có thông tin'}</p>
+                <p class="mb-2"><strong><i class="fa fa-user me-2"></i>Người đặt:</strong> ${order.username || order.customer?.name || 'Không có thông tin'}</p>
               </div>
               <div class="col-md-6">
                 <p class="mb-2"><strong><i class="fa fa-map-marker-alt me-2"></i>Địa chỉ:</strong> ${order.customer?.address || 'Không có'}</p>
@@ -493,6 +546,27 @@
       return classMap[status] || 'bg-secondary';
     }
 
+    function handleBuyNowRedirect() {
+      const payload = sessionStorage.getItem('redirectFromBuyNow');
+      if (!payload) return;
+      sessionStorage.removeItem('redirectFromBuyNow');
+
+      const cartContainer = document.getElementById('cart-items');
+      if (cartContainer) {
+        const notice = document.createElement('div');
+        notice.className = 'alert alert-success d-flex align-items-center justify-content-between flex-column flex-sm-row gap-2';
+        notice.innerHTML = `
+          <div><i class="fa fa-check-circle me-2"></i>Sản phẩm bạn chọn đã có trong giỏ. Vui lòng kiểm tra lại và xác nhận thanh toán.</div>
+          <button type="button" class="btn-close"></button>
+        `;
+        notice.querySelector('.btn-close').addEventListener('click', () => notice.remove());
+        cartContainer.prepend(notice);
+        setTimeout(() => notice.remove(), 5000);
+      }
+
+      document.getElementById('checkoutBtn')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
     // ====== THANH TOÁN ======
     document.getElementById("checkoutBtn").addEventListener("click", () => {
       const cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -517,16 +591,35 @@
       const discount = 0;
       const total = subtotal + shipping - discount;
 
+      const addressInput = document.getElementById('summaryAddress');
+      let shippingAddress = addressInput ? addressInput.value.trim() : '';
+      if (!shippingAddress && currentUser.address) {
+        shippingAddress = currentUser.address;
+      }
+
+      if (!shippingAddress) {
+        const confirmEmpty = confirm('Bạn chưa nhập địa chỉ giao hàng. Tiếp tục và để nhân viên liên hệ bổ sung?');
+        if (!confirmEmpty) return;
+      }
+
+      if (shippingAddress && shippingAddress !== (currentUser.address || '')) {
+        currentUser.address = shippingAddress;
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+      }
+
+      const timestamp = new Date();
+      const isoTimestamp = timestamp.toISOString();
+
       // Tạo đơn hàng với USERNAME
       const order = {
         id: `ORD-${Date.now()}`,
-        date: new Date().toISOString().slice(0, 10),
+        date: isoTimestamp,
         username: currentUser.username || currentUser.email || currentUser.phone, // USERNAME ĐỂ LỌC
         customer: {
           name: currentUser.hoten || currentUser.name || 'Không có tên',
           phone: currentUser.phone || '',
           email: currentUser.email || '',
-          address: currentUser.address || ''
+          address: shippingAddress || ''
         },
         items: cart.map(item => ({
           name: item.name,
