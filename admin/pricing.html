@@ -8,28 +8,16 @@
   <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/admin-shared.css">
 
   <style>
     body { background:#f3f8f3; font-family:"Open Sans",sans-serif; }
-  .admin-banner { background: linear-gradient(0deg, rgba(0,80,40,0.45), rgba(0,80,40,0.45)), url('../img/banner.jpg') center/cover no-repeat; height:180px; border-radius:12px; color:#fff; display:flex; align-items:center; justify-content:center; margin-bottom:1.5rem;}
-    .sidebar { background:#fff; border-radius:1rem; padding:1.5rem; box-shadow:0 3px 10px rgba(0,0,0,0.08); }
-    .menu-item{ display:flex; align-items:center; color:#2d6a4f; font-weight:600; text-decoration:none; margin-bottom:0.8rem; }
     .content-area{ background:#fff; padding:1.5rem; border-radius:1rem; box-shadow:0 3px 8px rgba(0,0,0,0.04); min-height:65vh; }
-  
-    /* ===== Sidebar ===== */
-    .sidebar {
-      background-color: #ffffff;
-      border-radius: 1rem;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-      padding: 1.5rem;
-      height: 100%;
-    }
-    .sidebar h5 { color: #2d6a4f; font-weight: 700; margin-bottom: 1rem; }
-    .menu-item { display: flex; align-items: center; color: #2d6a4f; font-weight: 600; text-decoration: none; margin-bottom: 1rem; transition: .3s; }
-    .menu-item:hover { color: #40916c; transform: translateX(5px); }
-    .menu-item.active { color: #1b4332; font-weight: 700; }
-    .menu-item span.emoji { font-size: 1.5rem; margin-right: .75rem; }
-  
+    .card { border:none; border-radius:1rem; box-shadow:0 8px 24px rgba(0,0,0,0.05); }
+    .card-header { border-bottom:1px solid #eef4ef; background:#f8fffb; border-radius:1rem 1rem 0 0 !important; }
+    .table thead { background:#f5f8f6; color:#2d6a4f; font-weight:600; }
+    .price-input { max-width: 140px; }
+    .feedback { position: fixed; right: 24px; bottom: 24px; z-index: 9; min-width: 260px; }
   </style>
 </head>
 <body>
@@ -37,7 +25,7 @@
     <div class="admin-banner">
       <div class="text-center">
         <h1 class="h2 fw-bold">Thức Store Admin</h1>
-        <div class="small">Quản lý % lợi nhuận & Giá bán</div>
+        <div class="small">Quản lý giá bán — giao diện thao tác nhanh</div>
       </div>
     </div>
 
@@ -47,7 +35,7 @@
         <div class="sidebar">
           <h5>📋 Menu quản lý</h5>
           <a href="quanlysanpham.html" class="menu-item"><span class="emoji">📘</span> Quản lý Sản phẩm</a>
-          <a href="quanlydonhang.html" class="menu-item ><span class="emoji">🧾</span> Quản lý Đơn hàng</a>
+          <a href="quanlydonhang.html" class="menu-item"><span class="emoji">🧾</span> Quản lý Đơn hàng</a>
           <a href="user.html" class="menu-item"><span class="emoji">👤</span> Quản lý Người dùng</a>
           <a href="stock.html" class="menu-item"><span class="emoji">📦</span> Quản lý Kho</a>
           <a href="pricing.html" class="menu-item active"><span class="emoji">💲</span> Quản lý Giá</a>
@@ -57,214 +45,229 @@
 
       <div class="col-lg-9">
         <div class="content-area">
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="text-success m-0">Quản lý Giá Bán</h4>
-            <div><button id="btnExport" class="btn btn-outline-secondary btn-sm">Xuất Sản phẩm</button></div>
+          <div class="d-flex flex-column flex-md-row justify-content-between gap-2 mb-4">
+            <div>
+              <h4 class="text-success mb-1">Thiết lập giá bán</h4>
+              <p class="text-muted mb-0">Giao diện chỉ minh hoạ. Dữ liệu cập nhật cục bộ trong lần mở trang này.</p>
+            </div>
+            <button id="btnDownload" class="btn btn-outline-success btn-sm"><i class="fa-solid fa-file-export me-2"></i>Xuất bảng (JSON)</button>
           </div>
 
-          <div class="row g-4">
-            <div class="col-md-5">
-              <div class="card">
-                <div class="card-body">
-                  <h6>Thiết lập % lợi nhuận theo Sản phẩm</h6>
-                  <div class="mb-3">
-                    <label class="form-label">Chọn sản phẩm</label>
-                    <input id="productProfitInput" class="form-control" placeholder="Nhập mã hoặc tên sản phẩm..." list="productProfitList">
-                    <datalist id="productProfitList"></datalist>
+          <div class="card mb-4">
+            <div class="card-body">
+              <div class="row g-3">
+                <div class="col-md-5">
+                  <label class="form-label">Tìm kiếm (tên hoặc mã sản phẩm)</label>
+                  <input id="searchInput" class="form-control" placeholder="Ví dụ: VH001 / Đắc Nhân Tâm">
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Lọc theo nhóm</label>
+                  <select id="categoryFilter" class="form-select">
+                    <option value="">-- Tất cả loại --</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">Khoảng giá bán</label>
+                  <div class="d-flex gap-2">
+                    <input id="minPrice" type="number" class="form-control" placeholder="Từ">
+                    <input id="maxPrice" type="number" class="form-control" placeholder="Đến">
                   </div>
-                  <div class="mb-3">
-                    <label class="form-label">% Lợi nhuận (ví dụ 20)</label>
-                    <input id="productProfitValue" class="form-control" type="number" step="0.1" placeholder="Nhập %">
-                  </div>
-                  <button id="saveProductProfit" class="btn btn-success">Lưu thiết lập</button>
                 </div>
               </div>
-            </div>
-
-            <div class="col-md-7">
-              <div>
-                <div class="d-flex mb-2">
-                  <input id="qProduct" class="form-control me-2" placeholder="Tìm theo mã sản phẩm...">
-                  <button id="btnSearch" class="btn btn-outline-success">Tìm</button>
-                </div>
-                <div class="table-responsive">
-                  <table class="table table-striped align-middle">
-                    <thead class="table-light">
-                      <tr><th>Sản phẩm</th><th>Giá vốn</th><th>% lợi nhuận</th><th>Giá bán</th><th>Hành động</th></tr>
-                    </thead>
-                    <tbody id="productsTable"></tbody>
-                  </table>
-                </div>
+              <div class="text-end mt-3">
+                <button id="btnReset" class="btn btn-outline-secondary btn-sm">Đặt lại bộ lọc</button>
               </div>
             </div>
           </div>
 
+          <div class="card">
+            <div class="card-header d-flex flex-wrap gap-2 justify-content-between align-items-center">
+              <h5 class="mb-0 text-success"><i class="fa-solid fa-tags me-2"></i>Danh sách sản phẩm</h5>
+              <span id="tableSummary" class="text-muted">0 sản phẩm</span>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                  <thead>
+                    <tr>
+                      <th>Mã</th>
+                      <th>Tên sản phẩm</th>
+                      <th>Giá vốn</th>
+                      <th>Giá bán hiện tại</th>
+                      <th>Lợi nhuận ước tính</th>
+                      <th style="width:140px;">Hành động</th>
+                    </tr>
+                  </thead>
+                  <tbody id="pricingTable">
+                    <tr><td colspan="6" class="text-center text-muted">Đang tải dữ liệu...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
+  <div id="feedback" class="feedback d-none">
+    <div class="alert alert-success shadow mb-0" role="alert">
+      <span id="feedbackText">Đã cập nhật giá.</span>
+    </div>
+  </div>
+
   <script>
-    const K = { cats:'book_cats', prods:'book_prods', receipts:'book_receipts', sales:'book_sales' };
-    function ensureSample(){
-      if (!localStorage.getItem(K.cats)) localStorage.setItem(K.cats, JSON.stringify([{id:'cat1',name:'Tiểu thuyết'},{id:'cat2',name:'Kỹ thuật & CNTT'},{id:'cat3',name:'Thiếu nhi'}]));
-      if (!localStorage.getItem(K.prods)) localStorage.setItem(K.prods, JSON.stringify([
-        { id:'p1', title:'Sách Tiểu thuyết A', categoryId:'cat1', cost:120000, stock:10, threshold:5, initialStock:10, productProfit:null },
-        { id:'p2', title:'Lập trình JS', categoryId:'cat2', cost:220000, stock:5, threshold:3, initialStock:5, productProfit:null },
-        { id:'p3', title:'Truyện Thiếu Nhi B', categoryId:'cat3', cost:80000, stock:15, threshold:6, initialStock:15, productProfit:null }
-      ]));
-      if (!localStorage.getItem('book_category_profit')) localStorage.setItem('book_category_profit', JSON.stringify({ cat1:20, cat2:25, cat3:15 }));
-    }
-    ensureSample();
-    const $ = s => document.querySelector(s);
-    const $$ = s => Array.from(document.querySelectorAll(s));
-  const productProfitInput = $('#productProfitInput'), productProfitList = $('#productProfitList'), productProfitValue = $('#productProfitValue'), saveProductProfit = $('#saveProductProfit');
-    const productsTable = $('#productsTable'), qProduct = $('#qProduct'), btnLoad = $('#btnLoad'), btnExport = $('#btnExport'), btnSearch = $('#btnSearch');
+    document.addEventListener('DOMContentLoaded', () => {
+      const demoProducts = [
+        { code: 'VH001', name: 'Đắc Nhân Tâm', category: 'Văn học', cost: 52000, price: 86000 },
+        { code: 'VH002', name: 'Nhà Giả Kim', category: 'Văn học', cost: 48000, price: 79000 },
+        { code: 'KT001', name: 'Tư Duy Đầu Tư', category: 'Kinh tế', cost: 89000, price: 139000 },
+        { code: 'KT002', name: 'The Little Book', category: 'Kinh tế', cost: 99000, price: 155000 },
+        { code: 'KS001', name: '7 Thói Quen Hiệu Quả', category: 'Kỹ năng sống', cost: 74000, price: 118000 },
+        { code: 'TN001', name: 'Dế Mèn Phiêu Lưu Ký', category: 'Thiếu nhi', cost: 35000, price: 59000 }
+      ];
 
-    function read(k){ return JSON.parse(localStorage.getItem(k) || 'null'); }
-    function write(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
+      const state = [...demoProducts];
+      const el = {
+        search: document.getElementById('searchInput'),
+        category: document.getElementById('categoryFilter'),
+        minPrice: document.getElementById('minPrice'),
+        maxPrice: document.getElementById('maxPrice'),
+        table: document.getElementById('pricingTable'),
+        summary: document.getElementById('tableSummary'),
+        resetBtn: document.getElementById('btnReset'),
+        downloadBtn: document.getElementById('btnDownload'),
+        feedback: document.getElementById('feedback'),
+        feedbackText: document.getElementById('feedbackText')
+      };
 
+      const formatCurrency = (value) =>
+        Number(value || 0).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'đ');
 
-    // Tự động gợi ý sản phẩm cho input
-    function updateProductProfitList() {
-      const prodsA = read(K.prods) || [];
-      const rawB = JSON.parse(localStorage.getItem('products') || 'null') || [];
-      const prodsB = rawB.map((p, i) => ({
-        id: p.ma || ('p_admin_' + i),
-        ma: p.ma || '',
-        title: p.ten || '',
-      }));
-      const prods = [...prodsA, ...prodsB];
-      productProfitList.innerHTML = '';
-      prods.forEach(p => {
-        const opt = document.createElement('option');
-        opt.value = (p.ma || p.id) + ' - ' + p.title;
-        productProfitList.appendChild(opt);
+      const calcProfitPercent = (cost, price) => {
+        if (!cost) return 0;
+        return Math.round(((price - cost) / cost) * 1000) / 10;
+      };
+
+      const showFeedback = (msg) => {
+        if (!el.feedback) return;
+        el.feedbackText.textContent = msg;
+        el.feedback.classList.remove('d-none');
+        setTimeout(() => el.feedback.classList.add('d-none'), 2200);
+      };
+
+      const populateCategories = () => {
+        if (!el.category) return;
+        const existing = el.category.value;
+        const cats = [...new Set(state.map((p) => p.category))];
+        el.category.innerHTML = '<option value="">-- Tất cả loại --</option>';
+        cats.forEach((c) => {
+          const option = document.createElement('option');
+          option.value = c;
+          option.textContent = c;
+          el.category.appendChild(option);
+        });
+        if (existing && cats.includes(existing)) el.category.value = existing;
+      };
+
+      const getFilters = () => ({
+        search: el.search?.value?.trim().toLowerCase() || '',
+        category: el.category?.value || '',
+        min: Number(el.minPrice?.value || '') || null,
+        max: Number(el.maxPrice?.value || '') || null
       });
-    }
 
-    // Khi chọn sản phẩm, tự động điền % lợi nhuận nếu đã có
-    productProfitInput.oninput = function() {
-      const val = productProfitInput.value.trim().toLowerCase();
-      if (!val) { productProfitValue.value = ''; return; }
-      const prodsA = read(K.prods) || [];
-      const rawB = JSON.parse(localStorage.getItem('products') || 'null') || [];
-      const prodsB = rawB.map((p, i) => ({
-        id: p.ma || ('p_admin_' + i),
-        ma: p.ma || '',
-        title: p.ten || '',
-        productProfit: p.productProfit ?? null
-      }));
-      const prods = [...prodsA, ...prodsB];
-      let found = prods.find(p => val === (p.ma || p.id).toLowerCase() || val === (p.title || '').toLowerCase() || val === ((p.ma || p.id) + ' - ' + p.title).toLowerCase());
-      if (found && found.productProfit != null) productProfitValue.value = found.productProfit;
-      else productProfitValue.value = '';
-    };
+      const renderTable = () => {
+        if (!el.table) return;
+        populateCategories();
+        const filters = getFilters();
+        const rows = state.filter((p) => {
+          const code = p.code.toLowerCase();
+          const name = p.name.toLowerCase();
+          const matchesSearch = !filters.search || code.includes(filters.search) || name.includes(filters.search);
+          const matchesCategory = !filters.category || p.category === filters.category;
+          const matchesMin = filters.min === null || p.price >= filters.min;
+          const matchesMax = filters.max === null || p.price <= filters.max;
+          return matchesSearch && matchesCategory && matchesMin && matchesMax;
+        });
 
-    saveProductProfit.onclick = function() {
-      const val = productProfitInput.value.trim().toLowerCase();
-      if (!val) return alert('Nhập mã hoặc tên sản phẩm.');
-      const v = Number(productProfitValue.value);
-      if (isNaN(v)) return alert('Nhập % hợp lệ.');
-      // Tìm sản phẩm trong cả 2 nguồn
-      let prods = read(K.prods) || [];
-      let p = prods.find(x => val === (x.ma || x.id).toLowerCase() || val === (x.title || '').toLowerCase() || val === ((x.ma || x.id) + ' - ' + x.title).toLowerCase());
-      if (p) {
-        p.productProfit = v;
-        write(K.prods, prods);
-        alert('Đã lưu % lợi nhuận cho sản phẩm.');
-        renderProducts();
-        return;
-      }
-      // Nếu không có trong prodsA thì thử admin products
-      let rawB = JSON.parse(localStorage.getItem('products') || 'null') || [];
-      let idx = rawB.findIndex(x => val === (x.ma || '').toLowerCase() || val === (x.ten || '').toLowerCase() || val === ((x.ma || '') + ' - ' + (x.ten || '')).toLowerCase());
-      if (idx !== -1) {
-        rawB[idx].productProfit = v;
-        localStorage.setItem('products', JSON.stringify(rawB));
-        alert('Đã lưu % lợi nhuận cho sản phẩm.');
-        renderProducts();
-        return;
-      }
-      alert('Không tìm thấy sản phẩm này.');
-    };
+        el.summary.textContent = `${rows.length} sản phẩm`;
 
-    // Cập nhật datalist khi trang tải xong
-    updateProductProfitList();
-
-    function calculateSelling(product){
-      const catProf = read('book_category_profit') || {};
-      const catPct = catProf[product.categoryId];
-      const usedPct = product.productProfit != null ? product.productProfit : (catPct != null ? catPct : 0);
-      const selling = Math.round(product.cost * (1 + usedPct/100));
-      return { usedPct, selling };
-    }
-
-    function renderProducts(){
-      // Load products from both older 'book_prods' namespace and admin product manager ('products')
-      const prodsA = read(K.prods) || [];
-      const rawB = JSON.parse(localStorage.getItem('products') || 'null') || [];
-      // Map products from admin manager to the shape used by pricing page
-      const prodsB = rawB.map((p, i) => ({
-        id: p.ma || ('p_admin_' + i),
-        ma: p.ma || '',
-        title: p.ten || '',
-        categoryId: Array.isArray(p.loai) ? p.loai[0] : (p.loai || ''),
-        cost: Number(p.giagoc) || Number(p.gia) || 0,
-        stock: p.stock || 0,
-        threshold: p.threshold || 0,
-        initialStock: p.initialStock || 0,
-        productProfit: p.productProfit ?? null,
-        _raw: p // keep raw for additional info like tacgia, nhaxuatban
-      }));
-
-      const prods = [...prodsA, ...prodsB];
-      const q = (qProduct.value||'').toLowerCase().trim();
-      productsTable.innerHTML = '';
-      prods.forEach(p => {
-        // Tìm theo mã sản phẩm (nếu có trường 'ma' thì dùng 'ma', nếu không dùng 'id')
-        const code = ((p.ma || p.id) + '').toLowerCase();
-        if (q && !code.includes(q)) return;
-        const calc = calculateSelling(p);
-        const tr = document.createElement('tr');
-        // show extra metadata when available (from _raw)
-        const extra = p._raw ? `<div class="text-muted small">Mã: ${p.ma || p.id} | Tác giả: ${p._raw.tacgia || '-'} | NXB: ${p._raw.nhaxuatban || '-'}</div>` : `<div class="text-muted small">Mã: ${p.ma || p.id} | Loại: ${p.categoryId || '-'}</div>`;
-        tr.innerHTML = `
-          <td>${p.title}${extra}</td>
-          <td>${(p.cost||0).toLocaleString()} VND</td>
-          <td>
-            <input data-id="${p.id}" class="form-control form-control-sm prodProfit" style="width:100px" value="${p.productProfit ?? ''}" placeholder="inherit">
-            <div class="text-muted small">Sử dụng: ${calc.usedPct}%</div>
-          </td>
-          <td>${calc.selling.toLocaleString()} VND</td>
-          <td><button data-id="${p.id}" class="btn btn-sm btn-success saveProd">Lưu</button></td>
-        `;
-        productsTable.appendChild(tr);
-      });
-      $$('.saveProd').forEach(b => b.onclick = e => {
-        const id = e.currentTarget.dataset.id;
-        const input = document.querySelector(`input.prodProfit[data-id="${id}"]`);
-        const v = input.value.trim();
-        const prods = read(K.prods) || [];
-        const p = prods.find(x=>x.id===id);
-        if (!p) return alert('Sản phẩm không tồn tại.');
-        if (v === '') p.productProfit = null; else {
-          const n = Number(v);
-          if (isNaN(n)) return alert('Nhập % hợp lệ.');
-          p.productProfit = n;
+        if (!rows.length) {
+          el.table.innerHTML = '<tr><td colspan="6" class="text-center text-muted">Không tìm thấy sản phẩm phù hợp.</td></tr>';
+          return;
         }
-        write(K.prods, prods);
-        alert('Đã lưu % lợi nhuận sản phẩm.');
-        renderProducts();
+
+        el.table.innerHTML = rows.map((p) => {
+          const profit = calcProfitPercent(p.cost, p.price);
+          return `
+            <tr>
+              <td><strong>${p.code}</strong><div class="text-muted small">${p.category}</div></td>
+              <td>${p.name}</td>
+              <td>${formatCurrency(p.cost)}</td>
+              <td>
+                <input type="number" class="form-control form-control-sm price-input" data-code="${p.code}" value="${p.price}" min="0">
+              </td>
+              <td>
+                <div>${formatCurrency(p.price - p.cost)}</div>
+                <small class="text-muted">${profit}%</small>
+              </td>
+              <td>
+                <button class="btn btn-success btn-sm update-price" data-code="${p.code}">
+                  <i class="fa-solid fa-floppy-disk me-1"></i>Lưu giá
+                </button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      };
+
+      const handlePriceUpdate = (code) => {
+        const input = document.querySelector(`.price-input[data-code="${code}"]`);
+        if (!input) return;
+        const value = Number(input.value);
+        if (Number.isNaN(value) || value <= 0) {
+          alert('Vui lòng nhập giá bán hợp lệ.');
+          return;
+        }
+        const product = state.find((p) => p.code === code);
+        if (!product) return;
+        product.price = value;
+        showFeedback(`Đã cập nhật giá cho ${product.name}.`);
+        renderTable();
+      };
+
+      el.search?.addEventListener('input', renderTable);
+      el.category?.addEventListener('change', renderTable);
+      el.minPrice?.addEventListener('input', renderTable);
+      el.maxPrice?.addEventListener('input', renderTable);
+      el.resetBtn?.addEventListener('click', () => {
+        if (el.search) el.search.value = '';
+        if (el.category) el.category.value = '';
+        if (el.minPrice) el.minPrice.value = '';
+        if (el.maxPrice) el.maxPrice.value = '';
+        renderTable();
       });
-    }
 
-    btnLoad.onclick = () => { ensureSample(); loadCats(); renderProducts(); alert('Làm mới xong'); };
-    btnExport.onclick = () => { const p = read(K.prods) || []; const w = window.open(); w.document.write('<pre>'+JSON.stringify(p,null,2).replace(/</g,'&lt;')+'</pre>'); };
-    btnSearch.onclick = () => renderProducts();
+      document.addEventListener('click', (e) => {
+        if (e.target.closest('.update-price')) {
+          const btn = e.target.closest('.update-price');
+          handlePriceUpdate(btn.dataset.code);
+        }
+      });
 
-    function init(){ loadCats(); renderProducts(); }
-    init();
+      el.downloadBtn?.addEventListener('click', () => {
+        const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'thuc-store-pricing-demo.json';
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+
+      renderTable();
+    });
   </script>
 </body>
 </html>

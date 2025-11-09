@@ -1,0 +1,96 @@
+/* Shared admin sidebar styles */
+body {
+  font-family: "Open Sans", sans-serif;
+  background-color: #f3f8f3;
+}
+
+.sidebar {
+  background-color: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  height: 100%;
+}
+
+.sidebar h5 {
+  color: #2d6a4f;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  font-size: 1.05rem;
+  color: #2d6a4f;
+  font-weight: 600;
+  text-decoration: none;
+  margin-bottom: 1rem;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.menu-item:hover {
+  color: #40916c;
+  transform: translateX(5px);
+}
+
+.menu-item.active {
+  color: #1b4332;
+  font-weight: 700;
+}
+
+.menu-item span.emoji {
+  font-size: 1.5rem;
+  margin-right: 0.75rem;
+  line-height: 1;
+}
+
+.admin-banner {
+  position: relative;
+  background: linear-gradient(0deg, rgba(0, 80, 40, 0.5), rgba(0, 80, 40, 0.5)), url('../img/banner.jpg') center/cover no-repeat;
+  border-radius: 12px;
+  min-height: 200px;
+  margin-bottom: 2rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #fff;
+  padding: 2rem 1.5rem;
+}
+
+.admin-banner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.35));
+  mix-blend-mode: multiply;
+}
+
+.admin-banner > * {
+  position: relative;
+  z-index: 1;
+}
+
+.admin-banner h1 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+.admin-banner p,
+.admin-banner .small,
+.admin-banner span {
+  color: #eafbea;
+  font-size: clamp(0.95rem, 2vw, 1.1rem);
+  margin: 0;
+}
+
+@media (max-width: 992px) {
+  .sidebar {
+    height: auto;
+  }
+}

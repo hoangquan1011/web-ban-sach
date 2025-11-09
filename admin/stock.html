@@ -8,29 +8,17 @@
   <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/admin-shared.css">
 
   <style>
     body { background:#f3f8f3; font-family:"Open Sans",sans-serif; }
-  .admin-banner { background: linear-gradient(0deg, rgba(0,80,40,0.45), rgba(0,80,40,0.45)), url('../img/banner.jpg') center/cover no-repeat; height:180px; border-radius:12px; color:#fff; display:flex; align-items:center; justify-content:center; margin-bottom:1.5rem;}
-    .sidebar { background:#fff; border-radius:1rem; padding:1.5rem; box-shadow:0 3px 10px rgba(0,0,0,0.08); }
-    .menu-item{ display:flex; align-items:center; color:#2d6a4f; font-weight:600; text-decoration:none; margin-bottom:0.8rem; }
     .content-area{ background:#fff; padding:1.5rem; border-radius:1rem; box-shadow:0 3px 8px rgba(0,0,0,0.04); min-height:65vh; }
-    .low { color:#d9534f; font-weight:700; }
-
-    /* ===================== SIDEBAR ===================== */
-    .sidebar {
-      background-color: #ffffff;
-      border-radius: 1rem;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-      padding: 1.5rem;
-      height: 100%;
-    }
-    .sidebar h5 { color: #2d6a4f; font-weight: 700; margin-bottom: 1rem; }
-    .menu-item { display: flex; align-items: center; color: #2d6a4f; font-weight: 600; text-decoration: none; margin-bottom: 1rem; transition: .3s; }
-    .menu-item:hover { color: #40916c; transform: translateX(5px); }
-    .menu-item.active { color: #1b4332; font-weight: 700; }
-    .menu-item span.emoji { font-size: 1.5rem; margin-right: .75rem; }
-    
+    .card { border:none; box-shadow:0 3px 12px rgba(0,0,0,0.05); border-radius:1rem; }
+    .card-header { border-bottom:1px solid #edf2ef; background:#f9fffb; border-radius:1rem 1rem 0 0 !important; }
+    .table thead { background:#f5f8f6; color:#2d6a4f; font-weight:600; }
+    .sku-pill { font-weight:600; color:#1b4332; }
+    .badge-cat { background:#ecfdf5; color:#065f46; border-radius:999px; padding:2px 8px; font-size:.8rem; }
+    .text-muted-small { font-size:.9rem; color:#6c757d; }
 
   </style>
 </head>
@@ -39,7 +27,7 @@
     <div class="admin-banner">
       <div class="text-center">
         <h1 class="h2 fw-bold">Thức Store Admin</h1>
-        <div class="small">Kiểm tra tồn — Lịch sử Nhập/Xuất — Cảnh báo</div>
+        <div class="small">Kiểm tra tồn kho</div>
       </div>
     </div>
 
@@ -60,113 +48,166 @@
 
       <div class="col-lg-9">
         <div class="content-area">
-          <h4 class="text-success">Quản lý Số Lượng Tồn</h4>
+          <div class="d-flex flex-column flex-md-row justify-content-between gap-2 align-items-md-center mb-3">
+            <div>
+              <h4 class="text-success mb-1">Quản lý Kho - Danh sách sản phẩm</h4>
+      
+            </div>
+            
+          </div>
 
-          <!-- Quick search by product code: show only Mã - Tên - Tồn -->
-          <div class="row">
-            <div class="col-12">
-              <div class="card mb-3">
-                <div class="card-body">
-                  <h6>Tìm theo Mã sản phẩm</h6>
-                  <div class="d-flex">
-                    <input id="qStock" class="form-control me-2" placeholder="Tìm theo mã sản phẩm...">
-                    <button id="btnStockSearch" class="btn btn-outline-success">Tìm</button>
-                  </div>
-                  <div id="stockSearchResult" class="mt-3"></div>
+          <div class="card mb-4">
+            <div class="card-body">
+              <div class="row g-3">
+                <div class="col-md-5">
+                  <label class="form-label">Tìm kiếm (tên hoặc mã sản phẩm)</label>
+                  <input id="searchInput" class="form-control" placeholder="Ví dụ: Đắc Nhân Tâm / VH001">
                 </div>
+                <div class="col-md-4">
+                  <label class="form-label">Lọc theo nhóm</label>
+                  <select id="categoryFilter" class="form-select">
+                    <option value="">-- Tất cả loại --</option>
+                  </select>
+                </div>
+               
               </div>
             </div>
           </div>
 
-          <div class="row g-3 mt-3">
-            <div class="col-md-6">
-              <div class="card">
-                <div class="card-body">
-                  <h6>Cảnh báo sắp hết hàng (hiện tại)</h6>
-                  <div id="lowStockList" class="mt-2 text-muted"></div>
-                  <button id="refreshLow" class="btn btn-warning btn-sm mt-2">Làm mới cảnh báo</button>
-                </div>
+          <div class="card">
+            <div class="card-header d-flex justify-content-between flex-wrap gap-2 align-items-center">
+              <h5 class="mb-0 text-success"><i class="fa-solid fa-boxes-stacked me-2"></i>Danh sách tồn kho</h5>
+              <span id="listSummary" class="text-muted-small">0 sản phẩm</span>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                  <thead>
+                    <tr>
+                      <th style="min-width: 120px;">Mã</th>
+                      <th>Tên sản phẩm</th>
+                      <th style="min-width: 150px;">Loại</th>
+                      <th style="width: 90px;">Tồn</th>
+                      <th style="min-width: 140px;">Giá bán</th>
+                      <th style="min-width: 160px;">Ghi chú</th>
+                    </tr>
+                  </thead>
+                  <tbody id="stockTable">
+                    <tr>
+                      <td colspan="6" class="text-center text-muted">Đang tải dữ liệu...</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
-
-            <div class="col-md-6">
-              <!-- Removed: Lịch sử Nhập - Xuất, Tổng hợp theo Loại, Mô phỏng Bán hàng per request -->
-            </div>
           </div>
-
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    const K = { cats:'book_cats', prods:'book_prods', receipts:'book_receipts', sales:'book_sales' };
-    function ensure(){
-      if (!localStorage.getItem(K.cats)) localStorage.setItem(K.cats, JSON.stringify([{id:'cat1',name:'Tiểu thuyết'},{id:'cat2',name:'Kỹ thuật & CNTT'},{id:'cat3',name:'Thiếu nhi'}]));
-      if (!localStorage.getItem(K.prods)) localStorage.setItem(K.prods, JSON.stringify([
-        { id:'p1', title:'Sách Tiểu thuyết A', categoryId:'cat1', cost:120000, stock:10, threshold:5, initialStock:10, productProfit:null },
-        { id:'p2', title:'Lập trình JS', categoryId:'cat2', cost:220000, stock:5, threshold:3, initialStock:5, productProfit:null },
-        { id:'p3', title:'Truyện Thiếu Nhi B', categoryId:'cat3', cost:80000, stock:15, threshold:6, initialStock:15, productProfit:null }
-      ]));
-      if (!localStorage.getItem(K.receipts)) localStorage.setItem(K.receipts, JSON.stringify([]));
-      if (!localStorage.getItem(K.sales)) localStorage.setItem(K.sales, JSON.stringify([]));
-    }
-    ensure();
+    document.addEventListener('DOMContentLoaded', () => {
+      const fallbackProducts = [
+        { ma: 'VH001', ten: 'Đắc Nhân Tâm', loai: ['Văn học'], gia: 86000, stock: 120 },
+        { ma: 'VH002', ten: 'Nhà Giả Kim', loai: ['Văn học'], gia: 72000, stock: 80 },
+        { ma: 'KT001', ten: 'Tư Duy Đầu Tư', loai: ['Kinh tế'], gia: 130000, stock: 60 },
+        { ma: 'KT002', ten: 'The Little Book', loai: ['Kinh tế'], gia: 150000, stock: 40 },
+        { ma: 'TN001', ten: 'Dế Mèn Phiêu Lưu Ký', loai: ['Thiếu nhi'], gia: 55000, stock: 150 }
+      ];
 
-    const $ = s => document.querySelector(s);
-    const $$ = s => Array.from(document.querySelectorAll(s));
-  const lowStockList = $('#lowStockList'), refreshLow = $('#refreshLow');
-    const btnRefresh = $('#btnRefresh');
-    // Stock quick-search controls
-    const qStock = $('#qStock'), btnStockSearch = $('#btnStockSearch'), stockSearchResult = $('#stockSearchResult');
+      const refs = {
+        search: document.getElementById('searchInput'),
+        category: document.getElementById('categoryFilter'),
+        source: document.getElementById('sourceFilter'),
+        table: document.getElementById('stockTable'),
+        summary: document.getElementById('listSummary')
+      };
 
-    function read(k){ return JSON.parse(localStorage.getItem(k) || 'null'); }
-    function write(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
+      const getStoredProducts = () => JSON.parse(localStorage.getItem('products') || '[]');
 
-    // product selectors removed (no longer needed)
+      const getProducts = () => {
+        const stored = getStoredProducts();
+        return refs.source?.value === 'fallback'
+          ? [...fallbackProducts]
+          : refs.source?.value === 'products'
+            ? (stored.length ? stored : [])
+            : (stored.length ? stored : fallbackProducts);
+      };
 
-    // Quick search: look up products by code from both 'book_prods' and admin 'products'
-    function renderStockSearch(filter = ''){
-      const q = (filter || '').toLowerCase().trim();
-      // load both sources
-      const base = read(K.prods) || [];
-      const adminRaw = JSON.parse(localStorage.getItem('products') || 'null') || [];
-      const admin = adminRaw.map((p,i) => ({ id: p.ma || ('admin_'+i), ma: p.ma || '', title: p.ten || '', stock: Number(p.stock||0) }));
-      const all = [...base.map(p=>({ id:p.id, ma: p.ma||p.id, title: p.title, stock: Number(p.stock||0)})), ...admin];
-      const filtered = q ? all.filter(p => (p.ma || '').toLowerCase().includes(q)) : all;
-      if (!stockSearchResult) return;
-      if (filtered.length === 0) { stockSearchResult.innerHTML = '<div class="text-muted">Không tìm thấy sản phẩm theo mã.</div>'; return; }
-      let html = '<div class="table-responsive"><table class="table table-sm"><thead class="table-light"><tr><th>Mã</th><th>Tên</th><th>Tồn</th></tr></thead><tbody>';
-      filtered.forEach(p => { html += `<tr><td>${p.ma || p.id}</td><td>${p.title}</td><td>${p.stock}</td></tr>`; });
-      html += '</tbody></table></div>';
-      stockSearchResult.innerHTML = html;
-    }
+      const formatCurrency = (val) =>
+        Number(val || 0).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'đ');
 
-    if (btnStockSearch) btnStockSearch.onclick = () => renderStockSearch(qStock.value);
-    if (qStock) qStock.addEventListener('input', e => renderStockSearch(e.target.value));
+      const normalizeCategories = (p) => {
+        if (Array.isArray(p.loai)) return p.loai.filter(Boolean);
+        if (typeof p.loai === 'string' && p.loai.trim()) return p.loai.split(',').map((c) => c.trim()).filter(Boolean);
+        return [];
+      };
 
-    function refreshLowStock(){
-      const prods = read(K.prods) || [];
-      lowStockList.innerHTML = '';
-      const lows = prods.filter(p => Number(p.stock||0) <= (Number(p.threshold||5)));
-      if (lows.length === 0) { lowStockList.innerHTML = '<div class="text-muted">Không có sản phẩm sắp hết.</div>'; return; }
-      const ul = document.createElement('ul');
-      lows.forEach(p=>{
-        const li = document.createElement('li');
-        li.innerHTML = `<strong class="low">${p.title}</strong> — Tồn: ${p.stock} (Ngưỡng: ${p.threshold})`;
-        ul.appendChild(li);
-      });
-      lowStockList.appendChild(ul);
-    }
+      const populateCategoryOptions = (products) => {
+        if (!refs.category) return;
+        const cats = new Set();
+        products.forEach((p) => normalizeCategories(p).forEach((cat) => cats.add(cat)));
 
-    // Removed history/aggregation/sale simulation handlers per request
+        const current = refs.category.value;
+        refs.category.innerHTML = '<option value="">-- Tất cả loại --</option>';
+        Array.from(cats).sort().forEach((cat) => {
+          const option = document.createElement('option');
+          option.value = cat;
+          option.textContent = cat;
+          refs.category.appendChild(option);
+        });
+        if (current && cats.has(current)) refs.category.value = current;
+      };
 
-  btnRefresh.onclick = () => { ensure(); refreshLowStock(); alert('Làm mới xong'); };
+      const renderTable = () => {
+        if (!refs.table) return;
+        const searchTerm = refs.search?.value?.trim().toLowerCase() || '';
+        const selectedCat = refs.category?.value || '';
+        const products = getProducts();
 
-    function init(){
-      refreshLowStock();
-    }
-    init();
+        populateCategoryOptions(products);
+
+        const filtered = products.filter((p) => {
+          const name = (p.ten || p.title || '').toLowerCase();
+          const sku = (p.ma || p.id || '').toLowerCase();
+          const matchesSearch = !searchTerm || name.includes(searchTerm) || sku.includes(searchTerm);
+          const cats = normalizeCategories(p);
+          const matchesCategory = !selectedCat || cats.includes(selectedCat);
+          return matchesSearch && matchesCategory;
+        });
+
+        if (refs.summary) refs.summary.textContent = `${filtered.length} sản phẩm`;
+
+        if (!filtered.length) {
+          refs.table.innerHTML = '<tr><td colspan="6" class="text-center text-muted">Không tìm thấy sản phẩm phù hợp.</td></tr>';
+          return;
+        }
+
+        refs.table.innerHTML = filtered
+          .map((p) => {
+            const cats = normalizeCategories(p);
+            const badgeCats = cats.length ? cats.map((cat) => `<span class="badge-cat me-1">${cat}</span>`).join('') : '<span class="text-muted">—</span>';
+            return `
+              <tr>
+                <td><span class="sku-pill">${p.ma || p.id || 'N/A'}</span></td>
+                <td>${p.ten || p.title || 'Chưa đặt tên'}</td>
+                <td>${badgeCats}</td>
+                <td>${Number(p.stock || 0)}</td>
+                <td>${formatCurrency(p.gia || p.price || 0)}</td>
+                <td>${p.nhaxuatban || p.supplier || '<span class="text-muted">Không có ghi chú</span>'}</td>
+              </tr>
+            `;
+          })
+          .join('');
+      };
+
+      refs.search?.addEventListener('input', () => renderTable());
+      refs.category?.addEventListener('change', () => renderTable());
+      refs.source?.addEventListener('change', () => renderTable());
+
+      renderTable();
+    });
   </script>
 </body>
 </html>

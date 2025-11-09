@@ -8,51 +8,27 @@
   <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/admin-shared.css">
 
   <style>
     body { background-color:#f3f8f3; font-family: "Open Sans", sans-serif; }
-  .admin-banner { background: linear-gradient(0deg, rgba(0,80,40,0.45), rgba(0,80,40,0.45)), url('../img/banner.jpg') center/cover no-repeat; height: 180px; border-radius:12px; display:flex; align-items:center; justify-content:center; color:#fff; margin-bottom:1.5rem; position:relative; }
-    .sidebar { background-color:#fff; border-radius:1rem; box-shadow:0 3px 10px rgba(0,0,0,0.08); padding:1.5rem; height:100%; }
-    .menu-item { display:flex; align-items:center; color:#2d6a4f; font-weight:600; text-decoration:none; margin-bottom:0.8rem; }
-    .menu-item:hover { color:#40916c; transform:translateX(6px); transition:all .2s; }
     .content-area { background:#fff; border-radius:1rem; box-shadow:0 3px 8px rgba(0,0,0,0.04); padding:1.5rem; min-height:65vh; }
-    .status-draft { color:#856404; background:#fff3cd; padding:4px 8px; border-radius:6px; }
-    .status-completed { color:#155724; background:#d4edda; padding:4px 8px; border-radius:6px; }
-    .small-input { max-width:160px; }
-
-    /* ===== Sidebar ===== */
-    .sidebar {
-      background-color: #ffffff;
-      border-radius: 1rem;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-      padding: 1.5rem;
-      height: 100%;
-    }
-    .sidebar h5 { color: #2d6a4f; font-weight: 700; margin-bottom: 1rem; }
-    .menu-item { display: flex; align-items: center; color: #2d6a4f; font-weight: 600; text-decoration: none; margin-bottom: 1rem; transition: .3s; }
-    .menu-item:hover { color: #40916c; transform: translateX(5px); }
-    .menu-item.active { color: #1b4332; font-weight: 700; }
-    .menu-item span.emoji { font-size: 1.5rem; margin-right: .75rem; }
-
+    .card { border:none; box-shadow:0 4px 16px rgba(0,0,0,0.05); border-radius:1rem; }
+    .card-header { background-color:#f8fdf9; border-bottom:1px solid #e6f3ea; border-radius:1rem 1rem 0 0 !important; }
+    .badge-status { border-radius:999px; padding:4px 12px; font-size:.85rem; }
+    .badge-draft { background:#fff7e6; color:#ad6800; }
+    .badge-done { background:#e4f5ed; color:#1b4332; }
+    .form-muted { font-size:.9rem; color:#6c757d; }
+    .table thead { background:#f5f8f6; font-weight:600; color:#2d6a4f; }
+    .combo-hint { font-size:.85rem; color:#6c757d; margin-top:4px; }
   </style>
 </head>
 <body>
-  <!-- Toast notification -->
-  <div class="position-fixed top-0 end-0 p-3" style="z-index: 9999">
-    <div id="successToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
-      <div class="d-flex">
-        <div class="toast-body">
-          Đã lưu thành công
-        </div>
-        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-      </div>
-    </div>
-  </div>
   <div class="container-fluid py-4">
     <div class="admin-banner">
       <div class="text-center">
         <h1 class="h2 fw-bold">Thức Store Admin</h1>
-        <div class="small">Quản lý Nhập hàng — Cập nhật tồn & giá vốn</div>
+        <div class="small">Quản lý nhập hàng – Ghi nhận tồn kho</div>
       </div>
     </div>
 
@@ -60,422 +36,275 @@
       <!-- Sidebar -->
       <div class="col-lg-3">
         <div class="sidebar">
-          <h5 class="text-success">📋 Menu quản lý</h5>
-          <a href="quanlysanpham.html" class="menu-item"><span class="me-2">📘</span> Quản lý Sản phẩm</a>
-          <a href="quanlydonhang.html" class="menu-item"><span class="me-2">🧾</span> Quản lý Đơn hàng</a>
-          <a href="user.html" class="menu-item"><span class="me-2">👤</span> Quản lý Người dùng</a>
-          <a href="pricing.html" class="menu-item"><span class="me-2">💲</span> Quản lý Giá</a>
-          <a href="stock.html" class="menu-item"><span class="me-2">📦</span> Quản lý Kho</a>
-          <a href="import.html" class="menu-item active"><span class="me-2">🚚</span> Nhập hàng</a>
-
+          <h5>📋 Menu quản lý</h5>
+          <a href="quanlysanpham.html" class="menu-item"><span class="emoji">📘</span> Quản lý Sản phẩm</a>
+          <a href="quanlydonhang.html" class="menu-item"><span class="emoji">🧾</span> Quản lý Đơn hàng</a>
+          <a href="user.html" class="menu-item"><span class="emoji">👤</span> Quản lý Người dùng</a>
+          <a href="stock.html" class="menu-item"><span class="emoji">📦</span> Quản lý Kho</a>
+          <a href="pricing.html" class="menu-item"><span class="emoji">💲</span> Quản lý Giá</a>
+          <a href="import.html" class="menu-item active"><span class="emoji">🚚</span> Nhập hàng</a>
         </div>
       </div>
 
       <!-- Content -->
       <div class="col-lg-9">
         <div class="content-area">
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <h4 class="text-success m-0">Quản lý Phiếu Nhập</h4>
-            <div>
-              <button id="newReceipt" class="btn btn-sm btn-success"><i class="fa fa-plus me-1"></i> Tạo phiếu mới</button>
-            </div>
-          </div>
-
-          <!-- Form thêm / sửa -->
           <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+              <h5 class="mb-0 text-success"><i class="fa-solid fa-file-circle-plus me-2"></i>Phiếu nhập mới</h5>
+              <span class="form-muted"></span>
+            </div>
             <div class="card-body">
-              <form id="receiptForm" class="row g-3">
-                <input type="hidden" id="receiptId" />
+              <div class="row g-3">
+                <div class="col-md-4">
+                  <label class="form-label">Mã phiếu</label>
+                  <input id="receiptCode" class="form-control" placeholder="PN-2025-001" disabled>
+                </div>
                 <div class="col-md-4">
                   <label class="form-label">Ngày nhập</label>
-                  <input id="receiptDate" class="form-control" type="datetime-local">
+                  <input type="date" id="receiptDate" class="form-control">
                 </div>
-                <div class="col-md-3">
-                  <label class="form-label">Trạng thái</label>
+                <div class="col-md-4">
+                  <label class="form-label">Nhà cung cấp</label>
+                  <input type="text" id="supplierInput" class="form-control" placeholder="Nhập tên nhà cung cấp...">
+                </div>
+                <div class="col-md-8">
+                  <label class="form-label">Sản phẩm (từ danh sách Quản lý sản phẩm)</label>
+                  <select id="productSelect" class="form-select">
+                    <option value="">Đang tải danh sách...</option>
+                  </select>
+                  <div class="combo-hint"></div>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label">Trạng thái phiếu</label>
                   <select id="receiptStatus" class="form-select">
-                    <option value="draft">Draft (Chưa hoàn thành)</option>
-                    <option value="completed">Completed (Hoàn thành)</option>
+                    <option value="draft">Bản nháp</option>
+                    <option value="done">Hoàn tất</option>
                   </select>
                 </div>
-                <div class="col-md-5">
+                <div class="col-md-3">
+                  <label class="form-label">Số lượng</label>
+                  <input type="number" id="quantityInput" class="form-control" min="1" placeholder="VD: 50">
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">Giá nhập (VND)</label>
+                  <input type="number" id="priceInput" class="form-control" min="0" step="1000" placeholder="VD: 85.000">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Tổng tiền dự kiến</label>
+                  <input type="text" id="totalPreview" class="form-control" placeholder="Tự tính theo SL * Giá" disabled>
+                </div>
+                <div class="col-md-12">
                   <label class="form-label">Ghi chú</label>
-                  <input id="receiptNote" class="form-control" placeholder="Ghi chú ngắn">
+                  <textarea id="noteInput" class="form-control" rows="2" placeholder="Ghi chú nội bộ, ví dụ: nhập thử nghiệm..."></textarea>
                 </div>
-
-                <div class="col-12">
-                  <h6>Chi tiết hàng</h6>
-                  <div id="lineItems" class="mb-2 text-muted">Chưa có dòng hàng.</div>
-
-                  <div class="row g-2 align-items-end">
-                    <div class="col-md-6">
-                      <label class="form-label">Sản phẩm (nhập mã hoặc tên)</label>
-                      <input id="productInput" class="form-control" placeholder="Nhập mã hoặc tên sản phẩm">
-                    </div>
-                    <div class="col-md-2">
-                      <label class="form-label">Số lượng</label>
-                      <input id="itemQty" class="form-control small-input" type="number" min="1" value="1">
-                    </div>
-                    <div class="col-md-2">
-                      <label class="form-label">Giá nhập (VND)</label>
-                      <input id="itemPrice" class="form-control small-input" type="number" min="0" step="0.01" placeholder="0">
-                    </div>
-                    <div class="col-md-2">
-                      <button id="addLineBtn" type="button" class="btn btn-success w-100">Thêm dòng</button>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-12 text-end">
-                  <button id="saveReceiptBtn" type="button" class="btn btn-primary"><i class="fa fa-save me-1"></i> Lưu phiếu</button>
-                  <button id="resetReceiptBtn" type="button" class="btn btn-secondary">Đặt lại</button>
-                </div>
-              </form>
+              </div>
+              <div class="text-end mt-4">
+                <button type="button" id="resetFormBtn" class="btn btn-outline-secondary me-2"><i class="fa-solid fa-arrows-rotate me-1"></i>Làm mới</button>
+                <button type="button" id="saveReceiptBtn" class="btn btn-success"><i class="fa-solid fa-floppy-disk me-1"></i>Lưu phiếu</button>
+              </div>
             </div>
           </div>
 
-          <!-- Danh sách phiếu -->
-          <div>
-            <div class="d-flex mb-2">
-              <input id="qReceipts" class="form-control me-2" placeholder="Tìm theo ID, ngày, tên sản phẩm...">
-              <button id="searchReceipts" class="btn btn-outline-success me-2">Tìm</button>
-            <!-- <button id="exportReceipts" class="btn btn-outline-secondary">Xuất JSON</button> -->
+          <div class="card">
+            <div class="card-header d-flex flex-wrap gap-2 justify-content-between align-items-center">
+              <h5 class="mb-0 text-success"><i class="fa-solid fa-clipboard-list me-2"></i>Danh sách phiếu gần đây</h5>
+              <div class="d-flex flex-wrap gap-2">
+                <input type="text" class="form-control form-control-sm" placeholder="🔍 Tìm theo mã phiếu...">
+                <select class="form-select form-select-sm">
+                  <option value="">Tất cả trạng thái</option>
+                  <option value="draft">Bản nháp</option>
+                  <option value="done">Hoàn tất</option>
+                </select>
+              
+              </div>
             </div>
-
-            <div class="table-responsive">
-              <table class="table table-hover align-middle">
-                <thead class="table-light">
-                  <tr><th>Mã</th><th>Tên</th><th>Số dòng</th><th>Tổng SL</th><th>Tồn hiện tại</th><th>Trạng thái</th><th>Hành động</th></tr>
-                </thead>
-                <tbody id="receiptsTable"></tbody>
-              </table>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                  <thead>
+                    <tr>
+                      <th>Mã phiếu</th>
+                      <th>Ngày nhập</th>
+                      <th>Sản phẩm</th>
+                      <th>Số lượng</th>
+                      <th>Tổng tiền</th>
+                      <th>Trạng thái</th>
+                      <th>Ghi chú</th>
+                    </tr>
+                  </thead>
+                  <tbody id="receiptTable">
+                  </tbody>
+                </table>
+              </div>
+              <p class="form-muted mb-0"></p>
             </div>
           </div>
-
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    // Shared keys and sample data
-    const K = { cats:'book_cats', prods:'book_prods', receipts:'book_receipts', sales:'book_sales' };
-    const SAMPLE_CATS = [{id:'cat1',name:'Tiểu thuyết'},{id:'cat2',name:'Kỹ thuật & CNTT'},{id:'cat3',name:'Thiếu nhi'}];
-    const SAMPLE_PRODS = [
-      { id:'p1', title:'Sách Tiểu thuyết A', categoryId:'cat1', cost:120000, stock:10, threshold:5, initialStock:10, productProfit:null },
-      { id:'p2', title:'Lập trình JS', categoryId:'cat2', cost:220000, stock:5, threshold:3, initialStock:5, productProfit:null },
-      { id:'p3', title:'Truyện Thiếu Nhi B', categoryId:'cat3', cost:80000, stock:15, threshold:6, initialStock:15, productProfit:null }
-    ];
+    document.addEventListener('DOMContentLoaded', () => {
+      const STORAGE_KEY = 'importDemoReceipts';
+      const DEFAULT_RECEIPTS = [
+        { code: 'PN-2025-001', date: '2025-01-08', product: 'Đắc Nhân Tâm', qty: 120, total: 10800000, status: 'done', note: 'Bổ sung đợt Tết' },
+        { code: 'PN-2025-002', date: '2025-01-11', product: 'Nhà Giả Kim', qty: 80, total: 7200000, status: 'draft', note: 'Chờ xác nhận giá' },
+        { code: 'PN-2025-003', date: '2025-01-15', product: 'Tư Duy Đầu Tư', qty: 150, total: 19500000, status: 'done', note: 'Đã nhập kho chính' }
+      ];
 
-    function ensureData(){
-      if (!localStorage.getItem(K.cats)) localStorage.setItem(K.cats, JSON.stringify(SAMPLE_CATS));
-      if (!localStorage.getItem(K.prods)) localStorage.setItem(K.prods, JSON.stringify(SAMPLE_PRODS));
-      if (!localStorage.getItem(K.receipts)) localStorage.setItem(K.receipts, JSON.stringify([]));
-      if (!localStorage.getItem(K.sales)) localStorage.setItem(K.sales, JSON.stringify([]));
-    }
-    ensureData();
-    const $ = s => document.querySelector(s);
-    const $$ = s => Array.from(document.querySelectorAll(s));
+      const refs = {
+        code: document.getElementById('receiptCode'),
+        date: document.getElementById('receiptDate'),
+        supplier: document.getElementById('supplierInput'),
+        product: document.getElementById('productSelect'),
+        status: document.getElementById('receiptStatus'),
+        qty: document.getElementById('quantityInput'),
+        price: document.getElementById('priceInput'),
+        totalPreview: document.getElementById('totalPreview'),
+        note: document.getElementById('noteInput'),
+        table: document.getElementById('receiptTable'),
+        resetBtn: document.getElementById('resetFormBtn'),
+        saveBtn: document.getElementById('saveReceiptBtn')
+      };
 
-    // Elements
-    const productSelect = $('#productSelect');
-    const itemQty = $('#itemQty');
-    const itemPrice = $('#itemPrice');
-    const addLineBtn = $('#addLineBtn');
-    const lineItems = $('#lineItems');
+      let receipts = [];
 
-    const receiptDate = $('#receiptDate');
-    const receiptStatus = $('#receiptStatus');
-    const receiptNote = $('#receiptNote');
-    const saveReceiptBtn = $('#saveReceiptBtn');
-    const resetReceiptBtn = $('#resetReceiptBtn');
-    const receiptsTable = $('#receiptsTable');
-    const qReceipts = $('#qReceipts');
-    const searchReceipts = $('#searchReceipts');
-    const newReceipt = $('#newReceipt');
-    const btnRefresh = $('#btnRefresh');
-    const exportReceipts = $('#exportReceipts');
+      const formatCurrency = (value) =>
+        Number(value || 0).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'đ');
 
-    let editingReceiptId = null;
-    let currentLines = [];
+      const formatDate = (value) => {
+        if (!value) return '—';
+        const dt = new Date(value);
+        return Number.isNaN(dt.getTime()) ? value : dt.toLocaleDateString('vi-VN');
+      };
 
-    function read(k){ return JSON.parse(localStorage.getItem(k) || 'null'); }
-    function write(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
+      const persist = () => localStorage.setItem(STORAGE_KEY, JSON.stringify(receipts));
 
-    // No longer needed: loadProducts()
-
-    function renderLineItems(){
-      if (currentLines.length === 0) { lineItems.innerHTML = '<div class="text-muted">Chưa có dòng hàng.</div>'; return; }
-      lineItems.innerHTML = '';
-      currentLines.forEach((li, idx)=>{
-        const div = document.createElement('div');
-        div.className = 'd-flex align-items-center gap-2 mb-2';
-        div.innerHTML = `
-          <div class="flex-grow-1"><strong>${li.title}</strong></div>
-          <div>Số lượng: <input data-idx="${idx}" class="form-control form-control-sm li-qty" style="width:90px;display:inline-block;margin-left:8px" value="${li.qty}"></div>
-          <div>Giá: <input data-idx="${idx}" class="form-control form-control-sm li-price" style="width:120px;display:inline-block;margin-left:8px" value="${li.price}"></div>
-          <div><button data-idx="${idx}" class="btn btn-sm btn-outline-danger remove-line"><i class="fa fa-trash"></i></button></div>
-        `;
-        lineItems.appendChild(div);
-      });
-      // events
-      $$('.remove-line').forEach(b=> b.onclick = e => {
-        const i = +e.currentTarget.dataset.idx;
-        currentLines.splice(i,1); renderLineItems();
-      });
-      $$('.li-qty').forEach(inp => inp.onchange = e => {
-        const i = +e.target.dataset.idx;
-        currentLines[i].qty = Math.max(1, Math.floor(Number(e.target.value) || 1));
-      });
-      $$('.li-price').forEach(inp => inp.onchange = e => {
-        const i = +e.target.dataset.idx;
-        currentLines[i].price = Math.max(0, Number(e.target.value) || 0);
-      });
-    }
-
-    addLineBtn.onclick = () => {
-      const input = document.getElementById('productInput');
-      const keyword = (input.value || '').trim().toLowerCase();
-      if (!keyword) return alert('Vui lòng nhập mã hoặc tên sản phẩm.');
-      const baseProds = read(K.prods) || [];
-      const adminProds = JSON.parse(localStorage.getItem('products') || 'null') || [];
-      // Tìm theo mã hoặc tên (ưu tiên mã)
-      let p = baseProds.find(x=> (x.ma||x.id||'').toString().toLowerCase() === keyword || (x.title||'').toLowerCase() === keyword);
-      if (!p) p = adminProds.find(x=> (x.ma||x.id||'').toString().toLowerCase() === keyword || (x.title||x.ten||'').toLowerCase() === keyword);
-      if (!p) return alert('Không tìm thấy sản phẩm với mã hoặc tên này.');
-      const pid = p.ma || p.id;
-      const qty = Math.max(1, Math.floor(Number(itemQty.value) || 1));
-      const price = Math.max(0, Number(itemPrice.value) || 0);
-      const title = p.title || p.ten || '';
-      currentLines.push({ productId: pid, title, qty, price });
-      renderLineItems();
-    };
-
-    function resetForm(){
-      editingReceiptId = null;
-      currentLines = [];
-      receiptDate.value = new Date().toISOString().slice(0,16);
-      receiptStatus.value = 'draft';
-      receiptNote.value = '';
-      itemQty.value = 1;
-      itemPrice.value = '';
-      renderLineItems();
-    }
-
-    function applyReceiptCompletion(receipt){
-      const prods = read(K.prods) || [];
-      let changed = false;
-      receipt.lines.forEach(li => {
-        // match product by id OR mã (ma)
-        const p = prods.find(x=> x.id===li.productId || (x.ma && x.ma===li.productId));
-        if (!p) return;
-        const incomingQty = Number(li.qty)||0;
-        const incomingPrice = Number(li.price)||0;
-        if (incomingQty <= 0) return;
-        const oldStock = Number(p.stock||0);
-        const oldCost = Number(p.cost||0);
-        const totalQty = oldStock + incomingQty;
-        const newCost = totalQty > 0 ? ((oldStock * oldCost) + (incomingQty * incomingPrice)) / totalQty : incomingPrice;
-        p.cost = Math.round(newCost);
-        p.stock = oldStock + incomingQty;
-        changed = true;
-      });
-      if (changed) write(K.prods, prods);
-      loadProducts();
-    }
-
-    function saveReceipt(){
-      const receipts = read(K.receipts) || [];
-      if (currentLines.length === 0) return alert('Phiếu phải có ít nhất 1 dòng.');
-      const dateVal = receiptDate.value ? new Date(receiptDate.value).toISOString() : new Date().toISOString();
-      const status = receiptStatus.value;
-      if (editingReceiptId){
-        const idx = receipts.findIndex(r=>r.id===editingReceiptId);
-        if (idx === -1) return alert('Phiếu không tồn tại.');
-        if (receipts[idx].status === 'completed') return alert('Không thể sửa phiếu đã hoàn thành.');
-        receipts[idx].date = dateVal;
-        receipts[idx].note = receiptNote.value;
-        receipts[idx].status = status;
-        receipts[idx].lines = JSON.parse(JSON.stringify(currentLines));
-        receipts[idx].updatedAt = new Date().toISOString();
-        if (status === 'completed') applyReceiptCompletion(receipts[idx]);
-  write(K.receipts, receipts);
-  loadReceiptsTable();
-  showSuccessToast();
-  resetForm();
-      } else {
-        const id = 'R' + Date.now();
-        const rec = { id, date: dateVal, status, note: receiptNote.value, lines: JSON.parse(JSON.stringify(currentLines)), createdAt: new Date().toISOString() };
-        receipts.unshift(rec);
-  write(K.receipts, receipts);
-  if (status === 'completed') applyReceiptCompletion(rec);
-  loadReceiptsTable();
-  showSuccessToast();
-    // Toast notification logic
-    function showSuccessToast() {
-      const toastEl = document.getElementById('successToast');
-      if (window.bootstrap && window.bootstrap.Toast) {
-        const toast = window.bootstrap.Toast.getOrCreateInstance(toastEl);
-        toast.show();
-      } else {
-        // fallback: show as alert if Bootstrap Toast not loaded
-        alert('Đã lưu thành công');
-      }
-    }
-  resetForm();
-      }
-    }
-
-    function loadReceiptsTable(filter=''){
-      const receipts = read(K.receipts) || [];
-      receiptsTable.innerHTML = '';
-      const f = (filter||'').toLowerCase().trim();
-
-      // Build arrays of known products from both K.prods and admin products
-      const baseProds = read(K.prods) || [];
-      const adminProds = JSON.parse(localStorage.getItem('products') || 'null') || [];
-
-      // If filter partially matches any known code, treat as product-code search (partial match)
-      const allCodes = [...baseProds.map(p=>((p.ma||p.id)||'').toString().toLowerCase()), ...adminProds.map(p=>((p.ma||p.id)||'').toString().toLowerCase())];
-      // Show aggregated product list when no filter provided (so user sees all products from product manager)
-      const isProductFilter = (f === '') || (f && allCodes.some(code => code.includes(f)));
-
-      if (isProductFilter) {
-        // Always show all products, but highlight/move matches to top if filter is present
-        const ag = {};
-  const allKnown = [...baseProds.map(p=>({ code: (p.ma||p.id)||'', title: p.title||p.ten||'' })), ...adminProds.map(p=>({ code: (p.ma||p.id)||'', title: p.title||p.ten||'' }))];
-  allKnown.forEach(a=>{ if (a.code && !ag[a.code]) ag[a.code] = { code: a.code, title: a.title, totalLines:0, totalQty:0, completed:0, draft:0, receipts: [] }; });
-        receipts.forEach(r => {
-          r.lines.forEach(li => {
-            const linePidRaw = (li.productId || '').toString();
-            const prod = baseProds.find(p => (p.id === li.productId) || (p.ma === li.productId)) || adminProds.find(p => (p.id === li.productId) || (p.ma === li.productId));
-            const prodCode = prod ? ((prod.ma || prod.id)||'').toString() : linePidRaw;
-            const prodTitle = prod ? (prod.title || prod.ten || '') : (li.title || '');
-            if (!ag[prodCode]) ag[prodCode] = { code: prodCode, title: prodTitle, totalLines: 0, totalQty: 0, completed:0, draft:0, receipts: [] };
-            ag[prodCode].totalLines += 1;
-            ag[prodCode].totalQty += Number(li.qty||0);
-            if (r.status === 'completed') ag[prodCode].completed += 1; else ag[prodCode].draft += 1;
-            ag[prodCode].receipts.push({ id: r.id, qty: Number(li.qty||0), date: r.date, status: r.status });
-          });
-        });
-
-        let rows = Object.values(ag);
-        if (f) {
-          // Only show products whose code matches filter
-          rows = rows.filter(item => item.code.toLowerCase().includes(f));
+      const renderReceipts = () => {
+        if (!refs.table) return;
+        if (!receipts.length) {
+          refs.table.innerHTML = '<tr><td colspan="7" class="text-center text-muted">Chưa có phiếu nào.</td></tr>';
+          return;
         }
-        if (rows.length === 0) { receiptsTable.innerHTML = '<tr><td colspan="7" class="text-muted">Không tìm thấy sản phẩm.</td></tr>'; return; }
-        rows.forEach(item => {
-          const tr = document.createElement('tr');
-          const stockRec = baseProds.find(p => ((p.ma||p.id)||'') == item.code);
-          const currentStock = stockRec ? Number(stockRec.stock||0) : '';
-          tr.innerHTML = `
-            <td>${item.code}</td>
-            <td>${item.title}</td>
-            <td>${item.totalLines}</td>
-            <td>${item.totalQty}</td>
-            <td>${currentStock}</td>
-            <td>Hoàn thành: ${item.completed} / Draft: ${item.draft}</td>
-            <td><button class="btn btn-sm btn-outline-primary view-product" data-code="${item.code}">Xem</button></td>
-          `;
-          receiptsTable.appendChild(tr);
+
+        refs.table.innerHTML = receipts
+          .map((r) => {
+            const badge = r.status === 'done' ? 'badge-done' : 'badge-draft';
+            const label = r.status === 'done' ? 'Hoàn tất' : 'Bản nháp';
+            return `
+              <tr>
+                <td><strong>${r.code}</strong></td>
+                <td>${formatDate(r.date)}</td>
+                <td>${r.product || '—'}</td>
+                <td>${r.qty || 0}</td>
+                <td>${formatCurrency(r.total || 0)}</td>
+                <td><span class="badge-status ${badge}">${label}</span></td>
+                <td>${r.note || '—'}</td>
+              </tr>
+            `;
+          })
+          .join('');
+      };
+
+      const loadReceipts = () => {
+        const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+        receipts = Array.isArray(stored) && stored.length ? stored : [...DEFAULT_RECEIPTS];
+        renderReceipts();
+      };
+
+      const generateCode = () => {
+        const now = new Date();
+        return `PN-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getTime()).slice(-4)}`;
+      };
+
+      const updateTempCode = () => {
+        if (refs.code) refs.code.value = generateCode();
+      };
+
+      const resetForm = () => {
+        updateTempCode();
+        if (refs.date) refs.date.value = '';
+        if (refs.supplier) refs.supplier.value = '';
+        if (refs.product) refs.product.value = '';
+        if (refs.status) refs.status.value = 'draft';
+        if (refs.qty) refs.qty.value = '';
+        if (refs.price) refs.price.value = '';
+        if (refs.note) refs.note.value = '';
+        if (refs.totalPreview) refs.totalPreview.value = '';
+      };
+
+      const updateTotalPreview = () => {
+        if (!refs.totalPreview) return;
+        const qty = Number(refs.qty?.value || 0);
+        const price = Number(refs.price?.value || 0);
+        refs.totalPreview.value = qty > 0 && price >= 0 ? formatCurrency(qty * price) : '';
+      };
+
+      const handleSave = () => {
+        const productOption = refs.product?.options?.[refs.product.selectedIndex];
+        if (!productOption || !refs.product.value) {
+          alert('Vui lòng chọn sản phẩm.');
+          return;
+        }
+        const qty = Number(refs.qty?.value);
+        const price = Number(refs.price?.value);
+        if (!qty || qty <= 0 || !price || price < 0) {
+          alert('Vui lòng nhập số lượng và giá hợp lệ.');
+          return;
+        }
+
+        const productName = (productOption.textContent || '').split('—').pop()?.trim() || productOption.textContent;
+        const newReceipt = {
+          code: refs.code?.value || generateCode(),
+          date: refs.date?.value || new Date().toISOString().slice(0, 10),
+          supplier: refs.supplier?.value?.trim() || '',
+          product: productName,
+          qty,
+          total: qty * price,
+          status: refs.status?.value || 'draft',
+          note: refs.note?.value?.trim() || ''
+        };
+
+        receipts.unshift(newReceipt);
+        persist();
+        renderReceipts();
+        alert('Đã lưu phiếu (demo). Phiếu này chỉ hiển thị trên danh sách bên dưới.');
+        resetForm();
+      };
+
+      const populateProducts = () => {
+        const select = refs.product;
+        if (!select) return;
+        const stored = JSON.parse(localStorage.getItem('products') || '[]');
+        const fallback = [
+          { ma: 'VH001', ten: 'Đắc Nhân Tâm' },
+          { ma: 'VH002', ten: 'Nhà Giả Kim' },
+          { ma: 'KT001', ten: 'Tư Duy Đầu Tư' },
+          { ma: 'KT002', ten: 'The Little Book' },
+          { ma: 'TN001', ten: 'Dế Mèn Phiêu Lưu Ký' }
+        ];
+        const source = stored.length ? stored : fallback;
+
+        select.innerHTML = '<option value="">-- Chọn sản phẩm --</option>';
+        source.forEach((product, index) => {
+          const option = document.createElement('option');
+          option.value = product.ma || `p-${index}`;
+          option.textContent = `${product.ma || 'N/A'} — ${product.ten || product.title || 'Sản phẩm không tên'}`;
+          select.appendChild(option);
         });
-        $$('.view-product').forEach(b=> b.onclick = e => viewReceiptsForProduct(e.currentTarget.dataset.code));
-        return;
-      }
+      };
 
-      // Default: search by receipt id, note, date or product title as before
-      receipts.forEach(r=>{
-        const matchesProductTitle = r.lines.some(li => {
-          const title = (li.title || '').toString().toLowerCase();
-          if (title.includes(f)) return true;
-          // also check if li.productId maps to a product whose mã or id includes the filter
-          const prod = baseProds.find(p=>p.id===li.productId || p.ma===li.productId) || adminProds.find(p=>p.id===li.productId || p.ma===li.productId);
-          if (prod) {
-            const code = ((prod.ma || prod.id) || '').toString().toLowerCase();
-            if (code.includes(f)) return true;
-          }
-          return false;
-        });
-        if (f && !(r.id.toLowerCase().includes(f) || (r.note||'').toLowerCase().includes(f) || r.date.toLowerCase().includes(f) || matchesProductTitle)) return;
-        const totalQty = r.lines.reduce((s,li)=>s + Number(li.qty||0),0);
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${r.id}</td>
-          <td>${new Date(r.date).toLocaleString()}</td>
-          <td>${r.status === 'completed' ? '<span class="status-completed">Hoàn thành</span>' : '<span class="status-draft">Draft</span>'}</td>
-          <td>${r.lines.length}</td>
-          <td>${totalQty}</td>
-          <td>
-            <button class="btn btn-sm btn-outline-primary view" data-id="${r.id}">Xem</button>
-            ${r.status==='draft' ? `<button class="btn btn-sm btn-outline-success edit" data-id="${r.id}">Sửa</button>` : ''}
-            ${r.status==='draft' ? `<button class="btn btn-sm btn-success complete" data-id="${r.id}">Hoàn thành</button>` : ''}
-            <button class="btn btn-sm btn-outline-danger del" data-id="${r.id}">Xóa</button>
-          </td>
-        `;
-        receiptsTable.appendChild(tr);
-      });
-      // attach events
-      $$('.view').forEach(b=> b.onclick = e => viewReceipt(e.currentTarget.dataset.id));
-      $$('.edit').forEach(b=> b.onclick = e => editReceipt(e.currentTarget.dataset.id));
-      $$('.complete').forEach(b=> b.onclick = e => completeReceipt(e.currentTarget.dataset.id));
-      $$('.del').forEach(b=> b.onclick = e => deleteReceipt(e.currentTarget.dataset.id));
-    }
+      refs.qty?.addEventListener('input', updateTotalPreview);
+      refs.price?.addEventListener('input', updateTotalPreview);
+      refs.resetBtn?.addEventListener('click', resetForm);
+      refs.saveBtn?.addEventListener('click', handleSave);
 
-    function viewReceipt(id){
-      const receipts = read(K.receipts) || [];
-      const r = receipts.find(x=>x.id===id);
-      if (!r) return alert('Không tìm thấy phiếu.');
-      alert(`Phiếu ${r.id}\nNgày: ${new Date(r.date).toLocaleString()}\nTrạng thái: ${r.status}\nGhi chú: ${r.note}\n\nDòng:\n` + r.lines.map(li=>`- ${li.title} | SL: ${li.qty} | Giá nhập: ${li.price}`).join('\n'));
-    }
-
-    function editReceipt(id){
-      const receipts = read(K.receipts) || [];
-      const r = receipts.find(x=>x.id===id);
-      if (!r) return alert('Không tìm thấy phiếu.');
-      if (r.status === 'completed') return alert('Không thể sửa phiếu đã hoàn thành.');
-      editingReceiptId = r.id;
-      receiptDate.value = new Date(r.date).toISOString().slice(0,16);
-      receiptStatus.value = r.status;
-      receiptNote.value = r.note || '';
-      currentLines = JSON.parse(JSON.stringify(r.lines));
-      renderLineItems();
-      window.scrollTo({top:0,behavior:'smooth'});
-    }
-
-    function completeReceipt(id){
-      if (!confirm('Xác nhận hoàn thành phiếu? (Hành động này sẽ cập nhật tồn kho)')) return;
-      const receipts = read(K.receipts) || [];
-      const r = receipts.find(x=>x.id===id);
-      if (!r) return alert('Không tìm thấy phiếu.');
-      if (r.status === 'completed') return alert('Phiếu đã hoàn thành.');
-      r.status = 'completed'; r.completedAt = new Date().toISOString();
-      write(K.receipts, receipts);
-      applyReceiptCompletion(r);
-      loadReceiptsTable();
-    }
-
-    function deleteReceipt(id){
-      if (!confirm('Xóa phiếu này? Hành động không thể hoàn tác.')) return;
-      let receipts = read(K.receipts) || [];
-      receipts = receipts.filter(r=>r.id!==id);
-      write(K.receipts, receipts);
-      loadReceiptsTable();
-    }
-
-    saveReceiptBtn.onclick = saveReceipt;
-    resetReceiptBtn.onclick = resetForm;
-    searchReceipts.onclick = () => loadReceiptsTable(qReceipts.value);
-    newReceipt.onclick = () => { resetForm(); window.scrollTo({top:0,behavior:'smooth'}); };
-    btnRefresh.onclick = () => { ensureData(); loadProducts(); loadReceiptsTable(); alert('Đã làm mới dữ liệu (tải lại mẫu nếu thiếu).'); };
-    exportReceipts.onclick = () => { const r = read(K.receipts) || []; const txt = JSON.stringify(r, null, 2); const w = window.open(); w.document.write('<pre>'+txt.replace(/</g,'&lt;')+'</pre>'); };
-
-    // init
-    function init(){
-      resetForm();
-      loadReceiptsTable();
-      receiptDate.value = new Date().toISOString().slice(0,16);
-    }
-    init();
+      populateProducts();
+      loadReceipts();
+      updateTempCode();
+    });
   </script>
 </body>
 </html>
