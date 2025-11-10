@@ -59,18 +59,17 @@
       </div>
 
       <div class="mb-3">
-        <label>Mật khẩu</label>
-        <input type="password" id="password" class="form-control">
+        <label>Mật khẩu hiện tại</label>
+        <div class="input-group">
+          <input type="password" id="currentPassword" class="form-control" readonly>
+          <button class="btn btn-outline-secondary" type="button" id="togglePassword">Hiện</button>
+        </div>
       </div>
 
       <div class="mb-3">
-        <label>Trạng thái</label>
-        <input type="text" id="status" class="form-control" disabled>
-      </div>
-
-      <div class="mb-3">
-        <label>Được tạo bởi</label>
-        <input type="text" id="createdBy" class="form-control" disabled>
+        <label>Mật khẩu mới</label>
+        <input type="password" id="newPassword" class="form-control" placeholder="Nhập mật khẩu mới (tùy chọn)">
+        <div class="form-text">Để trống nếu bạn chưa muốn thay đổi mật khẩu.</div>
       </div>
 
       <button type="submit" class="btn btn-success w-100">Lưu thay đổi</button>
@@ -79,24 +78,32 @@
   </div>
 
   <script>
-    // Lấy thông tin người dùng hiện tại
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
     if (!currentUser) {
       alert('Bạn cần đăng nhập để xem thông tin cá nhân!');
       window.location.href = 'login.html';
     }
 
-    // Lấy danh sách khách hàng trong localStorage (dữ liệu admin)
-    let data = JSON.parse(localStorage.getItem('khachhang_demo') || '[]');
+    const formEls = {
+      name: document.getElementById('name'),
+      email: document.getElementById('email'),
+      phone: document.getElementById('phone'),
+      city: document.getElementById('city'),
+      username: document.getElementById('username'),
+      currentPassword: document.getElementById('currentPassword'),
+      newPassword: document.getElementById('newPassword'),
+      togglePasswordBtn: document.getElementById('togglePassword')
+    };
 
-    // Tìm user trong danh sách
-    let user = data.find(u => u.username === currentUser.username);
+    let customerList = JSON.parse(localStorage.getItem('khachhang_demo') || '[]');
+    let adminUsers = JSON.parse(localStorage.getItem('users') || '[]');
+    let user = customerList.find(u => u.username === currentUser.username);
+    let adminUser = adminUsers.find(u => u.username === currentUser.username);
 
-    // Nếu chưa có trong danh sách (trường hợp đăng ký mới)
     if (!user) {
       user = {
         id: Date.now(),
-        name: currentUser.hoten || '',
+        name: currentUser.hoten || currentUser.name || '',
         email: currentUser.email || '',
         phone: currentUser.phone || '',
         city: currentUser.city || '',
@@ -105,39 +112,91 @@
         status: 'active',
         createdBy: 'customer'
       };
-      data.push(user);
-      localStorage.setItem('khachhang_demo', JSON.stringify(data));
+      customerList.push(user);
+      localStorage.setItem('khachhang_demo', JSON.stringify(customerList));
     }
 
-    // Hiển thị thông tin ra form
+    if (!adminUser) {
+      adminUser = {
+        id: Date.now(),
+        name: user.name || currentUser.hoten || '',
+        email: user.email || currentUser.email || '',
+        phone: user.phone || currentUser.phone || '',
+        city: user.city || currentUser.city || '',
+        username: user.username,
+        password: user.password || currentUser.password || '',
+        status: 'active',
+        createdBy: 'customer'
+      };
+      adminUsers.push(adminUser);
+      localStorage.setItem('users', JSON.stringify(adminUsers));
+    }
+
     function loadProfile() {
-      document.getElementById('name').value = user.name || '';
-      document.getElementById('email').value = user.email || '';
-      document.getElementById('phone').value = user.phone || '';
-      document.getElementById('city').value = user.city || '';
-      document.getElementById('username').value = user.username || '';
-      document.getElementById('password').value = user.password || '';
-      document.getElementById('status').value = user.status || 'active';
-      document.getElementById('createdBy').value = user.createdBy || 'customer';
+      const fallbackName = user.name || currentUser.hoten || currentUser.name || user.username || '';
+      formEls.name.value = fallbackName;
+      formEls.email.value = user.email || '';
+      formEls.phone.value = user.phone || '';
+      formEls.city.value = user.city || '';
+      formEls.username.value = user.username || '';
+      formEls.currentPassword.value = user.password || '';
+      formEls.newPassword.value = '';
+      formEls.currentPassword.type = 'password';
+      formEls.togglePasswordBtn.textContent = 'Hiện';
     }
     loadProfile();
 
-    // Cập nhật thông tin khi người dùng bấm Lưu
+    formEls.togglePasswordBtn.addEventListener('click', () => {
+      const isHidden = formEls.currentPassword.type === 'password';
+      formEls.currentPassword.type = isHidden ? 'text' : 'password';
+      formEls.togglePasswordBtn.textContent = isHidden ? 'Ẩn' : 'Hiện';
+    });
+
     document.getElementById('profileForm').addEventListener('submit', function (e) {
       e.preventDefault();
 
-      user.name = document.getElementById('name').value.trim();
-      user.email = document.getElementById('email').value.trim();
-      user.phone = document.getElementById('phone').value.trim();
-      user.city = document.getElementById('city').value.trim();
-      user.password = document.getElementById('password').value.trim();
+      user.name = formEls.name.value.trim();
+      user.email = formEls.email.value.trim();
+      user.phone = formEls.phone.value.trim();
+      user.city = formEls.city.value.trim();
 
-      // Cập nhật lại vào danh sách khách hàng và currentUser
-      const idx = data.findIndex(u => u.username === user.username);
-      if (idx >= 0) data[idx] = user;
+      const newPasswordValue = formEls.newPassword.value.trim();
+      if (newPasswordValue) {
+        user.password = newPasswordValue;
+        formEls.currentPassword.value = newPasswordValue;
+        formEls.newPassword.value = '';
+        formEls.currentPassword.type = 'password';
+        formEls.togglePasswordBtn.textContent = 'Hiện';
+      } else {
+        user.password = formEls.currentPassword.value.trim();
+      }
 
-      localStorage.setItem('khachhang_demo', JSON.stringify(data));
-      localStorage.setItem('currentUser', JSON.stringify(user));
+      const customerIdx = customerList.findIndex(u => u.username === user.username);
+      if (customerIdx >= 0) customerList[customerIdx] = user;
+      localStorage.setItem('khachhang_demo', JSON.stringify(customerList));
+
+      if (adminUser) {
+        adminUser.name = user.name;
+        adminUser.email = user.email;
+        adminUser.phone = user.phone;
+        adminUser.city = user.city;
+        adminUser.username = user.username;
+        adminUser.password = user.password;
+        adminUsers = adminUsers.map(u => (u.username === adminUser.username ? adminUser : u));
+        localStorage.setItem('users', JSON.stringify(adminUsers));
+      }
+
+      const syncedCurrentUser = {
+        ...currentUser,
+        hoten: user.name || currentUser.hoten,
+        name: user.name || currentUser.name,
+        email: user.email,
+        phone: user.phone,
+        city: user.city,
+        username: user.username,
+        password: user.password
+      };
+      localStorage.setItem('currentUser', JSON.stringify(syncedCurrentUser));
 
       alert('Cập nhật thông tin thành công!');
     });
