@@ -1,1102 +1,616 @@
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quản lý sản phẩm - Thức Store</title>
-
-  <!-- Bootstrap -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="../css/admin-shared.css">
-
-   <style>
-    body {
-      background-color: #f3f8f3;
-      font-family: "Open Sans", sans-serif;
-    }
-
-    /* ===================== CONTENT ===================== */
-    .content-area {
-      background: #fff;
-      border-radius: 1rem;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.05);
-      padding: 0;
-      min-height: 75vh;
-    }
-
-    .card {
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      border: none;
-      margin-bottom: 20px;
-    }
-
-    .card-header {
-      background: white;
-      border-bottom: 2px solid #e9ecef;
-      padding: 20px;
-      border-radius: 10px 10px 0 0 !important;
-    }
-
-    .card-title {
-      color: #2d6a4f;
-      font-weight: bold;
-      font-size: 1.2rem;
-      margin: 0;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    /* Form thêm sản phẩm */
-    .form-label {
-      font-weight: 600;
-      color: #495057;
-      margin-bottom: 8px;
-    }
-
-    .form-control, .form-select, textarea {
-      border-radius: 8px;
-      border: 1px solid #ced4da;
-      padding: 10px 14px;
-    }
-
-    .form-control:focus, .form-select:focus, textarea:focus {
-      border-color: #2d6a4f;
-      box-shadow: 0 0 0 0.2rem rgba(45, 106, 79, 0.15);
-    }
-
-    /* ✅ Checkbox thể loại - style đồng nhất */
-    .category-checkboxes {
-      padding: 12px 15px;
-      background: #ffffff;
-      border-radius: 8px;
-      border: 1px solid #ced4da;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-    }
-
-    .form-check-inline {
-      margin: 0;
-      padding: 8px 12px;
-      background: #f8f9fa;
-      border-radius: 6px;
-      transition: all 0.3s;
-    }
-
-    .form-check-inline:hover {
-      background: #e9ecef;
-    }
-
-    .form-check-input {
-      cursor: pointer;
-      margin-top: 0.2em;
-    }
-
-    .form-check-input:checked {
-      background-color: #2d6a4f;
-      border-color: #2d6a4f;
-    }
-
-    .form-check-label {
-      cursor: pointer;
-      user-select: none;
-      font-weight: 500;
-      color: #495057;
-      margin-left: 6px;
-    }
-
-    .btn-add-product {
-      background: #2d6a4f;
-      color: white;
-      border: none;
-      padding: 12px 30px;
-      border-radius: 8px;
-      font-weight: 600;
-      transition: all 0.3s;
-      width: 100%;
-    }
-
-    .btn-add-product:hover {
-      background: #1b4332;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(45, 106, 79, 0.3);
-    }
-
-    /* Filters */
-    .filter-section {
-      background: #f8f9fa;
-      padding: 20px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-    }
-
-    /* Product Grid */
-    .product-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 20px;
-      padding: 20px;
-    }
-
-    .product-card {
-      background: white;
-      border: 1px solid #e9ecef;
-      border-radius: 12px;
-      overflow: hidden;
-      transition: all 0.3s;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      display: flex;
-      flex-direction: column;
-    }
-
-    .product-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-    }
-
-    .product-card img {
-      width: 100%;
-      height: 220px;
-      object-fit: cover;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-
-    .product-card-body {
-      padding: 15px;
-      cursor: pointer;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .product-name {
-      font-weight: 600;
-      font-size: 0.95rem;
-      color: #212529;
-      margin-bottom: 8px;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    .product-meta {
-      font-size: 0.8rem;
-      color: #6c757d;
-      margin-bottom: 8px;
-    }
-
-    .product-price {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-
-    .price-current {
-      font-weight: 700;
-      color: #dc3545;
-      font-size: 1.1rem;
-    }
-
-    .price-original {
-      text-decoration: line-through;
-      color: #6c757d;
-      font-size: 0.9rem;
-    }
-
-    .discount-badge {
-      background: #dc3545;
-      color: white;
-      padding: 3px 8px;
-      border-radius: 6px;
-      font-size: 0.75rem;
-      font-weight: 600;
-    }
-
-    .product-status {
-      font-size: 0.85rem;
-      font-weight: 600;
-      margin-bottom: 10px;
-      margin-top: auto;
-    }
-
-    .status-visible { color: #28a745; }
-    .status-hidden { color: #dc3545; }
-
-    .product-actions {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
-      padding: 0 15px 15px 15px;
-    }
-
-    .btn-action {
-      padding: 8px 10px;
-      border: none;
-      border-radius: 6px;
-      font-size: 0.85rem;
-      cursor: pointer;
-      transition: all 0.3s;
-      font-weight: 500;
-    }
-
-    .btn-edit {
-      background: #4c6b5f;
-      color: white;
-    }
-
-    .btn-edit:hover {
-      background: #3a5447;
-    }
-
-    .btn-toggle {
-      background: #404A3D;
-      color: white;
-    }
-
-    .btn-toggle:hover {
-      background: #2e352a;
-    }
-
-    .btn-delete {
-      background: #dc3545;
-      color: white;
-    }
-
-    .btn-delete:hover {
-      background: #c82333;
-    }
-
-    /* Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1050;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.6);
-      overflow: auto;
-    }
-
-    .modal-content {
-      background: white;
-      margin: 3% auto;
-      padding: 0;
-      border-radius: 12px;
-      width: 600px;
-      max-width: 95%;
-      max-height: 90vh;
-      overflow: hidden;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-    }
-
-    .modal-header {
-      background: #2d6a4f;
-      color: white;
-      padding: 20px 25px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .modal-header h3 {
-      margin: 0;
-      font-size: 1.3rem;
-    }
-
-    .modal-close {
-      background: none;
-      border: none;
-      color: white;
-      font-size: 1.8rem;
-      cursor: pointer;
-      padding: 0;
-      width: 30px;
-      height: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      transition: all 0.3s;
-    }
-
-    .modal-close:hover {
-      background: rgba(255,255,255,0.2);
-    }
-
-    .modal-body {
-      padding: 25px;
-      max-height: calc(90vh - 140px);
-      overflow-y: auto;
-    }
-
-    .modal-body::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    .modal-body::-webkit-scrollbar-thumb {
-      background: #ccc;
-      border-radius: 4px;
-    }
-
-    .modal-footer {
-      padding: 20px 25px;
-      border-top: 1px solid #e9ecef;
-      display: flex;
-      gap: 10px;
-      background: #f8f9fa;
-    }
-
-    .btn-modal-save {
-      flex: 1;
-      background: #2d6a4f;
-      color: white;
-      border: none;
-      padding: 12px;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-
-    .btn-modal-save:hover {
-      background: #1b4332;
-    }
-
-    .btn-modal-cancel {
-      flex: 1;
-      background: #6c757d;
-      color: white;
-      border: none;
-      padding: 12px;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-
-    .btn-modal-cancel:hover {
-      background: #5a6268;
-    }
-
-    #editPreview {
-      max-width: 150px;
-      margin-top: 10px;
-      border-radius: 8px;
-      border: 2px solid #e9ecef;
-    }
-
-    @media (max-width: 768px) {
-      .product-grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 15px;
-        padding: 15px;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quản lý sản phẩm - Thức Store</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<style>
+body {
+  background-color: #f3f8f3;
+  font-family: "Open Sans", sans-serif;
+}
+.admin-banner {
+  background: linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%);
+  color: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+.sidebar {
+  background: #fff;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+}
+.sidebar h5 {
+  color: #2d6a4f;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+.menu-item {
+  display: block;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  border-radius: 0.5rem;
+  color: #333;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+.menu-item:hover, .menu-item.active {
+  background: #d8f3dc;
+  color: #1b4332;
+}
+.emoji { margin-right: 0.5rem; }
+.content-area {
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+  padding: 0;
+  min-height: 75vh;
+}
+.card {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border: none;
+  margin-bottom: 20px;
+}
+.card-header {
+  background: white;
+  border-bottom: 2px solid #e9ecef;
+  padding: 20px;
+  border-radius: 10px 10px 0 0 !important;
+}
+.card-title {
+  color: #2d6a4f;
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.form-label {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 8px;
+}
+.form-control, .form-select, textarea {
+  border-radius: 8px;
+  border: 1px solid #ced4da;
+  padding: 10px 14px;
+}
+.form-control:focus, .form-select:focus, textarea:focus {
+  border-color: #2d6a4f;
+  box-shadow: 0 0 0 0.2rem rgba(45, 106, 79, 0.15);
+}
+.category-checkboxes {
+  padding: 12px 15px;
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #ced4da;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+.form-check-inline {
+  margin: 0;
+  padding: 8px 12px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  transition: all 0.3s;
+}
+.form-check-inline:hover {
+  background: #e9ecef;
+}
+.form-check-input {
+  cursor: pointer;
+  margin-top: 0.2em;
+}
+.form-check-input:checked {
+  background-color: #2d6a4f;
+  border-color: #2d6a4f;
+}
+.form-check-label {
+  cursor: pointer;
+  user-select: none;
+  font-weight: 500;
+  color: #495057;
+  margin-left: 6px;
+}
+.btn-add-product {
+  background: #2d6a4f;
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s;
+  width: 100%;
+}
+.btn-add-product:hover {
+  background: #1b4332;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(45, 106, 79, 0.3);
+}
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+.product-card {
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+}
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+.product-card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+}
+.product-card-body {
+  padding: 15px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.product-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #212529;
+  margin-bottom: 8px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.8em;
+}
+.product-meta {
+  font-size: 0.8rem;
+  color: #6c757d;
+  margin-bottom: 8px;
+}
+.product-price {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.price-current {
+  font-weight: 700;
+  color: #dc3545;
+  font-size: 1.1rem;
+}
+.price-original {
+  text-decoration: line-through;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+.discount-badge {
+  background: #dc3545;
+  color: white;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+.product-status {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  margin-top: auto;
+  color: #28a745;
+}
+.product-actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  padding: 0 15px 15px 15px;
+}
+.btn-action {
+  padding: 8px 10px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-weight: 500;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+}
+.btn-edit {
+  background: #4c6b5f;
+  color: white;
+}
+.btn-edit:hover {
+  background: #3a5447;
+  color: white;
+}
+.btn-toggle {
+  background: #404A3D;
+  color: white;
+}
+.btn-toggle:hover {
+  background: #2e352a;
+  color: white;
+}
+.btn-delete {
+  background: #dc3545;
+  color: white;
+}
+.btn-delete:hover {
+  background: #c82333;
+  color: white;
+}
+@media (max-width: 768px) {
+  .product-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+    padding: 15px;
+  }
+}
+</style>
 </head>
-
 <body>
-  <div class="container-fluid py-4">
-    <!-- Banner -->
-    <div class="admin-banner">
-      <h1><i class="fas fa-book"></i> Thức Store Admin</h1>
-      <p>Trang quản trị hệ thống - Quản lý Sản phẩm</p>
+<div class="container-fluid py-4">
+  <div class="admin-banner">
+    <h1><i class="fas fa-book"></i> Thức Store Admin</h1>
+    <p>Trang quản trị hệ thống - Quản lý Sản phẩm</p>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-3 mb-4">
+      <div class="sidebar">
+        <h5>📋 Menu quản lý</h5>
+        <a href="quanlysanpham.html" class="menu-item active"><span class="emoji">📘</span> Quản lý Sản phẩm</a>
+        <a href="quanlydonhang.html" class="menu-item"><span class="emoji">🧾</span> Quản lý Đơn hàng</a>
+        <a href="user.html" class="menu-item"><span class="emoji">👤</span> Quản lý Người dùng</a>
+        <a href="stock.html" class="menu-item"><span class="emoji">📦</span> Quản lý Kho</a>
+        <a href="pricing.html" class="menu-item"><span class="emoji">💲</span> Quản lý Giá</a>
+        <a href="import.html" class="menu-item"><span class="emoji">🚚</span> Nhập hàng</a>
+      </div>
     </div>
 
-    <div class="row">
-      <!-- Sidebar -->
-      <div class="col-lg-3 mb-4">
-        <div class="sidebar">
-          <h5>📋 Menu quản lý</h5>
-          <a href="quanlysanpham.html" class="menu-item active"><span class="emoji">📘</span> Quản lý Sản phẩm</a>
-          <a href="quanlydonhang.html" class="menu-item"><span class="emoji">🧾</span> Quản lý Đơn hàng</a>
-          <a href="user.html" class="menu-item"><span class="emoji">👤</span> Quản lý Người dùng</a>
-          <a href="stock.html" class="menu-item"><span class="emoji">📦</span> Quản lý Kho</a>
-          <a href="pricing.html" class="menu-item"><span class="emoji">💲</span> Quản lý Giá</a>
-          <a href="import.html" class="menu-item"><span class="emoji">🚚</span> Nhập hàng</a>
-        </div>
-      </div>
-
-  <!-- Content -->
-      <div class="col-lg-9">
-        <div class="content-area">
-          <!-- Card Thêm sản phẩm -->
-          <div class="card">
-            <div class="card-header">
-              <h5 class="card-title"><i class="fas fa-plus-circle"></i> Thêm sản phẩm mới</h5>
-            </div>
-            <div class="card-body p-4">
-              <form id="addProductForm">
-                <div class="row g-3">
-                  <!-- Thể loại - Checkbox -->
-                  <div class="col-md-12">
-                    <label class="form-label">Thể loại <span class="text-danger">*</span></label>
-                    <div class="category-checkboxes">
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="cat1" value="Văn học">
-                        <label class="form-check-label" for="cat1">Văn học</label>
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="cat2" value="Kinh tế">
-                        <label class="form-check-label" for="cat2">Kinh tế</label>
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="cat3" value="Kỹ năng sống">
-                        <label class="form-check-label" for="cat3">Kỹ năng sống</label>
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="cat4" value="Thiếu nhi">
-                        <label class="form-check-label" for="cat4">Thiếu nhi</label>
-                      </div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="cat5" value="Giáo khoa">
-                        <label class="form-check-label" for="cat5">Giáo khoa</label>
-                      </div>
+    <div class="col-lg-9">
+      <div class="content-area">
+        
+        <!-- Card Thêm sản phẩm mới -->
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title"><i class="fas fa-plus-circle"></i> Thêm sản phẩm mới</h5>
+          </div>
+          <div class="card-body p-4">
+            <form>
+              <div class="row g-3">
+                <!-- Thể loại - Checkbox -->
+                <div class="col-md-12">
+                  <label class="form-label">Thể loại <span class="text-danger">*</span></label>
+                  <div class="category-checkboxes">
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="checkbox" id="cat1" value="Văn học">
+                      <label class="form-check-label" for="cat1">Văn học</label>
                     </div>
-                   
-                  </div>
-
-                  <div class="col-md-6">
-                    <label class="form-label">Mã sản phẩm</label>
-                    <input type="text" class="form-control" id="ma" required>
-                  </div>
-                  <div class="col-md-12">
-                    <label class="form-label">Tên sách</label>
-                    <input type="text" class="form-control" id="ten" required>
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label">Tác giả</label>
-                    <input type="text" class="form-control" id="tacgia" required>
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label">Nhà xuất bản</label>
-                    <input type="text" class="form-control" id="nhaxuatban" required>
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label">Năm xuất bản</label>
-                    <input type="text" class="form-control" id="namxuatban" required>
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label">Bìa sách</label>
-                    <input type="file" class="form-control" id="hinh" accept="image/*" required>
-                  </div>
-                  <div class="col-md-12">
-                    <label class="form-label">Mô tả</label>
-                    <textarea class="form-control" id="mota" rows="3"></textarea>
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label">Giá bán</label>
-                    <input type="number" class="form-control" id="gia" required>
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label">Giá gốc</label>
-                    <input type="number" class="form-control" id="giagoc" required>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="checkbox" id="cat2" value="Kinh tế">
+                      <label class="form-check-label" for="cat2">Kinh tế</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="checkbox" id="cat3" value="Kỹ năng sống">
+                      <label class="form-check-label" for="cat3">Kỹ năng sống</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="checkbox" id="cat4" value="Thiếu nhi">
+                      <label class="form-check-label" for="cat4">Thiếu nhi</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="checkbox" id="cat5" value="Giáo khoa">
+                      <label class="form-check-label" for="cat5">Giáo khoa</label>
+                    </div>
                   </div>
                 </div>
-                <button type="submit" class="btn-add-product mt-3">
-                  <i class="fas fa-plus"></i> Thêm sản phẩm
-                </button>
-              </form>
-            </div>
-          </div>
 
-          <!-- Card Danh sách sản phẩm -->
-          <div class="card">
-            <div class="card-header">
-              <h5 class="card-title"><i class="fas fa-list"></i> Danh sách sản phẩm</h5>
-            </div>
-            <div class="card-body">
-              <!-- Filters -->
-              <div class="filter-section">
-                <div class="row g-3">
-                  <div class="col-md-5">
-                    <input type="text" class="form-control" id="searchInput" placeholder="🔍 Tìm sản phẩm theo tên hoặc mã...">
+                <div class="col-md-6">
+                  <label class="form-label">Mã sản phẩm</label>
+                  <input type="text" class="form-control" placeholder="Ví dụ: KN001">
+                </div>
+                <div class="col-md-12">
+                  <label class="form-label">Tên sách</label>
+                  <input type="text" class="form-control" placeholder="Nhập tên sách">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Tác giả</label>
+                  <input type="text" class="form-control" placeholder="Nhập tên tác giả">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Nhà xuất bản</label>
+                  <input type="text" class="form-control" placeholder="Nhập nhà xuất bản">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Năm xuất bản</label>
+                  <input type="text" class="form-control" placeholder="Ví dụ: 2024">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Bìa sách</label>
+                  <input type="file" class="form-control" accept="image/*">
+                </div>
+                <div class="col-md-12">
+                  <label class="form-label">Mô tả</label>
+                  <textarea class="form-control" rows="3" placeholder="Nhập mô tả sản phẩm..."></textarea>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Giá bán</label>
+                  <input type="number" class="form-control" placeholder="Ví dụ: 85000">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Giá gốc</label>
+                  <input type="number" class="form-control" placeholder="Ví dụ: 120000">
+                </div>
+              </div>
+              <button type="button" class="btn-add-product mt-3">
+                <i class="fas fa-plus"></i> Thêm sản phẩm
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Card Danh sách sản phẩm -->
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title"><i class="fas fa-list"></i> Danh sách sản phẩm (15 sản phẩm)</h5>
+          </div>
+          <div class="card-body">
+            <div class="product-grid">
+              
+              <!-- Sản phẩm 1 -->
+              <div class="product-card">
+                <img src="../img/38.jpg" alt="GOOD ENERGY - NĂNG LƯỢNG TỐT">
+                <div class="product-card-body">
+                  <div class="product-name">GOOD ENERGY - NĂNG LƯỢNG TỐT</div>
+                  <div class="product-meta">Loại: Kỹ năng sống | Mã: KN001</div>
+                  <div class="product-price">
+                    <span class="price-current">85.000đ</span>
+                    <span class="price-original">120.000đ</span>
                   </div>
-                  <div class="col-md-3">
-                    <select class="form-select" id="categoryFilter">
-                      <option value="">-- Tất cả loại --</option>
-                      <option value="Văn học">Văn học</option>
-                      <option value="Kinh tế">Kinh tế</option>
-                      <option value="Kỹ năng sống">Kỹ năng sống</option>
-                      <option value="Thiếu nhi">Thiếu nhi</option>
-                      <option value="Giáo khoa">Giáo khoa</option>
-                    </select>
-                  </div>
-                  <div class="col-md-4">
-                    <select class="form-select" id="priceFilter">
-                      <option value="">-- Tất cả giá --</option>
-                      <option value="duoi100">Dưới 100.000đ</option>
-                      <option value="100-200">100k - 200.000đ</option>
-                      <option value="tren200">Trên 200.000đ</option>
-                    </select>
-                  </div>
+                  <div class="discount-badge">-29%</div>
+                  <div class="product-status">Đang hiển thị</div>
+                </div>
+                <div class="product-actions">
+                  <a href="#" class="btn-action btn-edit">Sửa</a>
+                  <a href="#" class="btn-action btn-toggle">Ẩn</a>
+                  <a href="#" class="btn-action btn-delete">Xóa</a>
                 </div>
               </div>
 
-              <!-- Product Grid -->
-              <div class="product-grid" id="productList"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+              <!-- Sản phẩm 2 -->
+              <div class="product-card">
+                <img src="../img/33.jpg" alt="NGHỆ THUẬT TƯ DUY LOGIC">
+                <div class="product-card-body">
+                  <div class="product-name">NGHỆ THUẬT TƯ DUY LOGIC</div>
+                  <div class="product-meta">Loại: Kỹ năng sống | Mã: KN002</div>
+                  <div class="product-price">
+                    <span class="price-current">126.000đ</span>
+                    <span class="price-original">169.000đ</span>
+                  </div>
+                  <div class="discount-badge">-25%</div>
+                  <div class="product-status">Đang hiển thị</div>
+                </div>
+                <div class="product-actions">
+                  <a href="#" class="btn-action btn-edit">Sửa</a>
+                  <a href="#" class="btn-action btn-toggle">Ẩn</a>
+                  <a href="#" class="btn-action btn-delete">Xóa</a>
+                </div>
+              </div>
 
-  <!-- Modal Sửa sản phẩm -->
-  <div id="editModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3><i class="fas fa-edit"></i> Sửa sản phẩm</h3>
-        <button class="modal-close" id="closeModal">&times;</button>
-      </div>
-      <div class="modal-body">
-        <form id="editForm">
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label class="form-label">Thể loại</label>
-              <input type="text" class="form-control" id="editLoai">
-            </div>
-            <div class="col-md-6">
-              <label class="form-label">Mã sản phẩm</label>
-              <input type="text" class="form-control" id="editMa" required>
-            </div>
-            <div class="col-md-12">
-              <label class="form-label">Tên sách</label>
-              <input type="text" class="form-control" id="editTen" required>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label">Tác giả</label>
-              <input type="text" class="form-control" id="editTacGia">
-            </div>
-            <div class="col-md-6">
-              <label class="form-label">Nhà xuất bản</label>
-              <input type="text" class="form-control" id="editNXB">
-            </div>
-            <div class="col-md-6">
-              <label class="form-label">Năm xuất bản</label>
-              <input type="number" class="form-control" id="editNam">
-            </div>
-            <div class="col-md-6">
-              <label class="form-label">Bìa sách</label>
-              <input type="file" class="form-control" id="editHinh" accept="image/*">
-            </div>
-            <div class="col-md-12">
-              <img id="editPreview" style="display:none;">
-            </div>
-            <div class="col-md-12">
-              <label class="form-label">Mô tả</label>
-              <textarea class="form-control" id="editMota" rows="3"></textarea>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label">Giá bán</label>
-              <input type="number" class="form-control" id="editGia" required>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label">Giá gốc</label>
-              <input type="number" class="form-control" id="editGiagoc" required>
-            </div>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn-modal-save" onclick="document.getElementById('editForm').dispatchEvent(new Event('submit'))">
-          <i class="fas fa-save"></i> Lưu thay đổi
-        </button>
-        <button type="button" class="btn-modal-cancel" id="cancelEdit">Hủy</button>
-      </div>
-    </div>
-  </div>
+              <!-- Sản phẩm 3 -->
+              <div class="product-card">
+                <img src="../img/34.jpg" alt="KỸ NĂNG TƯ DUY THỰC CHIẾN">
+                <div class="product-card-body">
+                  <div class="product-name">KỸ NĂNG TƯ DUY THỰC CHIẾN</div>
+                  <div class="product-meta">Loại: Kỹ năng sống | Mã: KN003</div>
+                  <div class="product-price">
+                    <span class="price-current">126.000đ</span>
+                    <span class="price-original">169.000đ</span>
+                  </div>
+                  <div class="discount-badge">-25%</div>
+                  <div class="product-status">Đang hiển thị</div>
+                </div>
+                <div class="product-actions">
+                  <a href="#" class="btn-action btn-edit">Sửa</a>
+                  <a href="#" class="btn-action btn-toggle">Ẩn</a>
+                  <a href="#" class="btn-action btn-delete">Xóa</a>
+                </div>
+              </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  
-  <script>
-    // ✅ Thêm sản phẩm
-    document.getElementById("addProductForm").addEventListener("submit", function(e) {
-      e.preventDefault();
+              <!-- Sản phẩm 4 -->
+              <div class="product-card">
+                <img src="../img/23.jpg" alt="THIÊN NHIÊN">
+                <div class="product-card-body">
+                  <div class="product-name">THIÊN NHIÊN - TẠI SAO CHÚNG TA CẦN THIÊN NHIÊN XANH TƯƠI?</div>
+                  <div class="product-meta">Loại: Thiếu nhi | Mã: TN001</div>
+                  <div class="product-price">
+                    <span class="price-current">52.000đ</span>
+                    <span class="price-original">70.000đ</span>
+                  </div>
+                  <div class="discount-badge">-26%</div>
+                  <div class="product-status">Đang hiển thị</div>
+                </div>
+                <div class="product-actions">
+                  <a href="#" class="btn-action btn-edit">Sửa</a>
+                  <a href="#" class="btn-action btn-toggle">Ẩn</a>
+                  <a href="#" class="btn-action btn-delete">Xóa</a>
+                </div>
+              </div>
 
-      const fileInput = document.getElementById("hinh").files[0];
-      if (!fileInput) {
-        alert("Vui lòng chọn ảnh!");
-        return;
-      }
+              <!-- Sản phẩm 5 -->
+              <div class="product-card">
+                <img src="../img/24.jpg" alt="NỖI BUỒN CỦA CÂY ÍCH KỶ">
+                <div class="product-card-body">
+                  <div class="product-name">GỢI MỞ TRÍ TƯỞNG TƯỢNG - NỖI BUỒN CỦA CÂY ÍCH KỶ</div>
+                  <div class="product-meta">Loại: Thiếu nhi | Mã: TN002</div>
+                  <div class="product-price">
+                    <span class="price-current">28.000đ</span>
+                    <span class="price-original">35.000đ</span>
+                  </div>
+                  <div class="discount-badge">-20%</div>
+                  <div class="product-status">Đang hiển thị</div>
+                </div>
+                <div class="product-actions">
+                  <a href="#" class="btn-action btn-edit">Sửa</a>
+                  <a href="#" class="btn-action btn-toggle">Ẩn</a>
+                  <a href="#" class="btn-action btn-delete">Xóa</a>
+                </div>
+              </div>
 
-      const reader = new FileReader();
-      reader.onload = function(event) {
-        let product = {
-          id: Date.now(), // ✅ QUAN TRỌNG: Tạo ID duy nhất
-          loai: document.getElementById("loai").value.split(",").map(x => x.trim()),
-          ma: document.getElementById("ma").value,
-          ten: document.getElementById("ten").value,
-          tacgia: document.getElementById("tacgia").value,
-          nhaxuatban: document.getElementById("nhaxuatban").value,
-          namxuatban: document.getElementById("namxuatban").value,
-          hinh: event.target.result,
-          mota: document.getElementById("mota").value,
-          gia: document.getElementById("gia").value,
-          giagoc: document.getElementById("giagoc").value,
-          an: false
-        };
+              <!-- Sản phẩm 6 -->
+              <div class="product-card">
+                <img src="../img/25.jpg" alt="RÈN TRÍ THÔNG MINH">
+                <div class="product-card-body">
+                  <div class="product-name">RÈN TRÍ THÔNG MINH - TẬP 3 (DÀNH CHO TRẺ 3 +)</div>
+                  <div class="product-meta">Loại: Thiếu nhi | Mã: TN003</div>
+                  <div class="product-price">
+                    <span class="price-current">24.000đ</span>
+                    <span class="price-original">30.000đ</span>
+                  </div>
+                  <div class="discount-badge">-20%</div>
+                  <div class="product-status">Đang hiển thị</div>
+                </div>
+                <div class="product-actions">
+                  <a href="#" class="btn-action btn-edit">Sửa</a>
+                  <a href="#" class="btn-action btn-toggle">Ẩn</a>
+                  <a href="#" class="btn-action btn-delete">Xóa</a>
+                </div>
+              </div>
 
-        let products = JSON.parse(localStorage.getItem("products")) || [];
-        products.push(product);
-        localStorage.setItem("products", JSON.stringify(products));
+              <!-- Sản phẩm 7 -->
+              <div class="product-card">
+                <img src="../img/26.jpg" alt="RUỒI TRÂU">
+                <div class="product-card-body">
+                  <div class="product-name">RUỒI TRÂU (TÁI BẢN NĂM 2018)</div>
+                  <div class="product-meta">Loại: Văn học | Mã: VH001</div>
+                  <div class="product-price">
+                    <span class="price-current">96.000đ</span>
+                    <span class="price-original">128.000đ</span>
+                  </div>
+                  <div class="discount-badge">-25%</div>
+                  <div class="product-status">Đang hiển thị</div>
+                </div>
+                <div class="product-actions">
+                  <a href="#" class="btn-action btn-edit">Sửa</a>
+                  <a href="#" class="btn-action btn-toggle">Ẩn</a>
+                  <a href="#" class="btn-action btn-delete">Xóa</a>
+                </div>
+              </div>
 
-        alert("✅ Đã thêm sản phẩm thành công!");
-        document.getElementById("addProductForm").reset();
-        renderProducts();
-      };
+              <!-- Sản phẩm 8 -->
+              <div class="product-card">
+                <img src="../img/27.jpg" alt="LỀ THÓI THỊ THÀNH">
+                <div class="product-card-body">
+                  <div class="product-name">VĂN HỌC KINH ĐIỂN - LỀ THÓI THỊ THÀNH</div>
+                  <div class="product-meta">Loại: Văn học | Mã: VH002</div>
+                  <div class="product-price">
+                    <span class="price-current">164.000đ</span>
+                    <span class="price-original">205.000đ</span>
+                  </div>
+                  <div class="discount-badge">-20%</div>
+                  <div class="product-status">Đang hiển thị</div>
+                </div>
+                <div class="product-actions">
+                  <a href="#" class="btn-action btn-edit">Sửa</a>
+                  <a href="#" class="btn-action btn-toggle">Ẩn</a>
+                  <a href="#" class="btn-action btn-delete">Xóa</a>
+                </div>
+              </div>
 
-      reader.readAsDataURL(fileInput);
-    });
+              <!-- Sản phẩm 9 -->
+              <div class="product-card">
+                <img src="../img/28.jpg" alt="CHÂN DUNG MỘT CUỘC HÔN NHÂN">
+                <div class="product-card-body">
+                  <div class="product-name">VĂN HỌC KINH ĐIỂN - CHÂN DUNG MỘT CUỘC HÔN NHÂN</div>
+                  <div class="product-meta">Loại: Văn học | Mã: VH003</div>
+                  <div class="product-price">
+                    <span class="price-current">215.000đ</span>
+                    <span class="price-original">225.000đ</span>
+                  </div>
+                  <div class="discount-badge">-4%</div>
+                  <div class="product-status">Đang hiển thị</div>
+                </div>
+                <div class="product-actions">
+                  <a href="#" class="btn-action btn-edit">Sửa</a>
+                  <a href="#" class="btn-action btn-toggle">Ẩn</a>
+                  <a href="#" class="btn-action btn-delete">Xóa</a>
+                </div>
+              </div>
 
-    // ✅ Hàm xoá sản phẩm 
-    function deleteProduct(index) {
-      let products = JSON.parse(localStorage.getItem("products")) || [];
-      if (confirm("Bạn có chắc muốn xoá sản phẩm này?")) {
-        products.splice(index, 1);
-        localStorage.setItem("products", JSON.stringify(products));
-        renderProducts(document.getElementById("searchInput").value);
-      }
-    }
+              <!-- Sản phẩm 10 -->
+              <div class="product-card">
+                <img src="../img/29.jpg" alt="ĐẦU TƯ PHÒNG THỦ">
+                <div class="product-card-body">
+                  <div class="product-name">THE LITTLE BOOK - ĐẦU TƯ THEO CHIẾN LƯỢC PHÒNG THỦ</div>
+                  <div class="product-meta">Loại: Kinh tế | Mã: KT001</div>
+                  <div class="product-price">
+                    <span class="price-current">134.000đ</span>
+                    <span class="price-original">179.500đ</span>
+                  </div>
+                  <div class="discount-badge">-25%</div>
+                  <div class="product-status">Đang hiển thị</div>
+                </div>
+                <div class="product-actions">
+                  <a href="#" class="btn-action btn-edit">Sửa</a>
+                  <a href="#" class="btn-action btn-toggle">Ẩn</a>
+                  <a href="#" class="btn-action btn-delete">Xóa</a>
+                </div>
+              </div>
 
-    // ✅ Hàm ẩn/hiện sản phẩm
-    function toggleHide(index) {
-      let products = JSON.parse(localStorage.getItem("products")) || [];
-      products[index].an = !products[index].an;
-      localStorage.setItem("products", JSON.stringify(products));
-      renderProducts(document.getElementById("searchInput").value);
-    }
+              <!-- Sản phẩm 11 -->
+              <div class="product-card">
+                <img src="../img/30.jpg" alt="TIỀN ĐẺ RA TIỀN">
+                <div class="product-card-body">
+                  <div class="product-name">TƯ DUY ĐẦU TƯ - TIỀN ĐẺ RA TIỀN</div>
+                  <div class="product-meta">Loại: Kinh tế | Mã: KT002</div>
+                  <div class="product-price">
+                    <span class="price-current">203.000đ</span>
+                    <span class="price-original">239.000đ</span>
+                  </div>
+                  <div class="discount-badge">-15%</div>
+                  <div class="product-status">Đang hiển thị</div>
+                </div>
+                <div class="product-actions">
+                  <a href="#" class="btn-action btn-edit">Sửa</a>
+                  <a href="#" class="btn-action btn-toggle">Ẩn</a>
+                  <a href="#" class="btn-action btn-delete">Xóa</a>
+                </div>
+              </div>
 
-    // ✅ Bỏ dấu tiếng Việt
-    function removeAccents(str) {
-      return str
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/đ/g, "d")
-        .replace(/Đ/g, "D");
-    }
-
-    // ✅ Render danh sách sản phẩm
-    function renderProducts(filter = "") {
-      let products = JSON.parse(localStorage.getItem("products")) || [];
-      const productList = document.getElementById("productList");
-      productList.innerHTML = "";
-
-      let filterText = removeAccents(filter.toLowerCase().trim());
-      const category = document.getElementById("categoryFilter")?.value || "";
-      const price = document.getElementById("priceFilter")?.value || "";
-
-      products.forEach((p, index) => {
-        let ten = removeAccents((p.ten || "").toLowerCase());
-        let ma = removeAccents((p.ma || "").toLowerCase());
-
-        if (!(ten.includes(filterText) || ma.includes(filterText))) return;
-
-        let loaiArr = Array.isArray(p.loai) ? p.loai : [p.loai];
-        if (category && !loaiArr.some(l => removeAccents(l.toLowerCase()) === removeAccents(category.toLowerCase()))) return;
-
-        let giaNum = parseFloat(p.gia.toString().replace(/\D/g, ""));
-        let giagocNum = parseFloat(p.giagoc.toString().replace(/\D/g, ""));
-
-        if (price === "duoi100" && giaNum >= 100000) return;
-        if (price === "100-200" && (giaNum < 100000 || giaNum > 200000)) return;
-        if (price === "tren200" && giaNum <= 200000) return;
-
-        let giamgia = giagocNum > giaNum ? Math.round(((giagocNum - giaNum) / giagocNum) * 100) : 0;
-
-        const card = document.createElement("div");
-        card.classList.add("product-card");
-
-        card.innerHTML = `
-          <img src="${p.hinh}" alt="${p.ten}">
-          <div class="product-card-body">
-            <div class="product-name">${p.ten}</div>
-            <div class="product-meta">Loại: ${Array.isArray(p.loai) ? p.loai.join(", ") : p.loai} | Mã: ${p.ma}</div>
-            <div class="product-price">
-              <span class="price-current">${giaNum.toLocaleString()}đ</span>
-              ${giagocNum > giaNum ? `<span class="price-original">${giagocNum.toLocaleString()}đ</span>` : ""}
-            </div>
-            ${giamgia > 0 ? `<div class="discount-badge">-${giamgia}%</div>` : ""}
-            <div class="product-status ${p.an ? 'status-hidden' : 'status-visible'}">
-               ${p.an ? "Đang ẩn" : "Đang hiển thị"}
-            </div>
-          </div>
-          <div class="product-actions">
-            <button class="btn-action btn-edit" onclick="openEditModal(${index})">
-               Sửa
-            </button>
-            <button class="btn-action btn-toggle" onclick="toggleHide(${index})">
-             ${p.an ? "Hiện" : "Ẩn"}
-            </button>
-            <button class="btn-action btn-delete" onclick="deleteProduct(${index})">
-               Xóa
-            </button>
-          </div>
-        `;
-
-        card.querySelector("img").addEventListener("click", () => {
-          localStorage.setItem("selectedProduct", JSON.stringify(p));
-          window.location.href = "chitiet.html";
-        });
-
-        card.querySelector(".product-card-body").addEventListener("click", () => {
-          localStorage.setItem("selectedProduct", JSON.stringify(p));
-          window.location.href = "chitiet.html";
-        });
-
-        productList.appendChild(card);
-      });
-    }
-
-    // ✅ Gắn sự kiện tìm kiếm và lọc
-    document.getElementById("searchInput").addEventListener("input", function() {
-      renderProducts(this.value);
-    });
-
-    document.getElementById("categoryFilter").addEventListener("change", () => {
-      renderProducts(document.getElementById("searchInput").value);
-    });
-
-    document.getElementById("priceFilter").addEventListener("change", () => {
-      renderProducts(document.getElementById("searchInput").value);
-    });
-
-    // ✅ Modal Edit
-    let editIndex = null;
-
-    function openEditModal(index) {
-      const products = JSON.parse(localStorage.getItem("products")) || [];
-      const product = products[index];
-      if (!product) return;
-
-      editIndex = index;
-
-      document.getElementById("editLoai").value = Array.isArray(product.loai) ? product.loai.join(", ") : product.loai || "";
-      document.getElementById("editMa").value = product.ma || "";
-      document.getElementById("editTen").value = product.ten || "";
-      document.getElementById("editTacGia").value = product.tacgia || "";
-      document.getElementById("editNXB").value = product.nhaxuatban || "";
-      document.getElementById("editNam").value = product.namxuatban || "";
-      document.getElementById("editMota").value = product.mota || "";
-      document.getElementById("editGia").value = product.gia || "";
-      document.getElementById("editGiagoc").value = product.giagoc || "";
-      document.getElementById("editPreview").src = product.hinh || "";
-      document.getElementById("editPreview").style.display = product.hinh ? "block" : "none";
-
-      document.getElementById("editModal").style.display = "block";
-    }
-
-    function closeEditModal() {
-      document.getElementById("editModal").style.display = "none";
-      editIndex = null;
-    }
-
-    document.addEventListener("DOMContentLoaded", function () {
-      document.getElementById("closeModal").addEventListener("click", closeEditModal);
-      document.getElementById("cancelEdit").addEventListener("click", closeEditModal);
-
-      window.addEventListener("click", function(e) {
-        const modal = document.getElementById("editModal");
-        if (e.target === modal) {
-          closeEditModal();
-        }
-      });
-
-      document.getElementById("editHinh").addEventListener("change", function() {
-        const file = this.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = e => {
-            document.getElementById("editPreview").src = e.target.result;
-            document.getElementById("editPreview").style.display = "block";
-          };
-          reader.readAsDataURL(file);
-        }
-      });
-
-      document.getElementById("editForm").addEventListener("submit", function(e) {
-        e.preventDefault();
-        let products = JSON.parse(localStorage.getItem("products")) || [];
-        if (editIndex === null || !products[editIndex]) return;
-
-        const loai = document.getElementById("editLoai").value.split(",").map(l => l.trim()).filter(Boolean);
-        const ma = document.getElementById("editMa").value.trim();
-        const ten = document.getElementById("editTen").value.trim();
-        const tacgia = document.getElementById("editTacGia").value.trim();
-        const nhaxuatban = document.getElementById("editNXB").value.trim();
-        const namxuatban = document.getElementById("editNam").value.trim();
-        const mota = document.getElementById("editMota").value.trim();
-        const gia = document.getElementById("editGia").value.trim();
-        const giagoc = document.getElementById("editGiagoc").value.trim();
-        const file = document.getElementById("editHinh").files[0];
-
-        if (!ma || !ten || !gia || !giagoc || !tacgia || !namxuatban || !nhaxuatban) {
-          alert("⚠️ Vui lòng nhập đầy đủ thông tin!");
-          return;
-        }
-
-        const saveProduct = (img) => {
-          products[editIndex] = {
-            ...products[editIndex],
-            loai, ma, ten, mota,
-            gia, giagoc, tacgia, nhaxuatban, namxuatban,
-            hinh: img || products[editIndex].hinh
-          };
-          localStorage.setItem("products", JSON.stringify(products));
-          
-          const selected = JSON.parse(localStorage.getItem("selectedProduct"));
-          if (selected && selected.ma === ma) {
-            localStorage.setItem("selectedProduct", JSON.stringify(products[editIndex]));
-          }
-          
-          alert("✅ Cập nhật thành công!");
-          closeEditModal();
-          renderProducts(document.getElementById("searchInput").value);
-        };
-
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = e => saveProduct(e.target.result);
-          reader.readAsDataURL(file);
-        } else {
-          saveProduct();
-        }
-      });
-    });
-
-    // ✅ Render ban đầu
-    renderProducts();
-    
-   // ✅ Luôn cập nhật dữ liệu mẫu mỗi khi reload
-(function initSampleData() {
-    const sampleProducts = [
-        {
-                    id: Date.now() + 1,
-                    loai: ["Kỹ năng sống"],
-                    ma: "KN001",
-                    ten: "GOOD ENERGY - NĂNG LƯỢNG TỐT",
-                    tacgia: "Casey Means - Calley Means",
-                    nhaxuatban: "Công Thương",
-                    namxuatban: "2024",
-                    hinh: "../img/38.jpg",
-                    mota: "Sức khỏe không chỉ là kết quả của di truyền hay may mắn, nó là hệ quả trực tiếp của cách mỗi cá nhân trao đổi chất với thế giới xung quanh. “Good Energy – Năng Lượng Tốt” là lời kêu gọi mạnh mẽ nhằm tái cấu trúc lại cách chúng ta nhìn nhận về y học, thực phẩm, bệnh tật và sức khỏe cá nhân trong thế kỷ 21.Thông qua góc nhìn của một bác sĩ y khoa kiêm chuyên gia khởi nghiệp trong lĩnh vực công nghệ y tế, Casey Means cùng Calley Means không chỉ bóc tách những giới hạn của hệ thống y tế hiện tại – vốn đang chú trọng vào điều trị triệu chứng hơn là chữa lành gốc rễ – mà còn dẫn dắt người đọc khám phá mối liên hệ sâu sắc giữa rối loạn trao đổi chất và gần như mọi căn bệnh phổ biến hiện nay: tiểu đường, béo phì, tim mạch, trầm cảm, Alzheimer, ung thư...Điểm nổi bật của sách nằm ở cách tiếp cận mang tính hệ thống, đan xen giữa dữ liệu khoa học và câu chuyện cá nhân, giữa phân tích xã hội và hướng dẫn thực hành. Người đọc không chỉ được cung cấp kiến thức về sinh học tế bào, hormone, vi sinh vật đường ruột... mà còn được truyền cảm hứng để thiết lập lại mối quan hệ với chính cơ thể mình – từ ăn uống, ngủ nghỉ cho đến cảm xúc.“Good Energy” không chỉ là một cuốn sách sức khỏe. Đó là cẩm nang đổi đời – dành cho những ai sẵn sàng chất vấn thực trạng, lựa chọn sống có hiểu biết, và chủ động thiết kế lại một cuộc đời tràn đầy năng lượng tốt từ gốc rễ.",
-                    gia: "85000",
-                    giagoc: "120000",
-                    an: false
-                },
-                {
-                    id: Date.now() + 2,
-                    loai: ["Kỹ năng sống"],
-                    ma: "KN002",
-                    ten: "NGHỆ THUẬT TƯ DUY LOGIC",
-                    tacgia: "Dan Levy",
-                    nhaxuatban: " Công Thương",
-                    namxuatban: "2024",
-                    hinh: "../img/33.jpg",
-                    mota: "Nghệ Thuật Tư Duy Logic là một cuốn sách thực tiễn về cách đưa ra quyết định hiệu quả và lý trí hơn trong đời sống cá nhân lẫn công việc. Lấy cảm hứng từ các khóa học tại Trường Harvard Kennedy, cuốn sách giúp người đọc tiếp cận tư duy phân tích thông qua các nguyên lý kinh tế học hành vi, logic xác suất và kỹ thuật phản tư.Tác phẩm không đi theo lối trình bày thuần lý thuyết mà đặt người đọc vào các tình huống đời thường, từ chuyện chơi bài, chọn bạn đời, ra chính sách công cho tới quyết định trong chăm sóc sức khỏe. Qua đó, từng nguyên tắc tư duy dần được hé mở và chứng minh bằng lý luận sắc sảo.Điểm mạnh của cuốn sách nằm ở cách dẫn dắt mạch lạc, kết hợp hài hòa giữa kiến thức hàn lâm và ứng dụng thực tiễn. Những câu châm ngôn được nhấn mạnh xuyên suốt không chỉ tạo điểm nhấn ghi nhớ mà còn truyền tải tinh thần cốt lõi: tư duy hợp lý là nền tảng của một đời sống hiệu quả và viên mãn.Dành cho sinh viên, nhà quản lý, người làm chính sách hay bất kỳ ai đang tìm kiếm sự tỉnh táo giữa thời đại nhiễu loạn, Nghệ Thuật Tư Duy Logic không chỉ là một cuốn sách kỹ năng, đây là lời mời gọi mỗi người trở thành người đưa ra quyết định sáng suốt hơn trong mọi ngữ cảnh đời sống.",
-                    gia: "126000",
-                    giagoc: "169000",
-                    an: false
-                },
-                {
-                    id: Date.now() + 3,
-                    loai: ["Kỹ năng sống"],
-                    ma: "KN003",
-                    ten: "KỸ NĂNG TƯ DUY THỰC CHIẾN",
-                    tacgia: " Simon Tyler",
-                    nhaxuatban: " Công Thương",
-                    namxuatban: "2024",
-                    hinh: "../img/34.jpg",
-                    mota: "Trong bối cảnh hiện đại, khi mọi cá nhân đều phải đối mặt với áp lực công việc, kỳ vọng xã hội và sự thay đổi không ngừng từ môi trường sống, khả năng giữ vững tư duy rõ ràng và hành động quyết đoán trở thành một trong những kỹ năng sống còn. Cuốn sách Kỹ Năng Tư Duy Thực Chiến của tác giả Simon Tyler mang đến một cẩm nang thiết thực giúp người đọc xây dựng nền tảng tư duy vững chắc để thích ứng linh hoạt với mọi tình huống trong cuộc sống và công việc.Cuốn sách tập trung vào khái niệm thái độ - không chỉ là phản ứng cảm xúc đơn thuần mà còn là cách mỗi người lựa chọn phản ứng, điều chỉnh tư duy và đưa ra quyết định trước những thay đổi. Với 50 chương ngắn gọn, tác phẩm được thiết kế như một chuỗi bài thực hành tư duy, từ những bước nhỏ như điều chỉnh hơi thở, quan sát cảm xúc, rèn luyện sự im lặng, đến những thay đổi mang tính chiến lược như xác định mục tiêu cá nhân, quản lý trạng thái tinh thần hay phát triển tư duy phản biện.Nội dung sách được trình bày khoa học, dễ tiếp cận và đặc biệt phù hợp với người bận rộn: mỗi chương là một chủ đề độc lập với phần lý thuyết tinh gọn, gợi ý thực hành rõ ràng, dễ áp dụng. Đọc giả không chỉ được truyền cảm hứng để thay đổi mà còn được trao công cụ để biến sự thay đổi đó trở nên bền vững và thực tế.Kỹ Năng Tư Duy Thực Chiến không chỉ dành cho các nhà lãnh đạo, người làm quản lý hay nhân sự cấp cao, mà còn phù hợp với bất kỳ ai đang mong muốn cải thiện khả năng tư duy, làm chủ cảm xúc và đạt được sự chủ động trong cuộc sống. Cuốn sách là một hành trình chiêm nghiệm thực tế, nơi tư duy được rèn luyện từng bước thông qua sự tỉnh thức và thực hành liên tục.",
-                    gia: "126000",
-                    giagoc: "169000",
-                    an: false
-                },
-                {
-                    id: Date.now() + 4,
-                    loai: ["Thiếu nhi"],
-                    ma: "TN001",
-                    ten: "THIÊN NHIÊN - TẠI SAO CHÚNG TA CẦN THIÊN NHIÊN XANH TƯƠI?",
-                    tacgia: " Joli Hannah",
-                    nhaxuatban: "NXB Văn học",
-                    namxuatban: "2021",
-                    hinh: "../img/23.jpg",
-                    mota: "Với các thông tin hữu ích và hình ảnh minh họa sống động, Thiên nhiên đưa độc giả vào một hành trình sinh thái tươi đẹp và đầy cảm hứng. Từ những khu rừng xanh tươi đến những đại dương xanh thăm thẳm, các em sẽ tìm hiểu về các chủ đề quan trọng như đa dạng sinh học, nạn phá rừng và dấu chân sinh thái của con người.Ngoài đặt ra những câu hỏi và yêu cầu độc giả tự tìm kiếm câu trả lời, cuốn sách độc đáo và hấp dẫn này còn truyền cảm hứng để các em trở thành những người tham gia tích cực vào phong trào bảo vệ Mẹ Trái đất.",
-                    gia: "52000",
-                    giagoc: "70000",
-                    an: false
-                },
-                {
-                    id: Date.now() + 5,
-                    loai: ["Thiếu nhi"],
-                    ma: "TN002",
-                    ten: "GỢI MỞ TRÍ TƯỞNG TƯỢNG - NỖI BUỒN CỦA CÂY ÍCH KỶ - BÀI HỌC DŨNG CẢM NHẬN LỖI VÀ SỬA LỖI",
-                    tacgia: "Daniel Kahneman",
-                    nhaxuatban: "NXB Thế Giới",
-                    namxuatban: "2020",
-                    hinh: "../img/24.jpg",
-                    mota: "Một cây khổng lồ ích kỷ trong khu rừng nọ tin rằng mình to và khỏe nhất nên muốn chiếm trọn cả khu rừng. Cây muốn giành hết ánh nắng, hút hết nước, ăn hết dưỡng chất. Cây xua đuổi những cây và sinh vật khác tránh xa mình ra. Cái cây có thể sống một mình trong khu rừng mà không cần đến những cây khác được không?Câu chuyện cây ích kỷ gửi đến mọi trẻ em và mọi người lớn thông điệp về sự hài hòa, gắn kết của cây cối với nhau để cùng bảo vệ sự sống, không chỉ riêng với một khu rừng.Với trí tưởng tượng và tình yêu thiên nhiên sâu sắc, Nỗi buồn của cây ích kỷ được tác giả Fuu.J viết và vẽ từ những ngày chị tha thẩn trong những cánh rừng làng quê mình. Hi vọng khi đọc những câu chuyện này sẽ khiến các em yêu thương và tôn trọng thiên nhiên quanh mình thêm một chút.",
-                    gia: "28000",
-                    giagoc: "35000",
-                    an: false
-                },
-                {
-                    id: Date.now() + 6,
-                    loai: ["Thiếu nhi"],
-                    ma: "TN003",
-                    ten: "RÈN TRÍ THÔNG MINH - TẬP 3 (DÀNH CHO TRẺ 3 +)",
-                    tacgia: "Catmint Books",
-                    nhaxuatban: "NXB Trẻ",
-                    namxuatban: "2025",
-                    hinh: "../img/25.jpg",
-                    mota: "Bộ sách rèn trí thông minh này mang đến cho bé một thế giới đầy màu sắc với các trò chơi vừa thú vị vừa bổ ích. Các trò chơi phong phú và đa dạng kích thích sự khám phá và tư duy sáng tạo. Mỗi trò chơi không chỉ mang lại niềm vui mà còn là cơ hội tuyệt vời để bé học cách giải quyết vấn đề, phát triển tư duy logic và khả năng suy luận.Bộ sách gồm ba tập, mỗi tập chứa đựng những trò chơi đặc sắc, được thiết kế để bé rèn luyện trí tuệ một cách tự nhiên.Với bộ sách này, bé sẽ được thử thách với các hoạt động phát huy khả năng quan sát và phân tích. Những trò chơi này không chỉ giúp bé cải thiện kỹ năng tư duy, mà còn nuôi dưỡng sự sáng tạo, khơi gợi trí tưởng tượng phong phú. Đây là một công cụ học tập tuyệt vời, giúp bé vừa học vừa chơi, phát triển trí thông minh với những hoạt động vui tươi và đầy thú vị.",
-                    gia: "24000",
-                    giagoc: "30000",
-                    an: false
-                },
-                {
-                    id: Date.now() + 7,
-                    loai: ["Văn học"],
-                    ma: "VN001",
-                    ten: "RUỒI TRÂU (TÁI BẢN NĂM 2018)",
-                    tacgia: " Ethel L Voynich",
-                    nhaxuatban: "NXB Hồng Đức",
-                    namxuatban: "2018",
-                    hinh: "../img/26.jpg",
-                    mota: "Nữ tiểu thuyết gia người Ireland Ethel Lilian Voynich (1864 – 1960) đã viết “Ruồi trâu” bằng tất cả ngọn lửa đam mê thổi hồn vào nhân vật trong bức tranh “Chân dung người không quen biết” của họa sĩ thế kỷ XVI Franciabigio mà bà được chiêm ngưỡng tại Bảo tàng Louvre (Pháp) vào năm mười bảy tuổi. Tác phẩm xuất bản lần đầu tại Anh và Hoa Kỳ năm 1897, và thực sự tạo tiếng vang rộng khắp sau khi được dịch sang tiếng Nga (1898). Vào thời điểm đó, “Ruồi trâu” là cuốn sách bán chạy nhất tại Nga và rất được ưa chuộng tại Trung Quốc.Truyện xoay quanh nhân vật trung tâm là chàng thanh niên Arthur - bí danh “Ruồi trâu”, một thanh niên hiền lành, thánh thiện, hiến dâng tất cả tình cảm riêng tư cho lý tưởng cách mạng. Những thăng trầm trong cuộc sống, quá trình chiến đấu vì lý tưởng đã tôi luyện chàng thanh niên trở thành một con người bản lĩnh, mạnh mẽ và luôn tràn đầy nhiệt huyết. Một trái tim rực cháy lý tưởng nhưng không quên tình yêu sâu đậm dành cho cô gái mà anh yêu thương - Emma.Bằng nghệ thuật chuyển ngữ mềm mại, linh hoạt, súc tích mà vẫn giàu hình ảnh của dịch giả tài hoa Hà Ngọc, truyện cuốn độc giả đi sâu vào những tình tiết hấp dẫn, những giằng xé nội tâm quyết liệt trong cuộc đấu tranh không khoan nhượng giữa người cha – Đức Hồng y Montaneli và cậu con trai ngoài giá thú Arthur. Cho đến tận lúc chết, hai con người đại diện cho hai lý tưởng sống và hai tôn giáo hoàn toàn đối lập nhau, vẫn kiên trung với con đường đã chọn, từ bỏ tình cảm ruột thịt thiêng liêng để sống theo lý trí.",
-                    gia: "96000",
-                    giagoc: "128000",
-                    an: false
-                },
-                {
-                    id: Date.now() + 8,
-                    loai: ["Văn học"],
-                    ma: "VH002",
-                    ten: "VĂN HỌC KINH ĐIỂN - LỀ THÓI THỊ THÀNH",
-                    tacgia: "Edith Wharton",
-                    nhaxuatban: "NXB Trẻ",
-                    namxuatban: "2022",
-                    hinh: "../img/27.jpg",
-                    mota: "“Một tiên đoán mang tính thời cuộc... Trong bối cảnh Thời đại Mạ vàng kiểu mới, khi khoảng cách giàu - nghèo ngày càng khơi sâu, 'Lề thói thị thành' một lần nữa được nhắc đến như tấm gương phản chiếu những góc khuất tối tăm của cuộc đời, qua cái nhìn sắc bén và tấm lòng cảm thương sâu sắc của Edith Wharton.” - The New York Times.Undine Spragg, đóa hoa kiêu sa của vùng Trung Tây hẻo lánh, sở hữu nhan sắc khiến bao người đắm say. Thế nhưng, vẻ đẹp ấy liệu có ý nghĩa gì nếu không được ai chiêm ngưỡng, tôn vinh?Mang theo giấc mơ biến con gái trở thành tâm điểm của giới thượng lưu, gia đình Spragg đã không ngần ngại dốc cạn tài sản để đưa Undine đến New York. Ngặt nỗi, khi bị kẹt trong một khách sạn xa hoa mà họ khó lòng thanh toán nổi, giấc mơ ấy có nguy cơ tan vỡ. Tuy nhiên, với niềm tôn thờ vật chất, khao khát cuộc sống phồn hoa đẳng cấp, Undine quyết tâm bám trụ và chinh phục đỉnh cao danh vọng bằng tất cả sức quyến rũ cùng mánh khóe của mình.Edith Wharton, thông qua ngòi bút sắc sảo và hài hước, đã phơi bày bộ mặt thật của giới thượng lưu, nơi tiền bạc và quyền lực có thể chi phối tất cả mọi thứ. Chính vì lẽ đó, mặc dù ra đời cách đây hơn một thế kỷ, Lề thói thị thành vẫn giữ nguyên sức hấp dẫn và khiến người đọc không khỏi giật mình trước tham vọng và thủ đoạn của con người khi đối diện với ảo mộng phù hoa; đồng thời, tác phẩm này đã đưa Undine trở thành một trong những nhân vật phản diện đáng nhớ và gây tranh cãi nhất trong nền văn học Mỹ.",
-                    gia: "164000",
-                    giagoc: "205000",
-                    an: false
-                },
-                {
-                    id: Date.now() + 9,
-                    loai: ["Văn học"],
-                    ma: "VH003",
-                    ten: "VĂN HỌC KINH ĐIỂN - CHÂN DUNG MỘT CUỘC HÔN NHÂN",
-                    tacgia: "Pearl S. Buck",
-                    nhaxuatban: "NXB Trẻ",
-                    namxuatban: "2025",
-                    hinh: "../img/28.jpg",
-                    mota: "“Pearl Buck, với bút lực tài hoa, đã biểu đạt những chân lý giản đơn nhưng sâu sắc về cuộc sống, về sự sống, mang giá trị vĩnh hằng.” - Saturday Review.Mọi chuyện khởi nguồn từ lúc chàng họa sĩ thuộc tầng lớp thượng lưu ở Philadelphia đi tìm cảm ứng, đã tình cờ gặp gỡ và bị cuốn hút bởi vẻ đẹp giản dị của một cô gái nông dân. Bức chân dung về cô đã trở thành một trong những tác phẩm ấn tượng nhất của anh; tuy nhiên niềm đam mê với cô gái mù chữ không chỉ dừng lại ở giá vẽ: chàng họa sĩ đã quay trở lại để kết hôn cùng cô và bắt đầu ổn định cuộc sống ở vùng thôn quê - một hành trình bắc cầu chông gai vượt qua những khoảng cách xa vời về văn hóa giữa họ, cắt đứt mối quan hệ gia đình và gây nên nỗi căng thẳng trong giới bằng hữu của cả hai người.Pearl S. Buck đã bày tỏ lòng cảm thông sâu sắc với cả hai phía của một cuộc hôn nhân phức tạp - từ buổi ban đầu lưu luyến lãng mạn đến thời điểm va chạm và mất mát, rồi sau cùng là sự bình yên chấp nhận - như một ẩn dụ của cuộc sống; đồng thời bà cũng khắc họa nên bức tranh sinh động về nước Mỹ trải dài từ đầu thế kỷ 20 đến Thế Chiến thứ Hai.",
-                    gia: "215000",
-                    giagoc: "225000",
-                    an: false
-                },
-                                {
-                    id: Date.now() + 10,
-                    loai: ["Kinh tế"],
-                    ma: "KT001",
-                    ten: "THE LITTLE BOOK - ĐẦU TƯ THEO CHIẾN LƯỢC PHÒNG THỦ",
-                    tacgia: "Ben Stein - Phil DeMuth",
-                    nhaxuatban: "NXB Dân Trí",
-                    namxuatban: "2025",
-                    hinh: "../img/29.jpg",
-                    mota: "Trong một thế giới tài chính đầy biến động, nơi các danh mục đầu tư có thể sụt giảm chỉ sau một đêm và những cơn khủng hoảng kinh tế luôn rình rập, việc bảo vệ tài sản và xây dựng chiến lược đầu tư vững chắc là nhiệm vụ sống còn đối với mỗi nhà đầu tư. Chính trong bối cảnh đó, cuốn The Little Book – Đầu tư theo chiến lược phòng thủ ra đời, mang đến cho độc giả những công cụ và lời khuyên thực tiễn để đối phó với các rủi ro tài chính hiện đại.Được viết bởi hai tác giả giàu kinh nghiệm và nổi tiếng - Ben Stein và Phil DeMuth, cuốn sách này là một hướng dẫn ngắn gọn nhưng súc tích, giúp bạn hiểu rõ những nguyên tắc cơ bản của đầu tư và cách áp dụng chúng để đạt được thành công bền vững. Từ những điều nên làm để tối ưu hóa lợi nhuận, đến những điều cần tránh để giảm thiểu rủi ro, cuốn sách mang đến sự kết hợp hoàn hảo giữa trí tuệ tài chính sắc bén và ngôn ngữ dễ tiếp cận.The Little Book – Đầu tư theo chiến lược phòng thủ không chỉ là một cuốn sách về đầu tư, mà còn là người bạn đồng hành, giúp bạn tiến bước vững chắc hơn trong hành trình tài chính của mình.",
-                    gia: "134000",
-                    giagoc: "179500",
-                    an: false
-                },
-                {
-                    id: Date.now() + 11,
-                    loai: ["Kinh tế"],
-                    ma: "KT002",
-                    ten: "TƯ DUY ĐẦU TƯ - TIỀN ĐẺ RA TIỀN",
-                    tacgia: "JL Collins",
-                    nhaxuatban: "NXB Công Thương",
-                    namxuatban: "2024",
-                    hinh: "../img/30.jpg",
-                    mota: "Tiền bạc là một trong những công cụ quyền lực nhất mà con người sở hữu. Với phần lớn mọi người, tiền luôn là thứ khó kiểm soát và nắm bắt. Bởi tính chất 2 mặt của đồng tiền - nó có thể là một người đầy tớ trung thành, nhưng cũng có thể trở thành một “ông chủ” hà khắc nếu ta không hiểu và làm chủ được nó.Vì vậy, việc trang bị tư duy đúng đắn về tiền bạc là điều vô cùng cần thiết, đặc biệt trong xã hội hiện đại hiện nay. Chỉ cần khả năng tư duy nhạy bén, kỷ luật trong chi tiêu và biết cách việc lập kế hoạch, tiền của bạn sẽ làm việc cho bạn.“Tư duy đầu tư - Tiền đẻ ra tiền” là cuốn sách dành cho bất kỳ ai muốn đạt được tự do về tài chính (Financial Independence, hay FI) - sự giàu có đích thực và lâu dài.Với hơn 100 câu chuyện thực tế từ những người thuộc mọi tầng lớp xã hội: giáo viên, y tá, người lao động phổ thông, kỹ sư... đã đạt được tự do tài chính không phải thông qua con đường thường thấy trên truyền thông là mức thu nhập khủng hay khoản may mắn đặc biệt. Cuốn sách chứng minh rằng: Tự do tài chính là điều dành cho mọi người, nếu biết cách khác biệt trong tư duy cốt lõi, khôn ngoan trong chiến lược đầu tư và kỷ luật trong chi tiêu hàng ngày.Thông qua lăng kính của những con người thật với những hành trình thật, cuốn sách không chỉ truyền cảm hứng mà gợi ý những chiến lược thực chiến để từng bước thoát khỏi sự ràng buộc của tiền lương, làm chủ thời gian và hướng tới một cuộc sống tự do, có ý nghĩa theo cách riêng của mỗi người.Tư duy đầu tư – Tiền đẻ ra tiền không chỉ nói về đầu tư mà còn tổng hợp một bộ nguyên tắc giúp bạn quản lý nỗi sợ và sự chông chênh về tài chính, từ đó thiết kế một cuộc sống phong phú tự do.",
-                    gia: "203000",
-                    giagoc: "239000",
-                    an: false
-                },
-                {
-                    id: Date.now() + 12,
-                    loai: ["Kinh tế"],
-                    ma: "KT003",
-                    ten: "TIỀN ĐẺ RA TIỀN - ĐẦU TƯ TÀI CHÍNH THÔNG MINH (TÁI BẢN 2025)",
-                    tacgia: " Duncan Bannatyne",
-                    nhaxuatban: "NXB Hông Đức",
-                    namxuatban: "2024",
-                    hinh: "../img/31.jpg",
-                    mota: "Điều đặc biệt so với những cuốn sách khác ông từng viết trước đây, đó là cuốn sách này không nói về chuyện làm giàu, cũng là một phần trong chuỗi câu chuyện “Bí quyết thành công của triệu phú Anh” nhưng nó bàn đến việc kiểm soát tiền bạc. Đến với cuối cuốn sách, bạn sẽ có sự tự tin để đưa ra những quyết định đúng đắn cho bản thân mình và những kỹ năng để khiến đồng tiền của mình đi xa hơn, có hiệu quả dù nền kinh tế có ra sao đi chăng nữa.Nó sẽ bàn tới những khía cạnh, những thành tố cốt yếu của tài chính và mối quan hệ cốt lõi của bạn với đồng tiền. Nếu bạn không suy nghĩ theo một cách có chiến lược về tiền bạc, bạn sẽ không thể làm bất cứ thứ gì có tính chiến lược với tiền bạc – thứ cứ thế trôi tuột ra khỏi tài khoản ngân hàng và ví của bạn. Nội dung của cuốn sách sẽ là những lời khuyên theo một kế hoạch cụ thể của Duncan mà bạn có thể áp dụng ngay được để có thể giúp bạn quản lý chi tiêu một cách tối ưu nhất, khiến “Tiền đẻ ra tiền” và giúp bạn đầu tư tài chính một cách thông minh.Dù bạn có tiền gửi ngân hàng hay không, bạn mười tám hay tám mươi tuổi, làm chủ, thất nghiệp hay làm giờ hành chính, những nguyên tắc để thông minh trong chuyện tiền bạc cũng vẫn được giữ nguyên. Thế nên nếu bạn muốn tối ưu hóa những gì bạn kiếm được thì đây chính là cuốn sách dành cho bạn.Mỗi chúng ta cần có trách nhiệm với những lựa chọn tài chính của mình bởi “Cái làm cho bạn giàu có không phải là lương bổng, mà đó là thói quen tiêu pha của bạn” và hy vọng cuốn sách sẽ tiếp thêm cho bạn sự tự tin để kiểm soát những vấn đề tài chính của mình.",
-                    gia: "128000",
-                    giagoc: "160000",
-                    an: false
-                },
-                {
-                    id: Date.now() + 13,
-                    loai: ["Giáo khoa"],
-                    ma: "GK001",
-                    ten: "TUYỂN TẬP BÀI VĂN NGHỊ LUẬN XÃ HỘI CHON LỌC - NÂNG CAO KỸ NĂNG VIẾT BÀI NGHỊ LUẬN XÃ HỘI - TẬP 1",
-                    tacgia: " Nguyễn Ngọc Anh",
-                    nhaxuatban: "NXB Dân Trí",
-                    namxuatban: "2024",
-                    hinh: "../img/35.jpg",
-                    mota: "Tô Hoài - cây đại thụ cuối cùng của lớp tác giả văn xuôi thời kỳ trước Cách mạng đã nhận định: “Mỗi trang văn đều soi bóng thời đại mà nó ra đời.”.Thực vậy, văn chương không chỉ là tấm gương phản chiếu cuộc sống mà còn là phương tiện để con người bày tỏ tư tưởng, góc nhìn trước những vấn đề của xã hội. Trong đó, văn nghị luận xã hội đóng vai trò đặc biệt quan trọng khi giúp người viết rèn luyện tư duy phản biện, lập luận chặt chẽ và khả năng diễn đạt thuyết phục.Nhưng những đổi mới trong cách ra đề, phương pháp đánh giá và yêu cầu ngày càng cao về tư duy độc lập đặt ra thách thức lớn cho học sinh: Làm sao để mỗi bài làm văn không chỉ dừng lại ở việc phân tích tác phẩm mà còn thể hiện được quan điểm, góc nhìn cá nhân trước những vấn đề của xã hội? Làm thế nào để văn chương trở thành cầu nối giữa tư duy và hiện thực, giúp học sinh bày tỏ suy nghĩ một cách rõ ràng, thuyết phục? Muốn làm được điều đó, học sinh – đặc biệt là những bạn đang chuẩn bị cho kỳ thi quan trọng cần rèn luyện kỹ năng lập luận, diễn đạt thông qua việc đọc và tham khảo những tài liệu chất lượng. Và bộ sách “Tuyển tập bài văn nghị luận xã hội chọn lọc” chính là chìa khóa giúp các bạn nâng cao tư duy và khả năng viết văn nghị luận xã hội! Bộ sách gồm 2 tập với 66 bài nghị luận xã hội tiêu biểu, được biên soạn theo chương trình sách giáo khoa mới, hướng dẫn từ cơ bản đến nâng cao, bao quát nhiều dạng đề quan trọng: nghị luận về một vấn đề xã hội, phản biện quan niệm sai lầm, bài luận về bản thân, tuổi trẻ và thời đại... Mỗi bài văn không chỉ là một mẫu tham khảo về cách triển khai ý tưởng, đảm bảo nội dung chuẩn bố cục, đủ ý, gọn lời mà còn là nguồn tư liệu quý giúp học sinh mở rộng góc nhìn và tư duy.",
-                    gia: "90000",
-                    giagoc: "120000",
-                    an: false
-                },
-                {
-                    id: Date.now() + 14,
-                    loai: ["Giáo khoa"],
-                    ma: "GK002",
-                    ten: "LUYỆN THI VÀO 10 NGỮ VĂN - CHINH PHỤC BÀI NGHị LUẬN XÃ HỘI THEO CHỦ ĐỀ THƯỜNG GẶP",
-                    tacgia: " Nguyễn Phước Lợi",
-                    nhaxuatban: " Đại học Quốc gia Hà Nội",
-                    namxuatban: "2024",
-                    hinh: "../img/36.jpg",
-                    mota: "LUYỆN THI VÀO 10 NGỮ VĂN - CHINH PHỤC BÀI NGHị LUẬN XÃ HỘI THEO CHỦ ĐỀ THƯỜNG GẶP là cuốn sách chuyên sâu dành cho học sinh lớp  chuẩn bị bước vào kỳ thi vào lớp 10.Cuốn sách được biên soạn từ những giáo viên có uy tín và kinh nghiệm nhiều năm biên soạn sách tham khảo, sách luyện thi bám sát chương trình học và thi - Là bộ luyện đề chất lượng mới nhất chiếm trọn sự mong đợi của các học sinh lớp 9.Cuốn sách là trợ thủ đắc lực giúp học sinh rèn kỹ năng viết văn nghị luận xã hội và nâng cao tư duy lập luận, xử lý các dạng đề để có thể đạt điểm cao trong các kỳ thi đặc biệt là kỳ thi vào 10.",
-                    gia: "71500",
-                    giagoc: "89000",
-                    an: false
-                },
-                {
-                    id: Date.now() + 15,
-                    loai: ["Giáo khoa"],
-                    ma: "GK003",
-                    ten: "TAKENOTE NGỮ PHÁP TRỌNG ĐIỂM TIẾNG ANH TRUNG HỌC CƠ SỞ",
-                    tacgia: " Vương Thanh Tâm",
-                    nhaxuatban: " Dân Trí",
-                    namxuatban: "2025",
-                    hinh: "../img/37.jpg",
-                    mota: "Hệ thống đầy đủ kiến thức ngữ pháp trọng tâm môn Tiếng Anh bám sát chương trình sách giáo khoa mới nhất của Bộ Giáo DụcTrình bày logic, dễ hiểu: Mỗi chủ điểm ngữ pháp được giải thích ngắn gọn, rõ ràng, kèm ví dụ minh họa dễ hiểu, dễ ghi nhớ và vận dụng.Thiết kế dễ sử dụng: Sổ tay gáy lò xo có thể tự học mọi lúc mọi nơi và dễ dàng mang theo.Hãy để TAKENOTE NGỮ PHÁP TRỌNG ĐIỂM TIẾNG ANH TRUNG HỌC CƠ SỞ đồng hành cùng bạn, biến việc học ngữ pháp trở nên nhẹ nhàng và hiệu quả!",
-                    gia: "71200",
-                    giagoc: "89000",
-                    an: false
-                }
-            ];
-            
-           // GHI ĐÈ mỗi khi reload trang
-    localStorage.setItem("products", JSON.stringify(sampleProducts));
-    console.log("✅ Đã cập nhật", sampleProducts.length, "sản phẩm");
-    renderProducts();
-})();
-  </script>
-</body>
-</html>
+              <!-- Sản phẩm 12 -->
+              <div class="product-card">
+                <img src="../img/31.jpg" alt="ĐẦU TƯ TÀI CHÍNH THÔNG MINH">
+                <div class="product-card-body">
+                  <div class="product-name">TIỀN ĐẺ RA TIỀN - ĐẦU TƯ TÀI CHÍNH THÔNG MINH</div>
+                  <div class="product-meta">Loại: Kinh tế | Mã: KT003</div>
+                  <div class="product-price">
+                    <span class="price-current">128.000đ</span>
+                    <span class="price-original">160.000đ</span>
+                  </div>
+                  <div class="discount-badge">-20%</div>
+                  <div class="product-status">Đang hiển thị</div>
+                </div>
+                <div class="product-actions">
+                  <a href="#" class="btn-action btn-edit">Sửa</a>
+                  <a href="#" class="btn-action btn-toggle">Ẩn</a>
+                  <a href="#" class="btn-action btn-delete">Xó
