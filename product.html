@@ -41,7 +41,7 @@
         
         .product-item .position-relative {
             width: 100%;
-            height: 280px; /* Chiều cao cố định cho ảnh */
+            height: 280px;
             overflow: hidden;
             position: relative;
         }
@@ -49,13 +49,13 @@
         .product-item img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Cắt ảnh để fit khung */
-            object-position: center; /* Căn giữa */
+            object-fit: cover;
+            object-position: center;
             transition: transform 0.3s ease;
         }
         
         .product-item:hover img {
-            transform: scale(1.05); /* Zoom nhẹ khi hover */
+            transform: scale(1.05);
         }
         
         .product-item .text-center {
@@ -65,7 +65,6 @@
             justify-content: space-between;
         }
         
-        /* Đảm bảo overlay hiển thị đúng */
         .product-overlay {
             position: absolute;
             top: 0;
@@ -75,6 +74,11 @@
             background: rgba(0, 0, 0, 0.7);
             opacity: 0;
             transition: opacity 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
         }
         
         .product-item:hover .product-overlay {
@@ -164,45 +168,397 @@
     <!-- Product Section Start -->
     <div class="container-xxl py-5">
         <div class="container">
-            <!-- Tiêu đề & Bộ lọc -->
+            <!-- Tiêu đề -->
             <div class="text-center mx-auto wow fadeInUp" data-wow-delay="0.1s" style="max-width: 700px;">
                 <p class="section-title bg-white text-center text-primary px-3">Sách bán chạy</p>
                 <h1 class="mb-4">Danh mục sản phẩm sách</h1>
             </div>
 
-            <!-- Bộ lọc tìm kiếm -->
-            <form class="row g-2 mb-5 justify-content-center align-items-end" id="searchForm">
-                <div class="col-md-4">
-                    <input type="text" class="form-control" id="searchName" placeholder="Tìm theo tên sách...">
-                </div>
-                <div class="col-md-3">
-                    <select class="form-select" id="searchCategory">
-                        <option value="">Phân loại</option>
-                        <option>Văn học</option>
-                        <option>Kinh tế</option>
-                        <option>Kỹ năng sống</option>
-                        <option>Thiếu nhi</option>
-                        <option>Giáo khoa</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <select class="form-select" id="priceFilter">
-                        <option value="">Khoảng giá</option>
-                        <option value="duoi100">Dưới 100.000đ</option>
-                        <option value="100-200">100.000đ - 200.000đ</option>
-                        <option value="tren200">Trên 200.000đ</option>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-primary w-100">Tìm kiếm</button>
-                </div>
-            </form>
-
             <!-- Danh sách sản phẩm -->
-            <div class="row gx-4 gy-4" id="productList"></div>
+            <div class="row gx-4 gy-4">
+                <!-- Product 1 -->
+                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="0.1s">
+                    <div class="product-item border rounded shadow-sm overflow-hidden position-relative">
+                        <div class="position-relative">
+                            <a href="chitiet.html?ma=KN001">
+                                <img class="img-fluid" src="img/38.jpg" alt="GOOD ENERGY">
+                            </a>
+                            <div class="product-overlay">
+                                <button class="btn btn-success px-4 py-2 rounded-pill"> 
+                                    <i class="bi bi-cart me-2"></i> Thêm vào giỏ
+                                </button>
+                                <button class="btn btn-success px-4 py-2 rounded-pill">
+                                    <i class="bi bi-bag me-2"></i> Mua ngay
+                                </button>
+                            </div>
+                        </div>
+                        <div class="text-center p-4">
+                            <a class="d-block h5 text-truncate" href="chitiet.html?ma=KN001">GOOD ENERGY - NĂNG LƯỢNG TỐT</a>
+                            <span class="text-primary me-1">85.000đ</span>
+                            <span class="text-decoration-line-through">120.000đ</span>
+                            <div style="color:red;font-weight:bold;">Giảm 29%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 2 -->
+                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="0.2s">
+                    <div class="product-item border rounded shadow-sm overflow-hidden position-relative">
+                        <div class="position-relative">
+                            <a href="chitiet.html?ma=KN002">
+                                <img class="img-fluid" src="img/33.jpg" alt="NGHỆ THUẬT TƯ DUY LOGIC">
+                            </a>
+                            <div class="product-overlay">
+                                <button class="btn btn-success px-4 py-2 rounded-pill"> 
+                                    <i class="bi bi-cart me-2"></i> Thêm vào giỏ
+                                </button>
+                                <button class="btn btn-success px-4 py-2 rounded-pill">
+                                    <i class="bi bi-bag me-2"></i> Mua ngay
+                                </button>
+                            </div>
+                        </div>
+                        <div class="text-center p-4">
+                            <a class="d-block h5 text-truncate" href="chitiet.html?ma=KN002">NGHỆ THUẬT TƯ DUY LOGIC</a>
+                            <span class="text-primary me-1">126.000đ</span>
+                            <span class="text-decoration-line-through">169.000đ</span>
+                            <div style="color:red;font-weight:bold;">Giảm 25%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 3 -->
+                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="0.3s">
+                    <div class="product-item border rounded shadow-sm overflow-hidden position-relative">
+                        <div class="position-relative">
+                            <a href="chitiet.html?ma=KN003">
+                                <img class="img-fluid" src="img/34.jpg" alt="KỸ NĂNG TƯ DUY THỰC CHIẾN">
+                            </a>
+                            <div class="product-overlay">
+                                <button class="btn btn-success px-4 py-2 rounded-pill"> 
+                                    <i class="bi bi-cart me-2"></i> Thêm vào giỏ
+                                </button>
+                                <button class="btn btn-success px-4 py-2 rounded-pill">
+                                    <i class="bi bi-bag me-2"></i> Mua ngay
+                                </button>
+                            </div>
+                        </div>
+                        <div class="text-center p-4">
+                            <a class="d-block h5 text-truncate" href="chitiet.html?ma=KN003">KỸ NĂNG TƯ DUY THỰC CHIẾN</a>
+                            <span class="text-primary me-1">126.000đ</span>
+                            <span class="text-decoration-line-through">169.000đ</span>
+                            <div style="color:red;font-weight:bold;">Giảm 25%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 4 -->
+                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="0.4s">
+                    <div class="product-item border rounded shadow-sm overflow-hidden position-relative">
+                        <div class="position-relative">
+                            <a href="chitiet.html?ma=TN001">
+                                <img class="img-fluid" src="img/23.jpg" alt="THIÊN NHIÊN">
+                            </a>
+                            <div class="product-overlay">
+                                <button class="btn btn-success px-4 py-2 rounded-pill"> 
+                                    <i class="bi bi-cart me-2"></i> Thêm vào giỏ
+                                </button>
+                                <button class="btn btn-success px-4 py-2 rounded-pill">
+                                    <i class="bi bi-bag me-2"></i> Mua ngay
+                                </button>
+                            </div>
+                        </div>
+                        <div class="text-center p-4">
+                            <a class="d-block h5 text-truncate" href="chitiet.html?ma=TN001">THIÊN NHIÊN - TẠI SAO CHÚNG TA CẦN THIÊN NHIÊN XANH TƯƠI?</a>
+                            <span class="text-primary me-1">52.000đ</span>
+                            <span class="text-decoration-line-through">70.000đ</span>
+                            <div style="color:red;font-weight:bold;">Giảm 26%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 5 -->
+                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="0.5s">
+                    <div class="product-item border rounded shadow-sm overflow-hidden position-relative">
+                        <div class="position-relative">
+                            <a href="chitiet.html?ma=TN002">
+                                <img class="img-fluid" src="img/24.jpg" alt="GỢI MỞ TRÍ TƯỞNG TƯỢNG">
+                            </a>
+                            <div class="product-overlay">
+                                <button class="btn btn-success px-4 py-2 rounded-pill"> 
+                                    <i class="bi bi-cart me-2"></i> Thêm vào giỏ
+                                </button>
+                                <button class="btn btn-success px-4 py-2 rounded-pill">
+                                    <i class="bi bi-bag me-2"></i> Mua ngay
+                                </button>
+                            </div>
+                        </div>
+                        <div class="text-center p-4">
+                            <a class="d-block h5 text-truncate" href="chitiet.html?ma=TN002">GỢI MỞ TRÍ TƯỞNG TƯỢNG - NỖI BUỒN CỦA CÂY ÍCH KỶ</a>
+                            <span class="text-primary me-1">28.000đ</span>
+                            <span class="text-decoration-line-through">35.000đ</span>
+                            <div style="color:red;font-weight:bold;">Giảm 20%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 6 -->
+                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="0.6s">
+                    <div class="product-item border rounded shadow-sm overflow-hidden position-relative">
+                        <div class="position-relative">
+                            <a href="chitiet.html?ma=TN003">
+                                <img class="img-fluid" src="img/25.jpg" alt="RÈN TRÍ THÔNG MINH">
+                            </a>
+                            <div class="product-overlay">
+                                <button class="btn btn-success px-4 py-2 rounded-pill"> 
+                                    <i class="bi bi-cart me-2"></i> Thêm vào giỏ
+                                </button>
+                                <button class="btn btn-success px-4 py-2 rounded-pill">
+                                    <i class="bi bi-bag me-2"></i> Mua ngay
+                                </button>
+                            </div>
+                        </div>
+                        <div class="text-center p-4">
+                            <a class="d-block h5 text-truncate" href="chitiet.html?ma=TN003">RÈN TRÍ THÔNG MINH - TẬP 3</a>
+                            <span class="text-primary me-1">24.000đ</span>
+                            <span class="text-decoration-line-through">30.000đ</span>
+                            <div style="color:red;font-weight:bold;">Giảm 20%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 7 -->
+                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="0.7s">
+                    <div class="product-item border rounded shadow-sm overflow-hidden position-relative">
+                        <div class="position-relative">
+                            <a href="chitiet.html?ma=VN001">
+                                <img class="img-fluid" src="img/26.jpg" alt="RUỒI TRÂU">
+                            </a>
+                            <div class="product-overlay">
+                                <button class="btn btn-success px-4 py-2 rounded-pill"> 
+                                    <i class="bi bi-cart me-2"></i> Thêm vào giỏ
+                                </button>
+                                <button class="btn btn-success px-4 py-2 rounded-pill">
+                                    <i class="bi bi-bag me-2"></i> Mua ngay
+                                </button>
+                            </div>
+                        </div>
+                        <div class="text-center p-4">
+                            <a class="d-block h5 text-truncate" href="chitiet.html?ma=VN001">RUỒI TRÂU (TÁI BẢN NĂM 2018)</a>
+                            <span class="text-primary me-1">96.000đ</span>
+                            <span class="text-decoration-line-through">128.000đ</span>
+                            <div style="color:red;font-weight:bold;">Giảm 25%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 8 -->
+                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="0.8s">
+                    <div class="product-item border rounded shadow-sm overflow-hidden position-relative">
+                        <div class="position-relative">
+                            <a href="chitiet.html?ma=VH002">
+                                <img class="img-fluid" src="img/27.jpg" alt="LỀ THÓI THỊ THÀNH">
+                            </a>
+                            <div class="product-overlay">
+                                <button class="btn btn-success px-4 py-2 rounded-pill"> 
+                                    <i class="bi bi-cart me-2"></i> Thêm vào giỏ
+                                </button>
+                                <button class="btn btn-success px-4 py-2 rounded-pill">
+                                    <i class="bi bi-bag me-2"></i> Mua ngay
+                                </button>
+                            </div>
+                        </div>
+                        <div class="text-center p-4">
+                            <a class="d-block h5 text-truncate" href="chitiet.html?ma=VH002">VĂN HỌC KINH ĐIỂN - LỀ THÓI THỊ THÀNH</a>
+                            <span class="text-primary me-1">164.000đ</span>
+                            <span class="text-decoration-line-through">205.000đ</span>
+                            <div style="color:red;font-weight:bold;">Giảm 20%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 9 -->
+                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="0.9s">
+                    <div class="product-item border rounded shadow-sm overflow-hidden position-relative">
+                        <div class="position-relative">
+                            <a href="chitiet.html?ma=VH003">
+                                <img class="img-fluid" src="img/28.jpg" alt="CHÂN DUNG MỘT CUỘC HÔN NHÂN">
+                            </a>
+                            <div class="product-overlay">
+                                <button class="btn btn-success px-4 py-2 rounded-pill"> 
+                                    <i class="bi bi-cart me-2"></i> Thêm vào giỏ
+                                </button>
+                                <button class="btn btn-success px-4 py-2 rounded-pill">
+                                    <i class="bi bi-bag me-2"></i> Mua ngay
+                                </button>
+                            </div>
+                        </div>
+                        <div class="text-center p-4">
+                            <a class="d-block h5 text-truncate" href="chitiet.html?ma=VH003">VĂN HỌC KINH ĐIỂN - CHÂN DUNG MỘT CUỘC HÔN NHÂN</a>
+                            <span class="text-primary me-1">215.000đ</span>
+                            <span class="text-decoration-line-through">225.000đ</span>
+                            <div style="color:red;font-weight:bold;">Giảm 4%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 10 -->
+                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="1.0s">
+                    <div class="product-item border rounded shadow-sm overflow-hidden position-relative">
+                        <div class="position-relative">
+                            <a href="chitiet.html?ma=KT001">
+                                <img class="img-fluid" src="img/29.jpg" alt="ĐẦU TƯ THEO CHIẾN LƯỢC PHÒNG THỦ">
+                            </a>
+                            <div class="product-overlay">
+                                <button class="btn btn-success px-4 py-2 rounded-pill"> 
+                                    <i class="bi bi-cart me-2"></i> Thêm vào giỏ
+                                </button>
+                                <button class="btn btn-success px-4 py-2 rounded-pill">
+                                    <i class="bi bi-bag me-2"></i> Mua ngay
+                                </button>
+                            </div>
+                        </div>
+                        <div class="text-center p-4">
+                            <a class="d-block h5 text-truncate" href="chitiet.html?ma=KT001">THE LITTLE BOOK - ĐẦU TƯ THEO CHIẾN LƯỢC PHÒNG THỦ</a>
+                            <span class="text-primary me-1">134.000đ</span>
+                            <span class="text-decoration-line-through">179.500đ</span>
+                            <div style="color:red;font-weight:bold;">Giảm 25%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 11 -->
+                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="1.1s">
+                    <div class="product-item border rounded shadow-sm overflow-hidden position-relative">
+                        <div class="position-relative">
+                            <a href="chitiet.html?ma=KT002">
+                                <img class="img-fluid" src="img/30.jpg" alt="TƯ DUY ĐẦU TƯ">
+                            </a>
+                            <div class="product-overlay">
+                                <button class="btn btn-success px-4 py-2 rounded-pill"> 
+                                    <i class="bi bi-cart me-2"></i> Thêm vào giỏ
+                                </button>
+                                <button class="btn btn-success px-4 py-2 rounded-pill">
+                                    <i class="bi bi-bag me-2"></i> Mua ngay
+                                </button>
+                            </div>
+                        </div>
+                        <div class="text-center p-4">
+                            <a class="d-block h5 text-truncate" href="chitiet.html?ma=KT002">TƯ DUY ĐẦU TƯ - TIỀN ĐẺ RA TIỀN</a>
+                            <span class="text-primary me-1">203.000đ</span>
+                            <span class="text-decoration-line-through">239.000đ</span>
+                            <div style="color:red;font-weight:bold;">Giảm 15%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 12 -->
+                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="1.2s">
+                    <div class="product-item border rounded shadow-sm overflow-hidden position-relative">
+                        <div class="position-relative">
+                            <a href="chitiet.html?ma=KT003">
+                                <img class="img-fluid" src="img/31.jpg" alt="TIỀN ĐẺ RA TIỀN">
+                            </a>
+                            <div class="product-overlay">
+                                <button class="btn btn-success px-4 py-2 rounded-pill"> 
+                                    <i class="bi bi-cart me-2"></i> Thêm vào giỏ
+                                </button>
+                                <button class="btn btn-success px-4 py-2 rounded-pill">
+                                    <i class="bi bi-bag me-2"></i> Mua ngay
+                                </button>
+                            </div>
+                        </div>
+                        <div class="text-center p-4">
+                            <a class="d-block h5 text-truncate" href="chitiet.html?ma=KT003">TIỀN ĐẺ RA TIỀN - ĐẦU TƯ TÀI CHÍNH THÔNG MINH</a>
+                            <span class="text-primary me-1">128.000đ</span>
+                            <span class="text-decoration-line-through">160.000đ</span>
+                            <div style="color:red;font-weight:bold;">Giảm 20%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 13 -->
+                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="1.3s">
+                    <div class="product-item border rounded shadow-sm overflow-hidden position-relative">
+                        <div class="position-relative">
+                            <a href="chitiet.html?ma=GK001">
+                                <img class="img-fluid" src="img/35.jpg" alt="TUYỂN TẬP BÀI VĂN NGHỊ LUẬN">
+                            </a>
+                            <div class="product-overlay">
+                                <button class="btn btn-success px-4 py-2 rounded-pill"> 
+                                    <i class="bi bi-cart me-2"></i> Thêm vào giỏ
+                                </button>
+                                <button class="btn btn-success px-4 py-2 rounded-pill">
+                                    <i class="bi bi-bag me-2"></i> Mua ngay
+                                </button>
+                            </div>
+                        </div>
+                        <div class="text-center p-4">
+                            <a class="d-block h5 text-truncate" href="chitiet.html?ma=GK001">TUYỂN TẬP BÀI VĂN NGHỊ LUẬN XÃ HỘI CHON LỌC</a>
+                            <span class="text-primary me-1">90.000đ</span>
+                            <span class="text-decoration-line-through">120.000đ</span>
+                            <div style="color:red;font-weight:bold;">Giảm 25%</div>
+                        </div>
+                    </div>
+                </div>
+
+               <!-- Product 14 -->
+                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="1.4s">
+                    <div class="product-item border rounded shadow-sm overflow-hidden position-relative">
+                        <div class="position-relative">
+                            <a href="chitiet.html?ma=GK002">
+                                <img class="img-fluid" src="img/36.jpg" alt="LUYỆN THI VÀO 10 NGỮ VĂN">
+                            </a>
+                            <div class="product-overlay">
+                                <button class="btn btn-success px-4 py-2 rounded-pill"> 
+                                    <i class="bi bi-cart me-2"></i> Thêm vào giỏ
+                                </button>
+                                <button class="btn btn-success px-4 py-2 rounded-pill">
+                                    <i class="bi bi-bag me-2"></i> Mua ngay
+                                </button>
+                            </div>
+                        </div>
+                        <div class="text-center p-4">
+                            <a class="d-block h5 text-truncate" href="chitiet.html?ma=GK002">LUYỆN THI VÀO 10 NGỮ VĂN - CHINH PHỤC BÀI NGHỊ LUẬN</a>
+                            <span class="text-primary me-1">71.500đ</span>
+                            <span class="text-decoration-line-through">89.000đ</span>
+                            <div style="color:red;font-weight:bold;">Giảm 20%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 15 -->
+                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="1.5s">
+                    <div class="product-item border rounded shadow-sm overflow-hidden position-relative">
+                        <div class="position-relative">
+                            <a href="chitiet.html?ma=GK003">
+                                <img class="img-fluid" src="img/37.jpg" alt="TAKENOTE NGỮ PHÁP">
+                            </a>
+                            <div class="product-overlay">
+                                <button class="btn btn-success px-4 py-2 rounded-pill"> 
+                                    <i class="bi bi-cart me-2"></i> Thêm vào giỏ
+                                </button>
+                                <button class="btn btn-success px-4 py-2 rounded-pill">
+                                    <i class="bi bi-bag me-2"></i> Mua ngay
+                                </button>
+                            </div>
+                        </div>
+                        <div class="text-center p-4">
+                            <a class="d-block h5 text-truncate" href="chitiet.html?ma=GK003">TAKENOTE NGỮ PHÁP TRỌNG ĐIỂM TIẾNG ANH TRUNG HỌC CƠ SỞ</a>
+                            <span class="text-primary me-1">71.200đ</span>
+                            <span class="text-decoration-line-through">89.000đ</span>
+                            <div style="color:red;font-weight:bold;">Giảm 20%</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- Product Section End -->
+     </div>
 
             <!-- Thanh phân trang -->
-            <nav aria-label="Page navigation example" class="mt-4">
+            <nav aria-label="Page navigation" class="mt-4">
                 <ul id="pagination" class="pagination justify-content-center"></ul>
             </nav>
         </div>
@@ -267,254 +623,8 @@
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
 
+    <!-- Script hiển thị người dùng và số lượng giỏ hàng -->
     <script>
-        const productList = document.getElementById("productList");
-        const pagination = document.getElementById("pagination");
-        let currentPage = 1;
-        const productsPerPage = 12;
-
-        // ✅ Lấy sản phẩm chưa bị ẩn
-        function getVisibleProducts() {
-            return (JSON.parse(localStorage.getItem("products")) || []).filter(p => !p.an);
-        }
-
-        // ✅ Bỏ dấu tiếng Việt
-        function removeAccents(str) {
-            return str
-                .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "")
-                .replace(/đ/g, "d")
-                .replace(/Đ/g, "D");
-        }
-
-        // ✅ Hàm xem chi tiết sản phẩm
-        function viewProduct(productId) {
-            const products = JSON.parse(localStorage.getItem('products')) || [];
-            const product = products.find(p => p.id == productId);
-            
-            if (product) {
-                localStorage.setItem('selectedProduct', JSON.stringify(product));
-                window.location.href = 'chitiet.html';
-            } else {
-                alert('Không tìm thấy sản phẩm!');
-            }
-        }
-
-        // ✅ Hàm hiển thị sản phẩm
-        function renderProducts(page = 1) {
-            productList.innerHTML = "";
-
-            // ✅ LUÔN LẤY TỪ PRODUCTS GỐC, KHÔNG DÙNG CACHE
-            let allProducts = getVisibleProducts();
-            
-            // ✅ Áp dụng bộ lọc nếu có
-            const name = document.getElementById("searchName").value.trim();
-            const category = document.getElementById("searchCategory").value.trim();
-            const priceFilter = document.getElementById("priceFilter").value.trim();
-            
-            let visibleProducts = allProducts;
-            
-            // Lọc theo tên
-            if (name) {
-                visibleProducts = visibleProducts.filter(p =>
-                    removeAccents(p.ten?.toLowerCase() || "").includes(removeAccents(name.toLowerCase()))
-                );
-            }
-            
-            // Lọc theo category
-            if (category) {
-                visibleProducts = visibleProducts.filter(p => {
-                    const loaiArr = Array.isArray(p.loai) ? p.loai : [p.loai];
-                    return loaiArr.some(l => 
-                        removeAccents((l || "").toLowerCase()) === removeAccents(category.toLowerCase())
-                    );
-                });
-            }
-            
-            // Lọc theo giá
-            if (priceFilter) {
-                visibleProducts = visibleProducts.filter(p => {
-                    const giaNum = parseFloat(p.gia.toString().replace(/\./g, "").replace(/[^\d]/g, "")) || 0;
-                    
-                    if (priceFilter === "duoi100") return giaNum < 100000;
-                    if (priceFilter === "100-200") return giaNum >= 100000 && giaNum <= 200000;
-                    if (priceFilter === "tren200") return giaNum > 200000;
-                    return true;
-                });
-            }
-
-            const totalPages = Math.max(1, Math.ceil(visibleProducts.length / productsPerPage));
-            currentPage = page;
-
-            const start = (currentPage - 1) * productsPerPage;
-            const end = start + productsPerPage;
-            const pageProducts = visibleProducts.slice(start, end);
-
-            if (pageProducts.length === 0) {
-                productList.innerHTML = `<div class="text-center py-5 col-12">Không có sản phẩm nào</div>`;
-                renderPagination(totalPages);
-                return;
-            }
-
-            pageProducts.forEach((p, index) => {
-                const giagocNum = parseFloat(p.giagoc) || 0;
-                const giaNum = parseFloat(p.gia) || 0;
-                const giamgia = giagocNum > giaNum ? Math.round(((giagocNum - giaNum) / giagocNum) * 100) : 0;
-
-                productList.innerHTML += `
-                    <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="${0.05 * (index + 1)}s">
-                        <div class="product-item border rounded shadow-sm overflow-hidden position-relative">
-                            <div class="position-relative">
-                                <img class="img-fluid" src="${p.hinh}" alt="${p.ten}" style="cursor:pointer;" onclick="viewProduct(${p.id})">
-                                <div class="product-overlay d-flex flex-column justify-content-center align-items-center gap-2">
-                                    <button class="btn btn-success px-4 py-2 rounded-pill them-gio-btn" data-id="${p.id}"> 
-                                        <i class="bi bi-cart me-2"></i> Thêm vào giỏ
-                                    </button>
-                                    <button class="btn btn-success px-4 py-2 rounded-pill mua-ngay-btn" data-id="${p.id}">
-                                        <i class="bi bi-bag me-2"></i> Mua ngay
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="text-center p-4">
-                                <a class="d-block h5 text-truncate" href="#" style="cursor:pointer;" onclick="viewProduct(${p.id}); return false;">${p.ten}</a>
-                                <span class="text-primary me-1">${giaNum.toLocaleString("vi-VN")}đ</span>
-                                ${giagocNum > giaNum ? `<span class="text-decoration-line-through">${giagocNum.toLocaleString("vi-VN")}đ</span>` : ""}
-                                ${giamgia > 0 ? `<div style="color:red;font-weight:bold;">Giảm ${giamgia}%</div>` : ""}
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-
-            renderPagination(totalPages);
-        }
-
-        // ✅ Hàm render thanh phân trang
-        function renderPagination(totalPages) {
-            pagination.innerHTML = "";
-
-            pagination.innerHTML += `
-                <li class="page-item ${currentPage === 1 ? "disabled" : ""}">
-                    <a class="page-link" href="#" id="prevPage">Trước</a>
-                </li>
-            `;
-
-            for (let i = 1; i <= totalPages; i++) {
-                pagination.innerHTML += `
-                    <li class="page-item ${i === currentPage ? "active" : ""}">
-                        <a class="page-link page-number" href="#">${i}</a>
-                    </li>
-                `;
-            }
-
-            pagination.innerHTML += `
-                <li class="page-item ${currentPage === totalPages ? "disabled" : ""}">
-                    <a class="page-link" href="#" id="nextPage">Sau</a>
-                </li>
-            `;
-
-            document.getElementById("prevPage")?.addEventListener("click", e => {
-                e.preventDefault();
-                if (currentPage > 1) renderProducts(currentPage - 1);
-            });
-
-            document.getElementById("nextPage")?.addEventListener("click", e => {
-                e.preventDefault();
-                if (currentPage < totalPages) renderProducts(currentPage + 1);
-            });
-
-            document.querySelectorAll(".page-number").forEach(link => {
-                link.addEventListener("click", e => {
-                    e.preventDefault();
-                    const newPage = parseInt(link.textContent);
-                    renderProducts(newPage);
-                });
-            });
-        }
-
-        // ✅ Lọc sản phẩm theo tên, thể loại, giá
-        function filterProducts() {
-            // ✅ Chỉ cần gọi lại renderProducts, không lưu cache
-            renderProducts(1);
-        }
-
-        // ✅ Gắn sự kiện
-        document.getElementById("searchForm").addEventListener("submit", e => {
-            e.preventDefault();
-            filterProducts();
-        });
-
-        document.getElementById("searchName").addEventListener("input", filterProducts);
-        document.getElementById("searchCategory").addEventListener("change", filterProducts);
-        document.getElementById("priceFilter").addEventListener("change", filterProducts);
-
-        // ✅ Thêm vào giỏ & Mua ngay
-        document.addEventListener("click", function (e) {
-            const btn = e.target.closest("button");
-            if (!btn) return;
-
-            const id = btn.getAttribute("data-id");
-            if (!id) return;
-
-            //const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-            //if (!currentUser) {
-            //    alert("⚠️ Bạn cần đăng nhập để sử dụng chức năng giỏ hàng!");
-            //    window.location.href = "user/login.html";
-            //    return;
-            //}
-
-            const products = JSON.parse(localStorage.getItem("products")) || [];
-            const product = products.find(p => p.id == id);
-            if (!product) return;
-
-            let cart = JSON.parse(localStorage.getItem("cart")) || [];
-            const existing = cart.find(item => item.id === product.id);
-
-            if (existing) {
-                existing.qty += 1;
-            } else {
-                cart.push({
-                    id: product.id,
-                    name: product.ten,
-                    price: parseFloat(product.gia),
-                    img: product.hinh,
-                    qty: 1
-                });
-            }
-
-            localStorage.setItem("cart", JSON.stringify(cart));
-
-            const toast = document.createElement("div");
-            toast.textContent = `🛒 Đã thêm "${product.ten}" vào giỏ hàng!`;
-            toast.style.position = "fixed";
-            toast.style.bottom = "30px";
-            toast.style.right = "30px";
-            toast.style.background = "#28a745";
-            toast.style.color = "#fff";
-            toast.style.padding = "12px 18px";
-            toast.style.borderRadius = "8px";
-            toast.style.fontWeight = "500";
-            toast.style.boxShadow = "0 4px 10px rgba(0,0,0,0.2)";
-            toast.style.zIndex = "9999";
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 2000);
-
-            const cartCount = document.getElementById("cartCount");
-            if (cartCount) {
-                const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
-                cartCount.textContent = totalQty;
-            }
-
-            if (btn.classList.contains("mua-ngay-btn")) {
-                sessionStorage.setItem(
-                  "redirectFromBuyNow",
-                  JSON.stringify({ productId: product.id, at: Date.now() })
-                );
-                window.location.href = "cart.html";
-            }
-        });
-
-        // ✅ Hiển thị người dùng
         document.addEventListener('DOMContentLoaded', function () {
             const userSection = document.getElementById('userSection');
             const currentUser = JSON.parse(localStorage.getItem('currentUser'));
@@ -531,11 +641,6 @@
                         alert('Bạn đã đăng xuất!');
                         window.location.reload();
                     });
-                } else {
-                    userSection.innerHTML = `
-                        <a href="user/login.html" class="btn btn-outline-primary btn-sm me-2">Đăng nhập</a>
-                        <a href="user/register.html" class="btn btn-primary btn-sm">Đăng ký</a>
-                    `;
                 }
             }
 
@@ -547,28 +652,163 @@
                 cartCount.textContent = totalQty;
             }
         });
-
-        // ✅ Hiển thị lần đầu
-        renderProducts();
-        
-        // ✅ Thêm ID cho sản phẩm cũ (chạy 1 lần)
-        (function addMissingIds() {
-            let products = JSON.parse(localStorage.getItem("products")) || [];
-            let updated = false;
-            
-            products.forEach((p, index) => {
-                if (!p.id) {
-                    p.id = Date.now() + index;
-                    updated = true;
-                }
-            });
-            
-            if (updated) {
-                localStorage.setItem("products", JSON.stringify(products));
-                console.log("✅ Đã thêm ID cho", products.length, "sản phẩm");
-                renderProducts(); // Render lại
-            }
-        })();
     </script>
+    <!-- Script xử lý thêm vào giỏ và mua ngay -->
+<script>
+    // ✅ Thêm vào giỏ & Mua ngay
+    document.addEventListener("click", function (e) {
+        const btn = e.target.closest("button");
+        if (!btn) return;
+
+        // Lấy mã sản phẩm từ link gần nhất
+        const productCard = btn.closest('.product-item');
+        if (!productCard) return;
+
+        const productLink = productCard.querySelector('a[href^="chitiet.html?ma="]');
+        if (!productLink) return;
+
+        const productCode = new URLSearchParams(productLink.href.split('?')[1]).get('ma');
+        if (!productCode) return;
+
+        // Danh sách sản phẩm
+        const allProducts = {
+            "KN001": { id: "KN001", ten: "GOOD ENERGY - NĂNG LƯỢNG TỐT", gia: 85000, hinh: "img/38.jpg" },
+            "KN002": { id: "KN002", ten: "NGHỆ THUẬT TƯ DUY LOGIC", gia: 126000, hinh: "img/33.jpg" },
+            "KN003": { id: "KN003", ten: "KỸ NĂNG TƯ DUY THỰC CHIẾN", gia: 126000, hinh: "img/34.jpg" },
+            "TN001": { id: "TN001", ten: "THIÊN NHIÊN - TẠI SAO CHÚNG TA CẦN THIÊN NHIÊN XANH TƯƠI?", gia: 52000, hinh: "img/23.jpg" },
+            "TN002": { id: "TN002", ten: "GỢI MỞ TRÍ TƯỞNG TƯỢNG - NỖI BUỒN CỦA CÂY ÍCH KỶ", gia: 28000, hinh: "img/24.jpg" },
+            "TN003": { id: "TN003", ten: "RÈN TRÍ THÔNG MINH - TẬP 3", gia: 24000, hinh: "img/25.jpg" },
+            "VN001": { id: "VN001", ten: "RUỒI TRÂU (TÁI BẢN NĂM 2018)", gia: 96000, hinh: "img/26.jpg" },
+            "VH002": { id: "VH002", ten: "VĂN HỌC KINH ĐIỂN - LỀ THÓI THỊ THÀNH", gia: 164000, hinh: "img/27.jpg" },
+            "VH003": { id: "VH003", ten: "VĂN HỌC KINH ĐIỂN - CHÂN DUNG MỘT CUỘC HÔN NHÂN", gia: 215000, hinh: "img/28.jpg" },
+            "KT001": { id: "KT001", ten: "THE LITTLE BOOK - ĐẦU TƯ THEO CHIẾN LƯỢC PHÒNG THỦ", gia: 134000, hinh: "img/29.jpg" },
+            "KT002": { id: "KT002", ten: "TƯ DUY ĐẦU TƯ - TIỀN ĐẺ RA TIỀN", gia: 203000, hinh: "img/30.jpg" },
+            "KT003": { id: "KT003", ten: "TIỀN ĐẺ RA TIỀN - ĐẦU TƯ TÀI CHÍNH THÔNG MINH", gia: 128000, hinh: "img/31.jpg" },
+            "GK001": { id: "GK001", ten: "TUYỂN TẬP BÀI VĂN NGHỊ LUẬN XÃ HỘI CHON LỌC", gia: 90000, hinh: "img/35.jpg" },
+            "GK002": { id: "GK002", ten: "LUYỆN THI VÀO 10 NGỮ VĂN - CHINH PHỤC BÀI NGHỊ LUẬN", gia: 71500, hinh: "img/36.jpg" },
+            "GK003": { id: "GK003", ten: "TAKENOTE NGỮ PHÁP TRỌNG ĐIỂM TIẾNG ANH TRUNG HỌC CƠ SỞ", gia: 71200, hinh: "img/37.jpg" }
+        };
+
+        const product = allProducts[productCode];
+        if (!product) return;
+
+        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+        const existing = cart.find(item => item.id === product.id);
+
+        if (existing) {
+            existing.qty += 1;
+        } else {
+            cart.push({
+                id: product.id,
+                name: product.ten,
+                price: product.gia,
+                img: product.hinh,
+                qty: 1
+            });
+        }
+
+        localStorage.setItem("cart", JSON.stringify(cart));
+
+        const toast = document.createElement("div");
+        toast.textContent = `🛒 Đã thêm "${product.ten}" vào giỏ hàng!`;
+        toast.style.position = "fixed";
+        toast.style.bottom = "30px";
+        toast.style.right = "30px";
+        toast.style.background = "#28a745";
+        toast.style.color = "#fff";
+        toast.style.padding = "12px 18px";
+        toast.style.borderRadius = "8px";
+        toast.style.fontWeight = "500";
+        toast.style.boxShadow = "0 4px 10px rgba(0,0,0,0.2)";
+        toast.style.zIndex = "9999";
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2000);
+
+        const cartCount = document.getElementById("cartCount");
+        if (cartCount) {
+            const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+            cartCount.textContent = totalQty;
+        }
+
+        // Nếu là nút "Mua ngay" thì chuyển sang trang giỏ hàng
+        if (btn.textContent.includes("Mua ngay")) {
+            sessionStorage.setItem(
+                "redirectFromBuyNow",
+                JSON.stringify({ productId: product.id, at: Date.now() })
+            );
+            window.location.href = "cart.html";
+        }
+    });
+</script>
+<!-- Script phân trang -->
+<script>
+    let currentPage = 1;
+    const productsPerPage = 12;
+
+    function showPage(page) {
+        const productItems = document.querySelectorAll('.product-item');
+        const totalPages = Math.ceil(productItems.length / productsPerPage);
+        
+        // Đảm bảo page nằm trong phạm vi hợp lệ
+        if (page < 1) page = 1;
+        if (page > totalPages) page = totalPages;
+        currentPage = page;
+
+        const start = (currentPage - 1) * productsPerPage;
+        const end = start + productsPerPage;
+
+        // Ẩn/hiện sản phẩm
+        productItems.forEach((item, index) => {
+            if (index >= start && index < end) {
+                item.closest('.col-6').style.display = 'block';
+            } else {
+                item.closest('.col-6').style.display = 'none';
+            }
+        });
+
+        // Render phân trang
+        renderPagination(totalPages);
+        
+        // Scroll lên đầu danh sách sản phẩm
+        document.querySelector('.container-xxl').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function renderPagination(totalPages) {
+        const paginationContainer = document.getElementById('pagination');
+        if (!paginationContainer) return;
+
+        let html = '';
+
+        // Nút "Trước"
+        html += `
+            <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                <a class="page-link" href="#" onclick="showPage(${currentPage - 1}); return false;">Trước</a>
+            </li>
+        `;
+
+        // Các số trang
+        for (let i = 1; i <= totalPages; i++) {
+            html += `
+                <li class="page-item ${i === currentPage ? 'active' : ''}">
+                    <a class="page-link" href="#" onclick="showPage(${i}); return false;">${i}</a>
+                </li>
+            `;
+        }
+
+        // Nút "Sau"
+        html += `
+            <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                <a class="page-link" href="#" onclick="showPage(${currentPage + 1}); return false;">Sau</a>
+            </li>
+        `;
+
+        paginationContainer.innerHTML = html;
+    }
+
+    // Khởi tạo trang đầu tiên khi load
+    document.addEventListener('DOMContentLoaded', function() {
+        showPage(1);
+    });
+</script>
 </body>
 </html>

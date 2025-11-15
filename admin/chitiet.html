@@ -187,16 +187,198 @@
   </div>
 
   <script>
-    const product = JSON.parse(localStorage.getItem("selectedProduct"));
+    // Danh sách tất cả sản phẩm
+    const allProducts = {
+      "KN001": {
+        ma: "KN001",
+        ten: "GOOD ENERGY - NĂNG LƯỢNG TỐT",
+        loai: ["Kỹ năng sống"],
+        tacgia: "Casey Means",
+        nhaxuatban: "NXB Thế Giới",
+        namxuatban: "2024",
+        hinh: "../img/38.jpg",
+        gia: "85000",
+        giagoc: "120000",
+        mota: "Sức khỏe không chỉ là kết quả của di truyền hay may mắn, nó là hệ quả trực tiếp của cách mỗi cá nhân trao đổi chất với thế giới xung quanh. “Good Energy – Năng Lượng Tốt” là lời kêu gọi mạnh mẽ nhằm tái cấu trúc lại cách chúng ta nhìn nhận về y học, thực phẩm, bệnh tật và sức khỏe cá nhân trong thế kỷ 21.Thông qua góc nhìn của một bác sĩ y khoa kiêm chuyên gia khởi nghiệp trong lĩnh vực công nghệ y tế, Casey Means cùng Calley Means không chỉ bóc tách những giới hạn của hệ thống y tế hiện tại – vốn đang chú trọng vào điều trị triệu chứng hơn là chữa lành gốc rễ – mà còn dẫn dắt người đọc khám phá mối liên hệ sâu sắc giữa rối loạn trao đổi chất và gần như mọi căn bệnh phổ biến hiện nay: tiểu đường, béo phì, tim mạch, trầm cảm, Alzheimer, ung thư...Điểm nổi bật của sách nằm ở cách tiếp cận mang tính hệ thống, đan xen giữa dữ liệu khoa học và câu chuyện cá nhân, giữa phân tích xã hội và hướng dẫn thực hành. Người đọc không chỉ được cung cấp kiến thức về sinh học tế bào, hormone, vi sinh vật đường ruột... mà còn được truyền cảm hứng để thiết lập lại mối quan hệ với chính cơ thể mình – từ ăn uống, ngủ nghỉ cho đến cảm xúc.“Good Energy” không chỉ là một cuốn sách sức khỏe. Đó là cẩm nang đổi đời – dành cho những ai sẵn sàng chất vấn thực trạng, lựa chọn sống có hiểu biết, và chủ động thiết kế lại một cuộc đời tràn đầy năng lượng tốt từ gốc rễ."
+      },
+      "KN002": {
+        ma: "KN002",
+        ten: "NGHỆ THUẬT TƯ DUY LOGIC",
+        loai: ["Kỹ năng sống"],
+        tacgia: "Tác giả ABC",
+        nhaxuatban: "NXB Kim Đồng",
+        namxuatban: "2023",
+        hinh: "../img/33.jpg",
+        gia: "126000",
+        giagoc: "169000",
+mota: "Nghệ Thuật Tư Duy Logic là một cuốn sách thực tiễn về cách đưa ra quyết định hiệu quả và lý trí hơn trong đời sống cá nhân lẫn công việc. Lấy cảm hứng từ các khóa học tại Trường Harvard Kennedy, cuốn sách giúp người đọc tiếp cận tư duy phân tích thông qua các nguyên lý kinh tế học hành vi, logic xác suất và kỹ thuật phản tư.Tác phẩm không đi theo lối trình bày thuần lý thuyết mà đặt người đọc vào các tình huống đời thường, từ chuyện chơi bài, chọn bạn đời, ra chính sách công cho tới quyết định trong chăm sóc sức khỏe. Qua đó, từng nguyên tắc tư duy dần được hé mở và chứng minh bằng lý luận sắc sảo.Điểm mạnh của cuốn sách nằm ở cách dẫn dắt mạch lạc, kết hợp hài hòa giữa kiến thức hàn lâm và ứng dụng thực tiễn. Những câu châm ngôn được nhấn mạnh xuyên suốt không chỉ tạo điểm nhấn ghi nhớ mà còn truyền tải tinh thần cốt lõi: tư duy hợp lý là nền tảng của một đời sống hiệu quả và viên mãn.Dành cho sinh viên, nhà quản lý, người làm chính sách hay bất kỳ ai đang tìm kiếm sự tỉnh táo giữa thời đại nhiễu loạn, Nghệ Thuật Tư Duy Logic không chỉ là một cuốn sách kỹ năng, đây là lời mời gọi mỗi người trở thành người đưa ra quyết định sáng suốt hơn trong mọi ngữ cảnh đời sống."
+      },
+      "KN003": {
+        ma: "KN003",
+        ten: "KỸ NĂNG TƯ DUY THỰC CHIẾN",
+        loai: ["Kỹ năng sống"],
+        tacgia: "Nguyễn Văn A",
+        nhaxuatban: "NXB Trẻ",
+        namxuatban: "2024",
+        hinh: "../img/34.jpg",
+        gia: "126000",
+        giagoc: "169000",
+mota: "Trong bối cảnh hiện đại, khi mọi cá nhân đều phải đối mặt với áp lực công việc, kỳ vọng xã hội và sự thay đổi không ngừng từ môi trường sống, khả năng giữ vững tư duy rõ ràng và hành động quyết đoán trở thành một trong những kỹ năng sống còn. Cuốn sách Kỹ Năng Tư Duy Thực Chiến của tác giả Simon Tyler mang đến một cẩm nang thiết thực giúp người đọc xây dựng nền tảng tư duy vững chắc để thích ứng linh hoạt với mọi tình huống trong cuộc sống và công việc.Cuốn sách tập trung vào khái niệm thái độ - không chỉ là phản ứng cảm xúc đơn thuần mà còn là cách mỗi người lựa chọn phản ứng, điều chỉnh tư duy và đưa ra quyết định trước những thay đổi. Với 50 chương ngắn gọn, tác phẩm được thiết kế như một chuỗi bài thực hành tư duy, từ những bước nhỏ như điều chỉnh hơi thở, quan sát cảm xúc, rèn luyện sự im lặng, đến những thay đổi mang tính chiến lược như xác định mục tiêu cá nhân, quản lý trạng thái tinh thần hay phát triển tư duy phản biện.Nội dung sách được trình bày khoa học, dễ tiếp cận và đặc biệt phù hợp với người bận rộn: mỗi chương là một chủ đề độc lập với phần lý thuyết tinh gọn, gợi ý thực hành rõ ràng, dễ áp dụng. Đọc giả không chỉ được truyền cảm hứng để thay đổi mà còn được trao công cụ để biến sự thay đổi đó trở nên bền vững và thực tế.Kỹ Năng Tư Duy Thực Chiến không chỉ dành cho các nhà lãnh đạo, người làm quản lý hay nhân sự cấp cao, mà còn phù hợp với bất kỳ ai đang mong muốn cải thiện khả năng tư duy, làm chủ cảm xúc và đạt được sự chủ động trong cuộc sống. Cuốn sách là một hành trình chiêm nghiệm thực tế, nơi tư duy được rèn luyện từng bước thông qua sự tỉnh thức và thực hành liên tục."
+      },
+      "TN001": {
+        ma: "TN001",
+        ten: "THIÊN NHIÊN - TẠI SAO CHÚNG TA CẦN THIÊN NHIÊN XANH TƯƠI?",
+        loai: ["Thiếu nhi"],
+        tacgia: "Tác giả XYZ",
+        nhaxuatban: "NXB Kim Đồng",
+        namxuatban: "2023",
+        hinh: "../img/23.jpg",
+        gia: "52000",
+        giagoc: "70000",
+mota: "Với các thông tin hữu ích và hình ảnh minh họa sống động, Thiên nhiên đưa độc giả vào một hành trình sinh thái tươi đẹp và đầy cảm hứng. Từ những khu rừng xanh tươi đến những đại dương xanh thăm thẳm, các em sẽ tìm hiểu về các chủ đề quan trọng như đa dạng sinh học, nạn phá rừng và dấu chân sinh thái của con người.Ngoài đặt ra những câu hỏi và yêu cầu độc giả tự tìm kiếm câu trả lời, cuốn sách độc đáo và hấp dẫn này còn truyền cảm hứng để các em trở thành những người tham gia tích cực vào phong trào bảo vệ Mẹ Trái đất."      },
+      "TN002": {
+        ma: "TN002",
+        ten: "GỢI MỞ TRÍ TƯỞNG TƯỢNG - NỖI BUỒN CỦA CÂY ÍCH KỶ",
+        loai: ["Thiếu nhi"],
+        tacgia: "Tác giả DEF",
+        nhaxuatban: "NXB Kim Đồng",
+        namxuatban: "2024",
+        hinh: "../img/24.jpg",
+        gia: "28000",
+        giagoc: "35000",
+mota: "Một cây khổng lồ ích kỷ trong khu rừng nọ tin rằng mình to và khỏe nhất nên muốn chiếm trọn cả khu rừng. Cây muốn giành hết ánh nắng, hút hết nước, ăn hết dưỡng chất. Cây xua đuổi những cây và sinh vật khác tránh xa mình ra. Cái cây có thể sống một mình trong khu rừng mà không cần đến những cây khác được không?Câu chuyện cây ích kỷ gửi đến mọi trẻ em và mọi người lớn thông điệp về sự hài hòa, gắn kết của cây cối với nhau để cùng bảo vệ sự sống, không chỉ riêng với một khu rừng.Với trí tưởng tượng và tình yêu thiên nhiên sâu sắc, Nỗi buồn của cây ích kỷ được tác giả Fuu.J viết và vẽ từ những ngày chị tha thẩn trong những cánh rừng làng quê mình. Hi vọng khi đọc những câu chuyện này sẽ khiến các em yêu thương và tôn trọng thiên nhiên quanh mình thêm một chút."      },
+      "TN003": {
+        ma: "TN003",
+        ten: "RÈN TRÍ THÔNG MINH - TẬP 3",
+        loai: ["Thiếu nhi"],
+        tacgia: "Nhóm tác giả",
+        nhaxuatban: "NXB Giáo dục",
+        namxuatban: "2023",
+        hinh: "../img/25.jpg",
+        gia: "24000",
+        giagoc: "30000",
+mota: "Bộ sách rèn trí thông minh này mang đến cho bé một thế giới đầy màu sắc với các trò chơi vừa thú vị vừa bổ ích. Các trò chơi phong phú và đa dạng kích thích sự khám phá và tư duy sáng tạo. Mỗi trò chơi không chỉ mang lại niềm vui mà còn là cơ hội tuyệt vời để bé học cách giải quyết vấn đề, phát triển tư duy logic và khả năng suy luận.Bộ sách gồm ba tập, mỗi tập chứa đựng những trò chơi đặc sắc, được thiết kế để bé rèn luyện trí tuệ một cách tự nhiên.Với bộ sách này, bé sẽ được thử thách với các hoạt động phát huy khả năng quan sát và phân tích. Những trò chơi này không chỉ giúp bé cải thiện kỹ năng tư duy, mà còn nuôi dưỡng sự sáng tạo, khơi gợi trí tưởng tượng phong phú. Đây là một công cụ học tập tuyệt vời, giúp bé vừa học vừa chơi, phát triển trí thông minh với những hoạt động vui tươi và đầy thú vị."      },
+      "VN001": {
+        ma: "VN001",
+        ten: "RUỒI TRÂU (TÁI BẢN NĂM 2018)",
+        loai: ["Văn học"],
+        tacgia: "Nam Cao",
+        nhaxuatban: "NXB Văn học",
+        namxuatban: "2018",
+        hinh: "../img/26.jpg",
+        gia: "96000",
+        giagoc: "128000",
+mota: "Nữ tiểu thuyết gia người Ireland Ethel Lilian Voynich (1864 – 1960) đã viết “Ruồi trâu” bằng tất cả ngọn lửa đam mê thổi hồn vào nhân vật trong bức tranh “Chân dung người không quen biết” của họa sĩ thế kỷ XVI Franciabigio mà bà được chiêm ngưỡng tại Bảo tàng Louvre (Pháp) vào năm mười bảy tuổi. Tác phẩm xuất bản lần đầu tại Anh và Hoa Kỳ năm 1897, và thực sự tạo tiếng vang rộng khắp sau khi được dịch sang tiếng Nga (1898). Vào thời điểm đó, “Ruồi trâu” là cuốn sách bán chạy nhất tại Nga và rất được ưa chuộng tại Trung Quốc.Truyện xoay quanh nhân vật trung tâm là chàng thanh niên Arthur - bí danh “Ruồi trâu”, một thanh niên hiền lành, thánh thiện, hiến dâng tất cả tình cảm riêng tư cho lý tưởng cách mạng. Những thăng trầm trong cuộc sống, quá trình chiến đấu vì lý tưởng đã tôi luyện chàng thanh niên trở thành một con người bản lĩnh, mạnh mẽ và luôn tràn đầy nhiệt huyết. Một trái tim rực cháy lý tưởng nhưng không quên tình yêu sâu đậm dành cho cô gái mà anh yêu thương - Emma.Bằng nghệ thuật chuyển ngữ mềm mại, linh hoạt, súc tích mà vẫn giàu hình ảnh của dịch giả tài hoa Hà Ngọc, truyện cuốn độc giả đi sâu vào những tình tiết hấp dẫn, những giằng xé nội tâm quyết liệt trong cuộc đấu tranh không khoan nhượng giữa người cha – Đức Hồng y Montaneli và cậu con trai ngoài giá thú Arthur. Cho đến tận lúc chết, hai con người đại diện cho hai lý tưởng sống và hai tôn giáo hoàn toàn đối lập nhau, vẫn kiên trung với con đường đã chọn, từ bỏ tình cảm ruột thịt thiêng liêng để sống theo lý trí."      },
+      "VH002": {
+        ma: "VH002",
+        ten: "VĂN HỌC KINH ĐIỂN - LỀ THÓI THỊ THÀNH",
+        loai: ["Văn học"],
+        tacgia: "Tác giả GHI",
+        nhaxuatban: "NXB Văn học",
+        namxuatban: "2023",
+        hinh: "../img/27.jpg",
+        gia: "164000",
+        giagoc: "205000",
+mota: "“Một tiên đoán mang tính thời cuộc... Trong bối cảnh Thời đại Mạ vàng kiểu mới, khi khoảng cách giàu - nghèo ngày càng khơi sâu, 'Lề thói thị thành' một lần nữa được nhắc đến như tấm gương phản chiếu những góc khuất tối tăm của cuộc đời, qua cái nhìn sắc bén và tấm lòng cảm thương sâu sắc của Edith Wharton.” - The New York Times.Undine Spragg, đóa hoa kiêu sa của vùng Trung Tây hẻo lánh, sở hữu nhan sắc khiến bao người đắm say. Thế nhưng, vẻ đẹp ấy liệu có ý nghĩa gì nếu không được ai chiêm ngưỡng, tôn vinh?Mang theo giấc mơ biến con gái trở thành tâm điểm của giới thượng lưu, gia đình Spragg đã không ngần ngại dốc cạn tài sản để đưa Undine đến New York. Ngặt nỗi, khi bị kẹt trong một khách sạn xa hoa mà họ khó lòng thanh toán nổi, giấc mơ ấy có nguy cơ tan vỡ. Tuy nhiên, với niềm tôn thờ vật chất, khao khát cuộc sống phồn hoa đẳng cấp, Undine quyết tâm bám trụ và chinh phục đỉnh cao danh vọng bằng tất cả sức quyến rũ cùng mánh khóe của mình.Edith Wharton, thông qua ngòi bút sắc sảo và hài hước, đã phơi bày bộ mặt thật của giới thượng lưu, nơi tiền bạc và quyền lực có thể chi phối tất cả mọi thứ. Chính vì lẽ đó, mặc dù ra đời cách đây hơn một thế kỷ, Lề thói thị thành vẫn giữ nguyên sức hấp dẫn và khiến người đọc không khỏi giật mình trước tham vọng và thủ đoạn của con người khi đối diện với ảo mộng phù hoa; đồng thời, tác phẩm này đã đưa Undine trở thành một trong những nhân vật phản diện đáng nhớ và gây tranh cãi nhất trong nền văn học Mỹ."      },
+      "VH003": {
+        ma: "VH003",
+        ten: "VĂN HỌC KINH ĐIỂN - CHÂN DUNG MỘT CUỘC HÔN NHÂN",
+        loai: ["Văn học"],
+        tacgia: "Tác giả JKL",
+        nhaxuatban: "NXB Văn học",
+        namxuatban: "2024",
+        hinh: "../img/28.jpg",
+        gia: "215000",
+        giagoc: "225000",
+        mota: "“Pearl Buck, với bút lực tài hoa, đã biểu đạt những chân lý giản đơn nhưng sâu sắc về cuộc sống, về sự sống, mang giá trị vĩnh hằng.” - Saturday Review.Mọi chuyện khởi nguồn từ lúc chàng họa sĩ thuộc tầng lớp thượng lưu ở Philadelphia đi tìm cảm ứng, đã tình cờ gặp gỡ và bị cuốn hút bởi vẻ đẹp giản dị của một cô gái nông dân. Bức chân dung về cô đã trở thành một trong những tác phẩm ấn tượng nhất của anh; tuy nhiên niềm đam mê với cô gái mù chữ không chỉ dừng lại ở giá vẽ: chàng họa sĩ đã quay trở lại để kết hôn cùng cô và bắt đầu ổn định cuộc sống ở vùng thôn quê - một hành trình bắc cầu chông gai vượt qua những khoảng cách xa vời về văn hóa giữa họ, cắt đứt mối quan hệ gia đình và gây nên nỗi căng thẳng trong giới bằng hữu của cả hai người.Pearl S. Buck đã bày tỏ lòng cảm thông sâu sắc với cả hai phía của một cuộc hôn nhân phức tạp - từ buổi ban đầu lưu luyến lãng mạn đến thời điểm va chạm và mất mát, rồi sau cùng là sự bình yên chấp nhận - như một ẩn dụ của cuộc sống; đồng thời bà cũng khắc họa nên bức tranh sinh động về nước Mỹ trải dài từ đầu thế kỷ 20 đến Thế Chiến thứ Hai."
+      },
+      "KT001": {
+        ma: "KT001",
+        ten: "THE LITTLE BOOK - ĐẦU TƯ THEO CHIẾN LƯỢC PHÒNG THỦ",
+        loai: ["Kinh tế"],
+        tacgia: "Tác giả MNO",
+        nhaxuatban: "NXB Thế Giới",
+        namxuatban: "2023",
+        hinh: "../img/29.jpg",
+        gia: "134000",
+        giagoc: "179500",
+mota: "Trong một thế giới tài chính đầy biến động, nơi các danh mục đầu tư có thể sụt giảm chỉ sau một đêm và những cơn khủng hoảng kinh tế luôn rình rập, việc bảo vệ tài sản và xây dựng chiến lược đầu tư vững chắc là nhiệm vụ sống còn đối với mỗi nhà đầu tư. Chính trong bối cảnh đó, cuốn The Little Book – Đầu tư theo chiến lược phòng thủ ra đời, mang đến cho độc giả những công cụ và lời khuyên thực tiễn để đối phó với các rủi ro tài chính hiện đại.Được viết bởi hai tác giả giàu kinh nghiệm và nổi tiếng - Ben Stein và Phil DeMuth, cuốn sách này là một hướng dẫn ngắn gọn nhưng súc tích, giúp bạn hiểu rõ những nguyên tắc cơ bản của đầu tư và cách áp dụng chúng để đạt được thành công bền vững. Từ những điều nên làm để tối ưu hóa lợi nhuận, đến những điều cần tránh để giảm thiểu rủi ro, cuốn sách mang đến sự kết hợp hoàn hảo giữa trí tuệ tài chính sắc bén và ngôn ngữ dễ tiếp cận.The Little Book – Đầu tư theo chiến lược phòng thủ không chỉ là một cuốn sách về đầu tư, mà còn là người bạn đồng hành, giúp bạn tiến bước vững chắc hơn trong hành trình tài chính của mình."      },
+      "KT002": {
+        ma: "KT002",
+        ten: "TƯ DUY ĐẦU TƯ - TIỀN ĐẺ RA TIỀN",
+        loai: ["Kinh tế"],
+        tacgia: "Robert Kiyosaki",
+        nhaxuatban: "NXB Lao động",
+        namxuatban: "2024",
+        hinh: "../img/30.jpg",
+        gia: "203000",
+        giagoc: "239000",
+mota: "Tiền bạc là một trong những công cụ quyền lực nhất mà con người sở hữu. Với phần lớn mọi người, tiền luôn là thứ khó kiểm soát và nắm bắt. Bởi tính chất 2 mặt của đồng tiền - nó có thể là một người đầy tớ trung thành, nhưng cũng có thể trở thành một “ông chủ” hà khắc nếu ta không hiểu và làm chủ được nó.Vì vậy, việc trang bị tư duy đúng đắn về tiền bạc là điều vô cùng cần thiết, đặc biệt trong xã hội hiện đại hiện nay. Chỉ cần khả năng tư duy nhạy bén, kỷ luật trong chi tiêu và biết cách việc lập kế hoạch, tiền của bạn sẽ làm việc cho bạn.“Tư duy đầu tư - Tiền đẻ ra tiền” là cuốn sách dành cho bất kỳ ai muốn đạt được tự do về tài chính (Financial Independence, hay FI) - sự giàu có đích thực và lâu dài.Với hơn 100 câu chuyện thực tế từ những người thuộc mọi tầng lớp xã hội: giáo viên, y tá, người lao động phổ thông, kỹ sư... đã đạt được tự do tài chính không phải thông qua con đường thường thấy trên truyền thông là mức thu nhập khủng hay khoản may mắn đặc biệt. Cuốn sách chứng minh rằng: Tự do tài chính là điều dành cho mọi người, nếu biết cách khác biệt trong tư duy cốt lõi, khôn ngoan trong chiến lược đầu tư và kỷ luật trong chi tiêu hàng ngày.Thông qua lăng kính của những con người thật với những hành trình thật, cuốn sách không chỉ truyền cảm hứng mà gợi ý những chiến lược thực chiến để từng bước thoát khỏi sự ràng buộc của tiền lương, làm chủ thời gian và hướng tới một cuộc sống tự do, có ý nghĩa theo cách riêng của mỗi người.Tư duy đầu tư – Tiền đẻ ra tiền không chỉ nói về đầu tư mà còn tổng hợp một bộ nguyên tắc giúp bạn quản lý nỗi sợ và sự chông chênh về tài chính, từ đó thiết kế một cuộc sống phong phú tự do."      },
+      "KT003": {
+        ma: "KT003",
+        ten: "TIỀN ĐẺ RA TIỀN - ĐẦU TƯ TÀI CHÍNH THÔNG MINH",
+        loai: ["Kinh tế"],
+        tacgia: "Tác giả PQR",
+        nhaxuatban: "NXB Lao động",
+        namxuatban: "2023",
+        hinh: "../img/31.jpg",
+        gia: "128000",
+        giagoc: "160000",
+mota: "Điều đặc biệt so với những cuốn sách khác ông từng viết trước đây, đó là cuốn sách này không nói về chuyện làm giàu, cũng là một phần trong chuỗi câu chuyện “Bí quyết thành công của triệu phú Anh” nhưng nó bàn đến việc kiểm soát tiền bạc. Đến với cuối cuốn sách, bạn sẽ có sự tự tin để đưa ra những quyết định đúng đắn cho bản thân mình và những kỹ năng để khiến đồng tiền của mình đi xa hơn, có hiệu quả dù nền kinh tế có ra sao đi chăng nữa.Nó sẽ bàn tới những khía cạnh, những thành tố cốt yếu của tài chính và mối quan hệ cốt lõi của bạn với đồng tiền. Nếu bạn không suy nghĩ theo một cách có chiến lược về tiền bạc, bạn sẽ không thể làm bất cứ thứ gì có tính chiến lược với tiền bạc – thứ cứ thế trôi tuột ra khỏi tài khoản ngân hàng và ví của bạn. Nội dung của cuốn sách sẽ là những lời khuyên theo một kế hoạch cụ thể của Duncan mà bạn có thể áp dụng ngay được để có thể giúp bạn quản lý chi tiêu một cách tối ưu nhất, khiến “Tiền đẻ ra tiền” và giúp bạn đầu tư tài chính một cách thông minh.Dù bạn có tiền gửi ngân hàng hay không, bạn mười tám hay tám mươi tuổi, làm chủ, thất nghiệp hay làm giờ hành chính, những nguyên tắc để thông minh trong chuyện tiền bạc cũng vẫn được giữ nguyên. Thế nên nếu bạn muốn tối ưu hóa những gì bạn kiếm được thì đây chính là cuốn sách dành cho bạn.Mỗi chúng ta cần có trách nhiệm với những lựa chọn tài chính của mình bởi “Cái làm cho bạn giàu có không phải là lương bổng, mà đó là thói quen tiêu pha của bạn” và hy vọng cuốn sách sẽ tiếp thêm cho bạn sự tự tin để kiểm soát những vấn đề tài chính của mình."      },
+      "GK001": {
+        ma: "GK001",
+        ten: "TUYỂN TẬP BÀI VĂN NGHỊ LUẬN XÃ HỘI CHON LỌC",
+        loai: ["Giáo khoa"],
+        tacgia: "Nhóm tác giả",
+        nhaxuatban: "NXB Giáo dục",
+        namxuatban: "2024",
+        hinh: "../img/35.jpg",
+        gia: "90000",
+        giagoc: "120000",
+       mota: "Tô Hoài - cây đại thụ cuối cùng của lớp tác giả văn xuôi thời kỳ trước Cách mạng đã nhận định: “Mỗi trang văn đều soi bóng thời đại mà nó ra đời.”.Thực vậy, văn chương không chỉ là tấm gương phản chiếu cuộc sống mà còn là phương tiện để con người bày tỏ tư tưởng, góc nhìn trước những vấn đề của xã hội. Trong đó, văn nghị luận xã hội đóng vai trò đặc biệt quan trọng khi giúp người viết rèn luyện tư duy phản biện, lập luận chặt chẽ và khả năng diễn đạt thuyết phục.Nhưng những đổi mới trong cách ra đề, phương pháp đánh giá và yêu cầu ngày càng cao về tư duy độc lập đặt ra thách thức lớn cho học sinh: Làm sao để mỗi bài làm văn không chỉ dừng lại ở việc phân tích tác phẩm mà còn thể hiện được quan điểm, góc nhìn cá nhân trước những vấn đề của xã hội? Làm thế nào để văn chương trở thành cầu nối giữa tư duy và hiện thực, giúp học sinh bày tỏ suy nghĩ một cách rõ ràng, thuyết phục? Muốn làm được điều đó, học sinh – đặc biệt là những bạn đang chuẩn bị cho kỳ thi quan trọng cần rèn luyện kỹ năng lập luận, diễn đạt thông qua việc đọc và tham khảo những tài liệu chất lượng. Và bộ sách “Tuyển tập bài văn nghị luận xã hội chọn lọc” chính là chìa khóa giúp các bạn nâng cao tư duy và khả năng viết văn nghị luận xã hội! Bộ sách gồm 2 tập với 66 bài nghị luận xã hội tiêu biểu, được biên soạn theo chương trình sách giáo khoa mới, hướng dẫn từ cơ bản đến nâng cao, bao quát nhiều dạng đề quan trọng: nghị luận về một vấn đề xã hội, phản biện quan niệm sai lầm, bài luận về bản thân, tuổi trẻ và thời đại... Mỗi bài văn không chỉ là một mẫu tham khảo về cách triển khai ý tưởng, đảm bảo nội dung chuẩn bố cục, đủ ý, gọn lời mà còn là nguồn tư liệu quý giúp học sinh mở rộng góc nhìn và tư duy."
+      },
+      "GK002": {
+        ma: "GK002",
+        ten: "LUYỆN THI VÀO 10 NGỮ VĂN - CHINH PHỤC BÀI NGHỊ LUẬN",
+        loai: ["Giáo khoa"],
+        tacgia: "Cô Nguyễn Thị B",
+        nhaxuatban: "NXB Đại học Quốc gia",
+        namxuatban: "2024",
+        hinh: "../img/36.jpg",
+        gia: "71500",
+        giagoc: "89000",
+mota: "LUYỆN THI VÀO 10 NGỮ VĂN - CHINH PHỤC BÀI NGHị LUẬN XÃ HỘI THEO CHỦ ĐỀ THƯỜNG GẶP là cuốn sách chuyên sâu dành cho học sinh lớp  chuẩn bị bước vào kỳ thi vào lớp 10.Cuốn sách được biên soạn từ những giáo viên có uy tín và kinh nghiệm nhiều năm biên soạn sách tham khảo, sách luyện thi bám sát chương trình học và thi - Là bộ luyện đề chất lượng mới nhất chiếm trọn sự mong đợi của các học sinh lớp 9.Cuốn sách là trợ thủ đắc lực giúp học sinh rèn kỹ năng viết văn nghị luận xã hội và nâng cao tư duy lập luận, xử lý các dạng đề để có thể đạt điểm cao trong các kỳ thi đặc biệt là kỳ thi vào 10."      },
+      "GK003": {
+        ma: "GK003",
+        ten: "TAKENOTE NGỮ PHÁP TRỌNG ĐIỂM TIẾNG ANH TRUNG HỌC CƠ SỞ",
+        loai: ["Giáo khoa"],
+        tacgia: "Thầy Trần Văn C",
+        nhaxuatban: "NXB Đại học Quốc gia",
+        namxuatban: "2023",
+        hinh: "../img/37.jpg",
+        gia: "71200",
+        giagoc: "89000",
+ mota: "Hệ thống đầy đủ kiến thức ngữ pháp trọng tâm môn Tiếng Anh bám sát chương trình sách giáo khoa mới nhất của Bộ Giáo DụcTrình bày logic, dễ hiểu: Mỗi chủ điểm ngữ pháp được giải thích ngắn gọn, rõ ràng, kèm ví dụ minh họa dễ hiểu, dễ ghi nhớ và vận dụng.Thiết kế dễ sử dụng: Sổ tay gáy lò xo có thể tự học mọi lúc mọi nơi và dễ dàng mang theo.Hãy để TAKENOTE NGỮ PHÁP TRỌNG ĐIỂM TIẾNG ANH TRUNG HỌC CƠ SỞ đồng hành cùng bạn, biến việc học ngữ pháp trở nên nhẹ nhàng và hiệu quả!"      }
+    };
+
+    // Lấy mã sản phẩm từ URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const productCode = urlParams.get('ma');
+
+    // Hiển thị sản phẩm
+    const product = allProducts[productCode];
+    
     if (product) {
       document.getElementById("detailImage").src = product.hinh || "";
       document.getElementById("detailName").textContent = product.ten || "Không có tên";
       document.getElementById("detailPrice").textContent = (product.gia ? product.gia + "₫" : "");
       document.getElementById("detailOldPrice").textContent = product.giagoc ? product.giagoc + "₫" : "";
+      
       if (product.giagoc && product.gia) {
         let discount = Math.round(100 - (product.gia / product.giagoc) * 100);
         document.getElementById("detailDiscount").textContent = "-" + discount + "%";
       }
+      
       document.getElementById("detailLoai").textContent = Array.isArray(product.loai) ? product.loai.join(", ") : product.loai || "Không rõ";
       document.getElementById("detailMa").textContent = product.ma || "Không rõ";
       document.getElementById("detailNam").textContent = product.namxuatban || "Không rõ";
@@ -204,7 +386,7 @@
       document.getElementById("detailTacGia").textContent = "Tác giả: " + (product.tacgia || "Không rõ");
       document.getElementById("detailMota").textContent = product.mota || "";
 
-      // ✅ Hiển thị thêm thumbnail nếu có
+      // Hiển thị thêm thumbnail nếu có
       if (product.hinhthem && Array.isArray(product.hinhthem)) {
         const thumbsDiv = document.getElementById("thumbs");
         product.hinhthem.forEach(src => {

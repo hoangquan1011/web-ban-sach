@@ -1,616 +1,1004 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quản lý sản phẩm - Thức Store</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-<style>
-body {
-  background-color: #f3f8f3;
-  font-family: "Open Sans", sans-serif;
-}
-.admin-banner {
-  background: linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%);
-  color: white;
-  padding: 2rem;
-  border-radius: 1rem;
-  margin-bottom: 2rem;
-  text-align: center;
-}
-.sidebar {
-  background: #fff;
-  border-radius: 1rem;
-  padding: 1.5rem;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.05);
-}
-.sidebar h5 {
-  color: #2d6a4f;
-  margin-bottom: 1rem;
-  font-weight: 700;
-}
-.menu-item {
-  display: block;
-  padding: 0.75rem 1rem;
-  margin-bottom: 0.5rem;
-  border-radius: 0.5rem;
-  color: #333;
-  text-decoration: none;
-  transition: all 0.3s;
-}
-.menu-item:hover, .menu-item.active {
-  background: #d8f3dc;
-  color: #1b4332;
-}
-.emoji { margin-right: 0.5rem; }
-.content-area {
-  background: #fff;
-  border-radius: 1rem;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.05);
-  padding: 0;
-  min-height: 75vh;
-}
-.card {
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  border: none;
-  margin-bottom: 20px;
-}
-.card-header {
-  background: white;
-  border-bottom: 2px solid #e9ecef;
-  padding: 20px;
-  border-radius: 10px 10px 0 0 !important;
-}
-.card-title {
-  color: #2d6a4f;
-  font-weight: bold;
-  font-size: 1.2rem;
-  margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.form-label {
-  font-weight: 600;
-  color: #495057;
-  margin-bottom: 8px;
-}
-.form-control, .form-select, textarea {
-  border-radius: 8px;
-  border: 1px solid #ced4da;
-  padding: 10px 14px;
-}
-.form-control:focus, .form-select:focus, textarea:focus {
-  border-color: #2d6a4f;
-  box-shadow: 0 0 0 0.2rem rgba(45, 106, 79, 0.15);
-}
-.category-checkboxes {
-  padding: 12px 15px;
-  background: #ffffff;
-  border-radius: 8px;
-  border: 1px solid #ced4da;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-}
-.form-check-inline {
-  margin: 0;
-  padding: 8px 12px;
-  background: #f8f9fa;
-  border-radius: 6px;
-  transition: all 0.3s;
-}
-.form-check-inline:hover {
-  background: #e9ecef;
-}
-.form-check-input {
-  cursor: pointer;
-  margin-top: 0.2em;
-}
-.form-check-input:checked {
-  background-color: #2d6a4f;
-  border-color: #2d6a4f;
-}
-.form-check-label {
-  cursor: pointer;
-  user-select: none;
-  font-weight: 500;
-  color: #495057;
-  margin-left: 6px;
-}
-.btn-add-product {
-  background: #2d6a4f;
-  color: white;
-  border: none;
-  padding: 12px 30px;
-  border-radius: 8px;
-  font-weight: 600;
-  transition: all 0.3s;
-  width: 100%;
-}
-.btn-add-product:hover {
-  background: #1b4332;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(45, 106, 79, 0.3);
-}
-.product-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 20px;
-  padding: 20px;
-}
-.product-card {
-  background: white;
-  border: 1px solid #e9ecef;
-  border-radius: 12px;
-  overflow: hidden;
-  transition: all 0.3s;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  display: flex;
-  flex-direction: column;
-}
-.product-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-}
-.product-card img {
-  width: 100%;
-  height: 220px;
-  object-fit: cover;
-}
-.product-card-body {
-  padding: 15px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-.product-name {
-  font-weight: 600;
-  font-size: 0.95rem;
-  color: #212529;
-  margin-bottom: 8px;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  min-height: 2.8em;
-}
-.product-meta {
-  font-size: 0.8rem;
-  color: #6c757d;
-  margin-bottom: 8px;
-}
-.product-price {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-.price-current {
-  font-weight: 700;
-  color: #dc3545;
-  font-size: 1.1rem;
-}
-.price-original {
-  text-decoration: line-through;
-  color: #6c757d;
-  font-size: 0.9rem;
-}
-.discount-badge {
-  background: #dc3545;
-  color: white;
-  padding: 3px 8px;
-  border-radius: 6px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  display: inline-block;
-  margin-bottom: 8px;
-}
-.product-status {
-  font-size: 0.85rem;
-  font-weight: 600;
-  margin-bottom: 10px;
-  margin-top: auto;
-  color: #28a745;
-}
-.product-actions {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
-  padding: 0 15px 15px 15px;
-}
-.btn-action {
-  padding: 8px 10px;
-  border: none;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  cursor: pointer;
-  transition: all 0.3s;
-  font-weight: 500;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-}
-.btn-edit {
-  background: #4c6b5f;
-  color: white;
-}
-.btn-edit:hover {
-  background: #3a5447;
-  color: white;
-}
-.btn-toggle {
-  background: #404A3D;
-  color: white;
-}
-.btn-toggle:hover {
-  background: #2e352a;
-  color: white;
-}
-.btn-delete {
-  background: #dc3545;
-  color: white;
-}
-.btn-delete:hover {
-  background: #c82333;
-  color: white;
-}
-@media (max-width: 768px) {
-  .product-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 15px;
-    padding: 15px;
-  }
-}
-</style>
-</head>
-<body>
-<div class="container-fluid py-4">
-  <div class="admin-banner">
-    <h1><i class="fas fa-book"></i> Thức Store Admin</h1>
-    <p>Trang quản trị hệ thống - Quản lý Sản phẩm</p>
-  </div>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý sản phẩm - Thức Store</title>
 
-  <div class="row">
-    <div class="col-lg-3 mb-4">
-      <div class="sidebar">
-        <h5>📋 Menu quản lý</h5>
-        <a href="quanlysanpham.html" class="menu-item active"><span class="emoji">📘</span> Quản lý Sản phẩm</a>
-        <a href="quanlydonhang.html" class="menu-item"><span class="emoji">🧾</span> Quản lý Đơn hàng</a>
-        <a href="user.html" class="menu-item"><span class="emoji">👤</span> Quản lý Người dùng</a>
-        <a href="stock.html" class="menu-item"><span class="emoji">📦</span> Quản lý Kho</a>
-        <a href="pricing.html" class="menu-item"><span class="emoji">💲</span> Quản lý Giá</a>
-        <a href="import.html" class="menu-item"><span class="emoji">🚚</span> Nhập hàng</a>
-      </div>
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/admin-shared.css">
+
+   <style>
+    body {
+      background-color: #f3f8f3;
+      font-family: "Open Sans", sans-serif;
+    }
+
+    /* ===================== CONTENT ===================== */
+    .content-area {
+      background: #fff;
+      border-radius: 1rem;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+      padding: 0;
+      min-height: 75vh;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border: none;
+      margin-bottom: 20px;
+    }
+
+    .card-header {
+      background: white;
+      border-bottom: 2px solid #e9ecef;
+      padding: 20px;
+      border-radius: 10px 10px 0 0 !important;
+    }
+
+    .card-title {
+      color: #2d6a4f;
+      font-weight: bold;
+      font-size: 1.2rem;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Form thêm sản phẩm */
+    .form-label {
+      font-weight: 600;
+      color: #495057;
+      margin-bottom: 8px;
+    }
+
+    .form-control, .form-select, textarea {
+      border-radius: 8px;
+      border: 1px solid #ced4da;
+      padding: 10px 14px;
+    }
+
+    .form-control:focus, .form-select:focus, textarea:focus {
+      border-color: #2d6a4f;
+      box-shadow: 0 0 0 0.2rem rgba(45, 106, 79, 0.15);
+    }
+
+    /* ✅ Checkbox thể loại - style đồng nhất */
+    .category-checkboxes {
+      padding: 12px 15px;
+      background: #ffffff;
+      border-radius: 8px;
+      border: 1px solid #ced4da;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .form-check-inline {
+      margin: 0;
+      padding: 8px 12px;
+      background: #f8f9fa;
+      border-radius: 6px;
+      transition: all 0.3s;
+    }
+
+    .form-check-inline:hover {
+      background: #e9ecef;
+    }
+
+    .form-check-input {
+      cursor: pointer;
+      margin-top: 0.2em;
+    }
+
+    .form-check-input:checked {
+      background-color: #2d6a4f;
+      border-color: #2d6a4f;
+    }
+
+    .form-check-label {
+      cursor: pointer;
+      user-select: none;
+      font-weight: 500;
+      color: #495057;
+      margin-left: 6px;
+    }
+
+    .btn-add-product {
+      background: #2d6a4f;
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s;
+      width: 100%;
+    }
+
+    .btn-add-product:hover {
+      background: #1b4332;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(45, 106, 79, 0.3);
+    }
+
+    /* Filters */
+    .filter-section {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    /* Product Grid */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .product-card {
+      background: white;
+      border: 1px solid #e9ecef;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.3s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    }
+
+    .product-card img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .product-card-body {
+      padding: 15px;
+      cursor: pointer;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .product-name {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #212529;
+      margin-bottom: 8px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .product-meta {
+      font-size: 0.8rem;
+      color: #6c757d;
+      margin-bottom: 8px;
+    }
+
+    .product-price {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .price-current {
+      font-weight: 700;
+      color: #dc3545;
+      font-size: 1.1rem;
+    }
+
+    .price-original {
+      text-decoration: line-through;
+      color: #6c757d;
+      font-size: 0.9rem;
+    }
+
+    .discount-badge {
+      background: #dc3545;
+      color: white;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .product-status {
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      margin-top: auto;
+    }
+
+    .status-visible { color: #28a745; }
+    .status-hidden { color: #dc3545; }
+
+    .product-actions {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      padding: 0 15px 15px 15px;
+    }
+
+    .btn-action {
+      padding: 8px 10px;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+
+    .btn-edit {
+      background: #4c6b5f;
+      color: white;
+    }
+
+    .btn-edit:hover {
+      background: #3a5447;
+    }
+
+    .btn-toggle {
+      background: #404A3D;
+      color: white;
+    }
+
+    .btn-toggle:hover {
+      background: #2e352a;
+    }
+
+    .btn-delete {
+      background: #dc3545;
+      color: white;
+    }
+
+    .btn-delete:hover {
+      background: #c82333;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1050;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      overflow: auto;
+    }
+
+    .modal-content {
+      background: white;
+      margin: 3% auto;
+      padding: 0;
+      border-radius: 12px;
+      width: 600px;
+      max-width: 95%;
+      max-height: 90vh;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    }
+
+    .modal-header {
+      background: #2d6a4f;
+      color: white;
+      padding: 20px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h3 {
+      margin: 0;
+      font-size: 1.3rem;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.8rem;
+      cursor: pointer;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: all 0.3s;
+    }
+
+    .modal-close:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    .modal-body {
+      padding: 25px;
+      max-height: calc(90vh - 140px);
+      overflow-y: auto;
+    }
+
+    .modal-body::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .modal-body::-webkit-scrollbar-thumb {
+      background: #ccc;
+      border-radius: 4px;
+    }
+
+    .modal-footer {
+      padding: 20px 25px;
+      border-top: 1px solid #e9ecef;
+      display: flex;
+      gap: 10px;
+      background: #f8f9fa;
+    }
+
+    .btn-modal-save {
+      flex: 1;
+      background: #2d6a4f;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-modal-save:hover {
+      background: #1b4332;
+    }
+
+    .btn-modal-cancel {
+      flex: 1;
+      background: #6c757d;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-modal-cancel:hover {
+      background: #5a6268;
+    }
+
+    #editPreview {
+      max-width: 150px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: 2px solid #e9ecef;
+    }
+
+    @media (max-width: 768px) {
+      .product-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 15px;
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container-fluid py-4">
+    <!-- Banner -->
+    <div class="admin-banner">
+      <h1><i class=""></i> Thức Store Admin</h1>
+      <p>Quản lý Sản phẩm</p>
     </div>
 
-    <div class="col-lg-9">
-      <div class="content-area">
-        
-        <!-- Card Thêm sản phẩm mới -->
-        <div class="card">
-          <div class="card-header">
-            <h5 class="card-title"><i class="fas fa-plus-circle"></i> Thêm sản phẩm mới</h5>
+    <div class="row">
+      <!-- Sidebar -->
+      <div class="col-lg-3 mb-4">
+        <div class="sidebar">
+          <h5>📋 Menu quản lý</h5>
+          <a href="quanlysanpham.html" class="menu-item active"><span class="emoji">📘</span> Quản lý Sản phẩm</a>
+          <a href="quanlydonhang.html" class="menu-item"><span class="emoji">🧾</span> Quản lý Đơn hàng</a>
+          <a href="user.html" class="menu-item"><span class="emoji">👤</span> Quản lý Người dùng</a>
+          <a href="stock.html" class="menu-item"><span class="emoji">📦</span> Quản lý Kho</a>
+          <a href="pricing.html" class="menu-item"><span class="emoji">💲</span> Quản lý Giá</a>
+          <a href="import.html" class="menu-item"><span class="emoji">🚚</span> Nhập hàng</a>
+        </div>
+      </div>
+      
+      <!-- Content -->
+      <div class="col-lg-9">
+        <div class="content-area">
+          <!-- Card Thêm sản phẩm -->
+          <div class="card">
+            <div class="card-header">
+              <h5 class="card-title"><i class="fas fa-plus-circle"></i> Thêm sản phẩm mới</h5>
+            </div>
+            <div class="card-body p-4">
+              <form>
+                <div class="row g-3">
+                  <!-- Thể loại - Checkbox -->
+                  <div class="col-md-12">
+                    <label class="form-label">Thể loại <span class="text-danger">*</span></label>
+                    <div class="category-checkboxes">
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="cat1" value="Văn học">
+                        <label class="form-check-label" for="cat1">Văn học</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="cat2" value="Kinh tế">
+                        <label class="form-check-label" for="cat2">Kinh tế</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="cat3" value="Kỹ năng sống">
+                        <label class="form-check-label" for="cat3">Kỹ năng sống</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="cat4" value="Thiếu nhi">
+                        <label class="form-check-label" for="cat4">Thiếu nhi</label>
+                      </div>
+                      <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="cat5" value="Giáo khoa">
+                        <label class="form-check-label" for="cat5">Giáo khoa</label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="form-label">Mã sản phẩm</label>
+                    <input type="text" class="form-control" placeholder="VD: KN001">
+                  </div>
+                  <div class="col-md-12">
+                    <label class="form-label">Tên sách</label>
+                    <input type="text" class="form-control" placeholder="Nhập tên sách">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Tác giả</label>
+                    <input type="text" class="form-control" placeholder="Nhập tên tác giả">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Nhà xuất bản</label>
+                    <input type="text" class="form-control" placeholder="Nhập NXB">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Năm xuất bản</label>
+                    <input type="text" class="form-control" placeholder="VD: 2024">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Bìa sách</label>
+                    <input type="file" class="form-control" accept="image/*">
+                  </div>
+                  <div class="col-md-12">
+                    <label class="form-label">Mô tả</label>
+                    <textarea class="form-control" rows="3" placeholder="Nhập mô tả sản phẩm"></textarea>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Giá bán</label>
+                    <input type="number" class="form-control" placeholder="VD: 85000">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label">Giá gốc</label>
+                    <input type="number" class="form-control" placeholder="VD: 120000">
+                  </div>
+                </div>
+                <button type="submit" class="btn-add-product mt-3">
+                  <i class="fas fa-plus"></i> Thêm sản phẩm
+                </button>
+              </form>
+            </div>
           </div>
-          <div class="card-body p-4">
-            <form>
-              <div class="row g-3">
-                <!-- Thể loại - Checkbox -->
-                <div class="col-md-12">
-                  <label class="form-label">Thể loại <span class="text-danger">*</span></label>
-                  <div class="category-checkboxes">
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="checkbox" id="cat1" value="Văn học">
-                      <label class="form-check-label" for="cat1">Văn học</label>
+
+          <!-- Card Danh sách sản phẩm -->
+          <div class="card">
+            <div class="card-header">
+              <h5 class="card-title"><i class="fas fa-list"></i> Danh sách sản phẩm</h5>
+            </div>
+            <div class="card-body">
+              <!-- Filters -->
+              <div class="filter-section">
+                <div class="row g-3">
+                  <div class="col-md-5">
+                    <input type="text" class="form-control" placeholder="🔍 Tìm sản phẩm theo tên hoặc mã...">
+                  </div>
+                  <div class="col-md-3">
+                    <select class="form-select">
+                      <option value="">-- Tất cả loại --</option>
+                      <option value="Văn học">Văn học</option>
+                      <option value="Kinh tế">Kinh tế</option>
+                      <option value="Kỹ năng sống">Kỹ năng sống</option>
+                      <option value="Thiếu nhi">Thiếu nhi</option>
+                      <option value="Giáo khoa">Giáo khoa</option>
+                    </select>
+                  </div>
+                  <div class="col-md-4">
+                    <select class="form-select">
+                      <option value="">-- Tất cả giá --</option>
+                      <option value="duoi100">Dưới 100.000đ</option>
+                      <option value="100-200">100k - 200.000đ</option>
+                      <option value="tren200">Trên 200.000đ</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Product Grid -->
+              <div class="product-grid">
+                <!-- Product 1 -->
+                <div class="product-card">
+                  <a href="chitiet.html?ma=KN001"><img src="../img/38.jpg" alt="GOOD ENERGY - NĂNG LƯỢNG TỐT"></a>
+                  <a href="chitiet.html?ma=KN001" style="text-decoration: none; color: inherit;">
+                    <div class="product-card-body">
+                      <div class="product-name">GOOD ENERGY - NĂNG LƯỢNG TỐT</div>
+                      <div class="product-meta">Loại: Kỹ năng sống | Mã: KN001</div>
+                      <div class="product-price">
+                        <span class="price-current">85.000đ</span>
+                        <span class="price-original">120.000đ</span>
+                      </div>
+                      <div class="discount-badge">-29%</div>
+                      <div class="product-status status-visible">Đang hiển thị</div>
                     </div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="checkbox" id="cat2" value="Kinh tế">
-                      <label class="form-check-label" for="cat2">Kinh tế</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="checkbox" id="cat3" value="Kỹ năng sống">
-                      <label class="form-check-label" for="cat3">Kỹ năng sống</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="checkbox" id="cat4" value="Thiếu nhi">
-                      <label class="form-check-label" for="cat4">Thiếu nhi</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="checkbox" id="cat5" value="Giáo khoa">
-                      <label class="form-check-label" for="cat5">Giáo khoa</label>
-                    </div>
+                  </a>
+                  <div class="product-actions">
+                    <button class="btn-action btn-edit">Sửa</button>
+                    <button class="btn-action btn-toggle">Ẩn</button>
+                    <button class="btn-action btn-delete">Xóa</button>
                   </div>
                 </div>
 
-                <div class="col-md-6">
-                  <label class="form-label">Mã sản phẩm</label>
-                  <input type="text" class="form-control" placeholder="Ví dụ: KN001">
+                <!-- Product 2 -->
+                <div class="product-card">
+                  <a href="chitiet.html?ma=KN002"><img src="../img/33.jpg" alt="NGHỆ THUẬT TƯ DUY LOGIC"></a>
+                  <a href="chitiet.html?ma=KN002" style="text-decoration: none; color: inherit;">
+                    <div class="product-card-body">
+                      <div class="product-name">NGHỆ THUẬT TƯ DUY LOGIC</div>
+                      <div class="product-meta">Loại: Kỹ năng sống | Mã: KN002</div>
+                      <div class="product-price">
+                        <span class="price-current">126.000đ</span>
+                        <span class="price-original">169.000đ</span>
+                      </div>
+                      <div class="discount-badge">-25%</div>
+                      <div class="product-status status-visible">Đang hiển thị</div>
+                    </div>
+                  </a>
+                  <div class="product-actions">
+                    <button class="btn-action btn-edit">Sửa</button>
+                    <button class="btn-action btn-toggle">Ẩn</button>
+                    <button class="btn-action btn-delete">Xóa</button>
+                  </div>
                 </div>
-                <div class="col-md-12">
-                  <label class="form-label">Tên sách</label>
-                  <input type="text" class="form-control" placeholder="Nhập tên sách">
+
+                <!-- Product 3 -->
+                <div class="product-card">
+                  <a href="chitiet.html?ma=KN003"><img src="../img/34.jpg" alt="KỸ NĂNG TƯ DUY THỰC CHIẾN"></a>
+                 <a href="chitiet.html?ma=KN003" style="text-decoration: none; color: inherit;">
+                    <div class="product-card-body">
+                      <div class="product-name">KỸ NĂNG TƯ DUY THỰC CHIẾN</div>
+                      <div class="product-meta">Loại: Kỹ năng sống | Mã: KN003</div>
+                      <div class="product-price">
+                        <span class="price-current">126.000đ</span>
+                        <span class="price-original">169.000đ</span>
+                      </div>
+                      <div class="discount-badge">-25%</div>
+                      <div class="product-status status-visible">Đang hiển thị</div>
+                    </div>
+                  </a>
+                  <div class="product-actions">
+                    <button class="btn-action btn-edit">Sửa</button>
+                    <button class="btn-action btn-toggle">Ẩn</button>
+                    <button class="btn-action btn-delete">Xóa</button>
+                  </div>
                 </div>
-                <div class="col-md-6">
-                  <label class="form-label">Tác giả</label>
-                  <input type="text" class="form-control" placeholder="Nhập tên tác giả">
+
+                <!-- Product 4 -->
+                <div class="product-card">
+                 <a href="chitiet.html?ma=TN001"><img src="../img/23.jpg" alt="THIÊN NHIÊN"></a>
+                  <a href="chitiet.html?ma=TN001" style="text-decoration: none; color: inherit;">
+                    <div class="product-card-body">
+                      <div class="product-name">THIÊN NHIÊN - TẠI SAO CHÚNG TA CẦN THIÊN NHIÊN XANH TƯƠI?</div>
+                      <div class="product-meta">Loại: Thiếu nhi | Mã: TN001</div>
+                      <div class="product-price">
+                        <span class="price-current">52.000đ</span>
+                        <span class="price-original">70.000đ</span>
+                      </div>
+                      <div class="discount-badge">-26%</div>
+                      <div class="product-status status-visible">Đang hiển thị</div>
+                    </div>
+                  </a>
+                  <div class="product-actions">
+                    <button class="btn-action btn-edit">Sửa</button>
+                    <button class="btn-action btn-toggle">Ẩn</button>
+                    <button class="btn-action btn-delete">Xóa</button>
+                  </div>
                 </div>
-                <div class="col-md-6">
-                  <label class="form-label">Nhà xuất bản</label>
-                  <input type="text" class="form-control" placeholder="Nhập nhà xuất bản">
+
+                <!-- Product 5 -->
+                <div class="product-card">
+                  <a href="chitiet.html?ma=TN002"><img src="../img/24.jpg" alt="GỢI MỞ TRÍ TƯỞNG TƯỢNG"></a>
+                  <a href="chitiet.html?ma=TN002" style="text-decoration: none; color: inherit;">
+                    <div class="product-card-body">
+                      <div class="product-name">GỢI MỞ TRÍ TƯỞNG TƯỢNG - NỖI BUỒN CỦA CÂY ÍCH KỶ</div>
+                      <div class="product-meta">Loại: Thiếu nhi | Mã: TN002</div>
+                      <div class="product-price">
+                        <span class="price-current">28.000đ</span>
+                        <span class="price-original">35.000đ</span>
+                      </div>
+                      <div class="discount-badge">-20%</div>
+                      <div class="product-status status-visible">Đang hiển thị</div>
+                    </div>
+                  </a>
+                  <div class="product-actions">
+                    <button class="btn-action btn-edit">Sửa</button>
+                    <button class="btn-action btn-toggle">Ẩn</button>
+                    <button class="btn-action btn-delete">Xóa</button>
+                  </div>
                 </div>
-                <div class="col-md-6">
-                  <label class="form-label">Năm xuất bản</label>
-                  <input type="text" class="form-control" placeholder="Ví dụ: 2024">
+
+                <!-- Product 6 -->
+                <div class="product-card">
+                 <a href="chitiet.html?ma=TN003"><img src="../img/25.jpg" alt="RÈN TRÍ THÔNG MINH"></a>
+                  <a href="chitiet.html?ma=TN003" style="text-decoration: none; color: inherit;">
+                    <div class="product-card-body">
+                      <div class="product-name">RÈN TRÍ THÔNG MINH - TẬP 3</div>
+                      <div class="product-meta">Loại: Thiếu nhi | Mã: TN003</div>
+                      <div class="product-price">
+                        <span class="price-current">24.000đ</span>
+                        <span class="price-original">30.000đ</span>
+                      </div>
+                      <div class="discount-badge">-20%</div>
+                      <div class="product-status status-visible">Đang hiển thị</div>
+                    </div>
+                  </a>
+                  <div class="product-actions">
+                    <button class="btn-action btn-edit">Sửa</button>
+                    <button class="btn-action btn-toggle">Ẩn</button>
+                    <button class="btn-action btn-delete">Xóa</button>
+                  </div>
                 </div>
-                <div class="col-md-6">
-                  <label class="form-label">Bìa sách</label>
-                  <input type="file" class="form-control" accept="image/*">
+
+                <!-- Product 7 -->
+                <div class="product-card">
+                  <a href="chitiet.html?ma=VN001"><img src="../img/26.jpg" alt="RUỒI TRÂU"></a>
+                  <a href="chitiet.html?ma=VN001" style="text-decoration: none; color: inherit;">
+                    <div class="product-card-body">
+                      <div class="product-name">RUỒI TRÂU (TÁI BẢN NĂM 2018)</div>
+                      <div class="product-meta">Loại: Văn học | Mã: VN001</div>
+                      <div class="product-price">
+                        <span class="price-current">96.000đ</span>
+                        <span class="price-original">128.000đ</span>
+                      </div>
+                      <div class="discount-badge">-25%</div>
+                      <div class="product-status status-visible">Đang hiển thị</div>
+                    </div>
+                  </a>
+                  <div class="product-actions">
+                    <button class="btn-action btn-edit">Sửa</button>
+                    <button class="btn-action btn-toggle">Ẩn</button>
+                    <button class="btn-action btn-delete">Xóa</button>
+                  </div>
                 </div>
-                <div class="col-md-12">
-                  <label class="form-label">Mô tả</label>
-                  <textarea class="form-control" rows="3" placeholder="Nhập mô tả sản phẩm..."></textarea>
+
+                <!-- Product 8 -->
+                <div class="product-card">
+                  <a href="chitiet.html?ma=VH002"><img src="../img/27.jpg" alt="LỀ THÓI THỊ THÀNH"></a>
+                  <a href="chitiet.html?ma=VH002" style="text-decoration: none; color: inherit;">
+                    <div class="product-card-body">
+                      <div class="product-name">VĂN HỌC KINH ĐIỂN - LỀ THÓI THỊ THÀNH</div>
+                      <div class="product-meta">Loại: Văn học | Mã: VH002</div>
+                      <div class="product-price">
+                        <span class="price-current">164.000đ</span>
+                        <span class="price-original">205.000đ</span>
+                      </div>
+                      <div class="discount-badge">-20%</div>
+                      <div class="product-status status-visible">Đang hiển thị</div>
+                    </div>
+                  </a>
+                  <div class="product-actions">
+                    <button class="btn-action btn-edit">Sửa</button>
+                    <button class="btn-action btn-toggle">Ẩn</button>
+                    <button class="btn-action btn-delete">Xóa</button>
+                  </div>
                 </div>
-                <div class="col-md-6">
-                  <label class="form-label">Giá bán</label>
-                  <input type="number" class="form-control" placeholder="Ví dụ: 85000">
+
+                <!-- Product 9 -->
+                <div class="product-card">
+                  <a href="chitiet.html?ma=VH003"><img src="../img/28.jpg" alt="CHÂN DUNG MỘT CUỘC HÔN NHÂN"></a>
+                  <a href="chitiet.html?ma=VH003" style="text-decoration: none; color: inherit;">
+                    <div class="product-card-body">
+                      <div class="product-name">VĂN HỌC KINH ĐIỂN - CHÂN DUNG MỘT CUỘC HÔN NHÂN</div>
+                      <div class="product-meta">Loại: Văn học | Mã: VH003</div>
+                      <div class="product-price">
+                        <span class="price-current">215.000đ</span>
+                        <span class="price-original">225.000đ</span>
+                      </div>
+                      <div class="discount-badge">-4%</div>
+                      <div class="product-status status-visible">Đang hiển thị</div>
+                    </div>
+                  </a>
+                  <div class="product-actions">
+                    <button class="btn-action btn-edit">Sửa</button>
+                    <button class="btn-action btn-toggle">Ẩn</button>
+                    <button class="btn-action btn-delete">Xóa</button>
+                  </div>
                 </div>
-                <div class="col-md-6">
-                  <label class="form-label">Giá gốc</label>
-                  <input type="number" class="form-control" placeholder="Ví dụ: 120000">
+
+                <!-- Product 10 -->
+                <div class="product-card">
+                  <a href="chitiet.html?ma=KT001"><img src="../img/29.jpg" alt="ĐẦU TƯ THEO CHIẾN LƯỢC PHÒNG THỦ"></a>
+                  <a href="chitiet.html?ma=KT001" style="text-decoration: none; color: inherit;">
+                    <div class="product-card-body">
+                      <div class="product-name">THE LITTLE BOOK - ĐẦU TƯ THEO CHIẾN LƯỢC PHÒNG THỦ</div>
+                      <div class="product-meta">Loại: Kinh tế | Mã: KT001</div>
+                      <div class="product-price">
+                        <span class="price-current">134.000đ</span>
+                        <span class="price-original">179.500đ</span>
+                      </div>
+                      <div class="discount-badge">-25%</div>
+                      <div class="product-status status-visible">Đang hiển thị</div>
+                    </div>
+                  </a>
+                  <div class="product-actions">
+                    <button class="btn-action btn-edit">Sửa</button>
+                    <button class="btn-action btn-toggle">Ẩn</button>
+                    <button class="btn-action btn-delete">Xóa</button>
+                  </div>
                 </div>
+
+                <!-- Product 11 -->
+                <div class="product-card">
+                 <a href="chitiet.html?ma=KT002"><img src="../img/30.jpg" alt="TƯ DUY ĐẦU TƯ"></a>
+                  <a href="chitiet.html?ma=KT002" style="text-decoration: none; color: inherit;">
+                    <div class="product-card-body">
+                      <div class="product-name">TƯ DUY ĐẦU TƯ - TIỀN ĐẺ RA TIỀN</div>
+                      <div class="product-meta">Loại: Kinh tế | Mã: KT002</div>
+                      <div class="product-price">
+                        <span class="price-current">203.000đ</span>
+                        <span class="price-original">239.000đ</span>
+                      </div>
+                      <div class="discount-badge">-15%</div>
+                      <div class="product-status status-visible">Đang hiển thị</div>
+                    </div>
+                  </a>
+                  <div class="product-actions">
+                    <button class="btn-action btn-edit">Sửa</button>
+                    <button class="btn-action btn-toggle">Ẩn</button>
+                    <button class="btn-action btn-delete">Xóa</button>
+                  </div>
+                </div>
+
+                <!-- Product 12 -->
+                <div class="product-card">
+                  <a href="chitiet.html?ma=KT003"><img src="../img/31.jpg" alt="TIỀN ĐẺ RA TIỀN"></a>
+                  <a href="chitiet.html?ma=KT003" style="text-decoration: none; color: inherit;">
+                    <div class="product-card-body">
+                      <div class="product-name">TIỀN ĐẺ RA TIỀN - ĐẦU TƯ TÀI CHÍNH THÔNG MINH</div>
+                      <div class="product-meta">Loại: Kinh tế | Mã: KT003</div>
+                      <div class="product-price">
+                        <span class="price-current">128.000đ</span>
+                        <span class="price-original">160.000đ</span>
+                      </div>
+                      <div class="discount-badge">-20%</div>
+                      <div class="product-status status-visible">Đang hiển thị</div>
+                    </div>
+                  </a>
+                  <div class="product-actions">
+                    <button class="btn-action btn-edit">Sửa</button>
+                    <button class="btn-action btn-toggle">Ẩn</button>
+                    <button class="btn-action btn-delete">Xóa</button>
+                  </div>
+                </div>
+
+                <!-- Product 13 -->
+                <div class="product-card">
+                  <a href="chitiet.html?ma=GK001"><img src="../img/35.jpg" alt="TUYỂN TẬP BÀI VĂN NGHỊ LUẬN"></a>
+                  <a href="chitiet.html?ma=GK001" style="text-decoration: none; color: inherit;">
+                    <div class="product-card-body">
+                      <div class="product-name">TUYỂN TẬP BÀI VĂN NGHỊ LUẬN XÃ HỘI CHON LỌC</div>
+                      <div class="product-meta">Loại: Giáo khoa | Mã: GK001</div>
+                      <div class="product-price">
+                        <span class="price-current">90.000đ</span>
+                        <span class="price-original">120.000đ</span>
+                      </div>
+                      <div class="discount-badge">-25%</div>
+                      <div class="product-status status-visible">Đang hiển thị</div>
+                    </div>
+                  </a>
+                  <div class="product-actions">
+                    <button class="btn-action btn-edit">Sửa</button>
+                    <button class="btn-action btn-toggle">Ẩn</button>
+                    <button class="btn-action btn-delete">Xóa</button>
+                  </div>
+                </div>
+
+                <!-- Product 14 -->
+                <div class="product-card">
+                  <a href="chitiet.html?ma=GK002"><img src="../img/36.jpg" alt="LUYỆN THI VÀO 10 NGỮ VĂN"></a>
+                  <a href="chitiet.html?ma=GK002" style="text-decoration: none; color: inherit;">
+                    <div class="product-card-body">
+                      <div class="product-name">LUYỆN THI VÀO 10 NGỮ VĂN - CHINH PHỤC BÀI NGHỊ LUẬN</div>
+                      <div class="product-meta">Loại: Giáo khoa | Mã: GK002</div>
+                      <div class="product-price">
+                        <span class="price-current">71.500đ</span>
+                        <span class="price-original">89.000đ</span>
+                      </div>
+                      <div class="discount-badge">-20%</div>
+                      <div class="product-status status-visible">Đang hiển thị</div>
+                    </div>
+                  </a>
+                  <div class="product-actions">
+                    <button class="btn-action btn-edit">Sửa</button>
+                    <button class="btn-action btn-toggle">Ẩn</button>
+                    <button class="btn-action btn-delete">Xóa</button>
+                  </div>
+                </div>
+
+                <!-- Product 15 -->
+                <div class="product-card">
+                  <a href="chitiet.html?ma=GK003"><img src="../img/37.jpg" alt="TAKENOTE NGỮ PHÁP"></a>
+                  <a href="chitiet.html?ma=GK003" style="text-decoration: none; color: inherit;">
+                    <div class="product-card-body">
+                      <div class="product-name">TAKENOTE NGỮ PHÁP TRỌNG ĐIỂM TIẾNG ANH TRUNG HỌC CƠ SỞ</div>
+                      <div class="product-meta">Loại: Giáo khoa | Mã: GK003</div>
+                      <div class="product-price">
+                        <span class="price-current">71.200đ</span>
+                        <span class="price-original">89.000đ</span>
+                      </div>
+                      <div class="discount-badge">-20%</div>
+                      <div class="product-status status-visible">Đang hiển thị</div>
+                    </div>
+                  </a>
+                  <div class="product-actions">
+                    <button class="btn-action btn-edit">Sửa</button>
+                    <button class="btn-action btn-toggle">Ẩn</button>
+                    <button class="btn-action btn-delete">Xóa</button>
+                  </div>
+                </div>
+
               </div>
-              <button type="button" class="btn-add-product mt-3">
-                <i class="fas fa-plus"></i> Thêm sản phẩm
-              </button>
-            </form>
+            </div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
 
-        <!-- Card Danh sách sản phẩm -->
-        <div class="card">
-          <div class="card-header">
-            <h5 class="card-title"><i class="fas fa-list"></i> Danh sách sản phẩm (15 sản phẩm)</h5>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Modal Sửa Sản Phẩm -->
+<div id="editModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3><i class="fas fa-edit"></i> Chỉnh sửa sản phẩm</h3>
+      <button class="modal-close" id="closeModal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <form id="editForm">
+        <div class="row g-3">
+          <!-- Thể loại -->
+          <div class="col-md-12">
+            <label class="form-label">Thể loại <span class="text-danger">*</span></label>
+            <div class="category-checkboxes">
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="editCat1" value="Văn học">
+                <label class="form-check-label" for="editCat1">Văn học</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="editCat2" value="Kinh tế">
+                <label class="form-check-label" for="editCat2">Kinh tế</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="editCat3" value="Kỹ năng sống">
+                <label class="form-check-label" for="editCat3">Kỹ năng sống</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="editCat4" value="Thiếu nhi">
+                <label class="form-check-label" for="editCat4">Thiếu nhi</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="editCat5" value="Giáo khoa">
+                <label class="form-check-label" for="editCat5">Giáo khoa</label>
+              </div>
+            </div>
           </div>
-          <div class="card-body">
-            <div class="product-grid">
-              
-              <!-- Sản phẩm 1 -->
-              <div class="product-card">
-                <img src="../img/38.jpg" alt="GOOD ENERGY - NĂNG LƯỢNG TỐT">
-                <div class="product-card-body">
-                  <div class="product-name">GOOD ENERGY - NĂNG LƯỢNG TỐT</div>
-                  <div class="product-meta">Loại: Kỹ năng sống | Mã: KN001</div>
-                  <div class="product-price">
-                    <span class="price-current">85.000đ</span>
-                    <span class="price-original">120.000đ</span>
-                  </div>
-                  <div class="discount-badge">-29%</div>
-                  <div class="product-status">Đang hiển thị</div>
-                </div>
-                <div class="product-actions">
-                  <a href="#" class="btn-action btn-edit">Sửa</a>
-                  <a href="#" class="btn-action btn-toggle">Ẩn</a>
-                  <a href="#" class="btn-action btn-delete">Xóa</a>
-                </div>
-              </div>
 
-              <!-- Sản phẩm 2 -->
-              <div class="product-card">
-                <img src="../img/33.jpg" alt="NGHỆ THUẬT TƯ DUY LOGIC">
-                <div class="product-card-body">
-                  <div class="product-name">NGHỆ THUẬT TƯ DUY LOGIC</div>
-                  <div class="product-meta">Loại: Kỹ năng sống | Mã: KN002</div>
-                  <div class="product-price">
-                    <span class="price-current">126.000đ</span>
-                    <span class="price-original">169.000đ</span>
-                  </div>
-                  <div class="discount-badge">-25%</div>
-                  <div class="product-status">Đang hiển thị</div>
-                </div>
-                <div class="product-actions">
-                  <a href="#" class="btn-action btn-edit">Sửa</a>
-                  <a href="#" class="btn-action btn-toggle">Ẩn</a>
-                  <a href="#" class="btn-action btn-delete">Xóa</a>
-                </div>
-              </div>
+          <div class="col-md-6">
+            <label class="form-label">Mã sản phẩm</label>
+            <input type="text" id="editMa" class="form-control" placeholder="VD: KN001">
+          </div>
+          <div class="col-md-12">
+            <label class="form-label">Tên sách</label>
+            <input type="text" id="editTen" class="form-control" placeholder="Nhập tên sách">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Tác giả</label>
+            <input type="text" id="editTacGia" class="form-control" placeholder="Nhập tên tác giả">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Nhà xuất bản</label>
+            <input type="text" id="editNXB" class="form-control" placeholder="Nhập NXB">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Năm xuất bản</label>
+            <input type="text" id="editNam" class="form-control" placeholder="VD: 2024">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Bìa sách</label>
+            <input type="file" id="editHinh" class="form-control" accept="image/*">
+            <img id="editPreview" style="display:none;" alt="Preview">
+          </div>
+          <div class="col-md-12">
+            <label class="form-label">Mô tả</label>
+            <textarea id="editMota" class="form-control" rows="3" placeholder="Nhập mô tả sản phẩm"></textarea>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Giá bán</label>
+            <input type="number" id="editGia" class="form-control" placeholder="VD: 85000">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Giá gốc</label>
+            <input type="number" id="editGiagoc" class="form-control" placeholder="VD: 120000">
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn-modal-save" id="saveEdit">Lưu thay đổi</button>
+      <button type="button" class="btn-modal-cancel" id="cancelEdit">Hủy</button>
+    </div>
+  </div>
+</div>
 
-              <!-- Sản phẩm 3 -->
-              <div class="product-card">
-                <img src="../img/34.jpg" alt="KỸ NĂNG TƯ DUY THỰC CHIẾN">
-                <div class="product-card-body">
-                  <div class="product-name">KỸ NĂNG TƯ DUY THỰC CHIẾN</div>
-                  <div class="product-meta">Loại: Kỹ năng sống | Mã: KN003</div>
-                  <div class="product-price">
-                    <span class="price-current">126.000đ</span>
-                    <span class="price-original">169.000đ</span>
-                  </div>
-                  <div class="discount-badge">-25%</div>
-                  <div class="product-status">Đang hiển thị</div>
-                </div>
-                <div class="product-actions">
-                  <a href="#" class="btn-action btn-edit">Sửa</a>
-                  <a href="#" class="btn-action btn-toggle">Ẩn</a>
-                  <a href="#" class="btn-action btn-delete">Xóa</a>
-                </div>
-              </div>
+<script>
+  // Mở modal
+  function openEditModal() {
+    document.getElementById("editModal").style.display = "block";
+  }
 
-              <!-- Sản phẩm 4 -->
-              <div class="product-card">
-                <img src="../img/23.jpg" alt="THIÊN NHIÊN">
-                <div class="product-card-body">
-                  <div class="product-name">THIÊN NHIÊN - TẠI SAO CHÚNG TA CẦN THIÊN NHIÊN XANH TƯƠI?</div>
-                  <div class="product-meta">Loại: Thiếu nhi | Mã: TN001</div>
-                  <div class="product-price">
-                    <span class="price-current">52.000đ</span>
-                    <span class="price-original">70.000đ</span>
-                  </div>
-                  <div class="discount-badge">-26%</div>
-                  <div class="product-status">Đang hiển thị</div>
-                </div>
-                <div class="product-actions">
-                  <a href="#" class="btn-action btn-edit">Sửa</a>
-                  <a href="#" class="btn-action btn-toggle">Ẩn</a>
-                  <a href="#" class="btn-action btn-delete">Xóa</a>
-                </div>
-              </div>
+  // Đóng modal
+  function closeEditModal() {
+    document.getElementById("editModal").style.display = "none";
+  }
 
-              <!-- Sản phẩm 5 -->
-              <div class="product-card">
-                <img src="../img/24.jpg" alt="NỖI BUỒN CỦA CÂY ÍCH KỶ">
-                <div class="product-card-body">
-                  <div class="product-name">GỢI MỞ TRÍ TƯỞNG TƯỢNG - NỖI BUỒN CỦA CÂY ÍCH KỶ</div>
-                  <div class="product-meta">Loại: Thiếu nhi | Mã: TN002</div>
-                  <div class="product-price">
-                    <span class="price-current">28.000đ</span>
-                    <span class="price-original">35.000đ</span>
-                  </div>
-                  <div class="discount-badge">-20%</div>
-                  <div class="product-status">Đang hiển thị</div>
-                </div>
-                <div class="product-actions">
-                  <a href="#" class="btn-action btn-edit">Sửa</a>
-                  <a href="#" class="btn-action btn-toggle">Ẩn</a>
-                  <a href="#" class="btn-action btn-delete">Xóa</a>
-                </div>
-              </div>
+  // Khi trang load xong
+  document.addEventListener("DOMContentLoaded", function() {
+    // Thêm sự kiện cho tất cả nút Sửa
+    const editButtons = document.querySelectorAll(".btn-edit");
+    editButtons.forEach(button => {
+      button.addEventListener("click", openEditModal);
+    });
 
-              <!-- Sản phẩm 6 -->
-              <div class="product-card">
-                <img src="../img/25.jpg" alt="RÈN TRÍ THÔNG MINH">
-                <div class="product-card-body">
-                  <div class="product-name">RÈN TRÍ THÔNG MINH - TẬP 3 (DÀNH CHO TRẺ 3 +)</div>
-                  <div class="product-meta">Loại: Thiếu nhi | Mã: TN003</div>
-                  <div class="product-price">
-                    <span class="price-current">24.000đ</span>
-                    <span class="price-original">30.000đ</span>
-                  </div>
-                  <div class="discount-badge">-20%</div>
-                  <div class="product-status">Đang hiển thị</div>
-                </div>
-                <div class="product-actions">
-                  <a href="#" class="btn-action btn-edit">Sửa</a>
-                  <a href="#" class="btn-action btn-toggle">Ẩn</a>
-                  <a href="#" class="btn-action btn-delete">Xóa</a>
-                </div>
-              </div>
+    // Đóng modal khi click vào dấu X
+    document.getElementById("closeModal").addEventListener("click", closeEditModal);
 
-              <!-- Sản phẩm 7 -->
-              <div class="product-card">
-                <img src="../img/26.jpg" alt="RUỒI TRÂU">
-                <div class="product-card-body">
-                  <div class="product-name">RUỒI TRÂU (TÁI BẢN NĂM 2018)</div>
-                  <div class="product-meta">Loại: Văn học | Mã: VH001</div>
-                  <div class="product-price">
-                    <span class="price-current">96.000đ</span>
-                    <span class="price-original">128.000đ</span>
-                  </div>
-                  <div class="discount-badge">-25%</div>
-                  <div class="product-status">Đang hiển thị</div>
-                </div>
-                <div class="product-actions">
-                  <a href="#" class="btn-action btn-edit">Sửa</a>
-                  <a href="#" class="btn-action btn-toggle">Ẩn</a>
-                  <a href="#" class="btn-action btn-delete">Xóa</a>
-                </div>
-              </div>
+    // Đóng modal khi click vào nút Hủy
+    document.getElementById("cancelEdit").addEventListener("click", closeEditModal);
 
-              <!-- Sản phẩm 8 -->
-              <div class="product-card">
-                <img src="../img/27.jpg" alt="LỀ THÓI THỊ THÀNH">
-                <div class="product-card-body">
-                  <div class="product-name">VĂN HỌC KINH ĐIỂN - LỀ THÓI THỊ THÀNH</div>
-                  <div class="product-meta">Loại: Văn học | Mã: VH002</div>
-                  <div class="product-price">
-                    <span class="price-current">164.000đ</span>
-                    <span class="price-original">205.000đ</span>
-                  </div>
-                  <div class="discount-badge">-20%</div>
-                  <div class="product-status">Đang hiển thị</div>
-                </div>
-                <div class="product-actions">
-                  <a href="#" class="btn-action btn-edit">Sửa</a>
-                  <a href="#" class="btn-action btn-toggle">Ẩn</a>
-                  <a href="#" class="btn-action btn-delete">Xóa</a>
-                </div>
-              </div>
-
-              <!-- Sản phẩm 9 -->
-              <div class="product-card">
-                <img src="../img/28.jpg" alt="CHÂN DUNG MỘT CUỘC HÔN NHÂN">
-                <div class="product-card-body">
-                  <div class="product-name">VĂN HỌC KINH ĐIỂN - CHÂN DUNG MỘT CUỘC HÔN NHÂN</div>
-                  <div class="product-meta">Loại: Văn học | Mã: VH003</div>
-                  <div class="product-price">
-                    <span class="price-current">215.000đ</span>
-                    <span class="price-original">225.000đ</span>
-                  </div>
-                  <div class="discount-badge">-4%</div>
-                  <div class="product-status">Đang hiển thị</div>
-                </div>
-                <div class="product-actions">
-                  <a href="#" class="btn-action btn-edit">Sửa</a>
-                  <a href="#" class="btn-action btn-toggle">Ẩn</a>
-                  <a href="#" class="btn-action btn-delete">Xóa</a>
-                </div>
-              </div>
-
-              <!-- Sản phẩm 10 -->
-              <div class="product-card">
-                <img src="../img/29.jpg" alt="ĐẦU TƯ PHÒNG THỦ">
-                <div class="product-card-body">
-                  <div class="product-name">THE LITTLE BOOK - ĐẦU TƯ THEO CHIẾN LƯỢC PHÒNG THỦ</div>
-                  <div class="product-meta">Loại: Kinh tế | Mã: KT001</div>
-                  <div class="product-price">
-                    <span class="price-current">134.000đ</span>
-                    <span class="price-original">179.500đ</span>
-                  </div>
-                  <div class="discount-badge">-25%</div>
-                  <div class="product-status">Đang hiển thị</div>
-                </div>
-                <div class="product-actions">
-                  <a href="#" class="btn-action btn-edit">Sửa</a>
-                  <a href="#" class="btn-action btn-toggle">Ẩn</a>
-                  <a href="#" class="btn-action btn-delete">Xóa</a>
-                </div>
-              </div>
-
-              <!-- Sản phẩm 11 -->
-              <div class="product-card">
-                <img src="../img/30.jpg" alt="TIỀN ĐẺ RA TIỀN">
-                <div class="product-card-body">
-                  <div class="product-name">TƯ DUY ĐẦU TƯ - TIỀN ĐẺ RA TIỀN</div>
-                  <div class="product-meta">Loại: Kinh tế | Mã: KT002</div>
-                  <div class="product-price">
-                    <span class="price-current">203.000đ</span>
-                    <span class="price-original">239.000đ</span>
-                  </div>
-                  <div class="discount-badge">-15%</div>
-                  <div class="product-status">Đang hiển thị</div>
-                </div>
-                <div class="product-actions">
-                  <a href="#" class="btn-action btn-edit">Sửa</a>
-                  <a href="#" class="btn-action btn-toggle">Ẩn</a>
-                  <a href="#" class="btn-action btn-delete">Xóa</a>
-                </div>
-              </div>
-
-              <!-- Sản phẩm 12 -->
-              <div class="product-card">
-                <img src="../img/31.jpg" alt="ĐẦU TƯ TÀI CHÍNH THÔNG MINH">
-                <div class="product-card-body">
-                  <div class="product-name">TIỀN ĐẺ RA TIỀN - ĐẦU TƯ TÀI CHÍNH THÔNG MINH</div>
-                  <div class="product-meta">Loại: Kinh tế | Mã: KT003</div>
-                  <div class="product-price">
-                    <span class="price-current">128.000đ</span>
-                    <span class="price-original">160.000đ</span>
-                  </div>
-                  <div class="discount-badge">-20%</div>
-                  <div class="product-status">Đang hiển thị</div>
-                </div>
-                <div class="product-actions">
-                  <a href="#" class="btn-action btn-edit">Sửa</a>
-                  <a href="#" class="btn-action btn-toggle">Ẩn</a>
-                  <a href="#" class="btn-action btn-delete">Xó
+    // Đóng modal khi click bên ngoài
+    window.addEventListener("click", function(event) {
+      const modal = document.getElementById("editModal");
+      if (event.target === modal) {
+        closeEditModal();
+      }
+    });
+  });
+</script>
+</body>
+</html>
