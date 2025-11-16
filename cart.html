@@ -125,6 +125,7 @@
             <a href="cart.html" class="btn btn-success btn-sm position-relative">
                 <i class="fas fa-shopping-cart"></i>
                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cartCount">2</span>
+                <span id="fixedCartBaseCountInfo" data-count="2" data-ids="KN001,VN001" class="d-none"></span>
             </a>
         </div>
        <!-- 🔹 Khu vực người dùng -->
@@ -149,7 +150,66 @@
   <!-- Cart Section -->
   <div class="container-xxl py-5">
     <div class="container">
-      <div id="cart-items"></div>
+      <div id="cart-items">
+        <div id="fixed-cart-items" class="mb-4">
+          <div class="cart-item fixed-cart-item mb-3" data-fixed-cart data-id="KN001" data-name="GOOD ENERGY - NĂNG LƯỢNG TỐT" data-price="85000" data-qty="1" data-img="img/38.jpg">
+            <div class="row align-items-center">
+              <div class="col-md-2 mb-3 mb-md-0">
+                <img src="img/38.jpg" class="img-fluid rounded" alt="GOOD ENERGY - NĂNG LƯỢNG TỐT">
+              </div>
+              <div class="col-md-4 mb-3 mb-md-0">
+                <h5 class="mb-1">GOOD ENERGY - NĂNG LƯỢNG TỐT</h5>
+                <span class="badge bg-success-subtle text-success">Sản phẩm mẫu cố định</span>
+              </div>
+              <div class="col-md-2 mb-3 mb-md-0 text-primary">
+                85.000₫
+              </div>
+              <div class="col-md-2 mb-3 mb-md-0">
+                <input type="number" class="form-control form-control-sm text-center" value="1" min="1" disabled>
+              </div>
+              <div class="col-md-2 text-end">
+                <button class="btn btn-danger btn-sm disabled opacity-75" title="Sản phẩm mặc định không thể xóa">
+                  <i class="fa fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="cart-item fixed-cart-item" data-fixed-cart data-id="VN001" data-name="RUỒI TRÂU (TÁI BẢN 2018)" data-price="96000" data-qty="1" data-img="img/26.jpg">
+            <div class="row align-items-center">
+              <div class="col-md-2 mb-3 mb-md-0">
+                <img src="img/26.jpg" class="img-fluid rounded" alt="RUỒI TRÂU (TÁI BẢN 2018)">
+              </div>
+              <div class="col-md-4 mb-3 mb-md-0">
+                <h5 class="mb-1">RUỒI TRÂU (TÁI BẢN 2018)</h5>
+                <span class="badge bg-success-subtle text-success">Sản phẩm mẫu cố định</span>
+              </div>
+              <div class="col-md-2 mb-3 mb-md-0 text-primary">
+                96.000₫
+              </div>
+              <div class="col-md-2 mb-3 mb-md-0">
+                <input type="number" class="form-control form-control-sm text-center" value="1" min="1" disabled>
+              </div>
+              <div class="col-md-2 text-end">
+                <button class="btn btn-danger btn-sm disabled opacity-75" title="Sản phẩm mặc định không thể xóa">
+                  <i class="fa fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="dynamic-cart-items"></div>
+
+        <div id="cart-empty-state" class="cart-empty" style="display:none;">
+          <i class="fa fa-shopping-cart"></i>
+          <h3 class="mb-4">Giỏ hàng của bạn đang trống</h3>
+          <p class="text-muted mb-4">Hãy thêm sản phẩm vào giỏ hàng để tiếp tục mua sắm</p>
+          <a href="product.html" class="btn btn-primary rounded-pill py-3 px-5">
+            <i class="fa fa-shopping-bag me-2"></i>Khám phá sản phẩm
+          </a>
+        </div>
+      </div>
 
       <div id="cart-summary" class="row" style="display:none;">
         <div class="col-lg-8"></div>
@@ -295,66 +355,57 @@
       }
     }
 
-    const LOCKED_DEFAULT_ITEMS = [
-      {
-        id: "KN001",
-        name: "GOOD ENERGY - NĂNG LƯỢNG TỐT",
-        price: 85000,
-        qty: 1,
-        img: "img/38.jpg",
-        locked: true
-      },
-      {
-        id: "VN001",
-        name: "RUỒI TRÂU (TÁI BẢN 2018)",
-        price: 96000,
-        qty: 1,
-        img: "img/26.jpg",
-        locked: true
-      }
-    ];
+    function getFixedCartItems() {
+      return Array.from(document.querySelectorAll('[data-fixed-cart]')).map(item => ({
+        id: item.dataset.id || item.dataset.name || `fixed-${Math.random()}`,
+        name: item.dataset.name || item.querySelector('h5')?.textContent.trim() || 'Sản phẩm cố định',
+        price: Number(item.dataset.price) || 0,
+        qty: Number(item.dataset.qty) || 1,
+        img: item.dataset.img || item.querySelector('img')?.getAttribute('src') || ''
+      }));
+    }
 
-    // Khởi tạo giỏ hàng mặc định nếu chưa có và khóa 2 sản phẩm mặc định
-    (function initDefaultCart() {
-      let cart;
+    function getFixedCartIds() {
+      return new Set(getFixedCartItems().map(item => String(item.id)));
+    }
+
+    function syncFixedCartBaseCount() {
+      const fixedQty = getFixedCartItems().reduce((sum, item) => sum + item.qty, 0);
+      localStorage.setItem('fixedCartBaseCount', fixedQty);
+      return fixedQty;
+    }
+
+    function getDynamicCartItems() {
       try {
-        cart = JSON.parse(localStorage.getItem('cart') || '[]');
-        if (!Array.isArray(cart)) cart = [];
-      } catch (error) {
-        cart = [];
-      }
-
-      let hasChanges = false;
-
-      if (cart.length === 0) {
-        cart = LOCKED_DEFAULT_ITEMS.map(item => ({ ...item }));
-        hasChanges = true;
-      } else {
-        LOCKED_DEFAULT_ITEMS.forEach(defaultItem => {
-          const existingItem = cart.find(item =>
-            item.id === defaultItem.id || item.name === defaultItem.name
-          );
-
-          if (!existingItem) {
-            cart.unshift({ ...defaultItem });
+        const parsed = JSON.parse(localStorage.getItem('cart') || '[]');
+        if (!Array.isArray(parsed)) return [];
+        const fixedIds = getFixedCartIds();
+        let hasChanges = false;
+        const filtered = parsed.filter(item => {
+          if (!item) {
             hasChanges = true;
-            return;
+            return false;
           }
-
-          if (!existingItem.locked) {
-            existingItem.locked = true;
+          const id = String(item.id || item.ma || '');
+          const shouldRemove = item.locked || (id && fixedIds.has(id));
+          if (shouldRemove) {
             hasChanges = true;
+            return false;
           }
+          return true;
         });
+        if (hasChanges) {
+          localStorage.setItem('cart', JSON.stringify(filtered));
+        }
+        return filtered;
+      } catch (error) {
+        return [];
       }
-
-      if (hasChanges) {
-        localStorage.setItem('cart', JSON.stringify(cart));
-      }
-    })();
+    }
 
     document.addEventListener('DOMContentLoaded', () => {
       checkLoginStatus();
+      syncFixedCartBaseCount();
       renderCart();
       renderCheckoutInfoCard();
       handleBuyNowRedirect();
@@ -362,42 +413,38 @@
     });
 
     function renderCart() {
-      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-      const cartContainer = document.getElementById('cart-items');
+      const cart = getDynamicCartItems();
+      const fixedItems = getFixedCartItems();
+      const dynamicContainer = document.getElementById('dynamic-cart-items');
+      const fixedContainer = document.getElementById('fixed-cart-items');
+      const emptyState = document.getElementById('cart-empty-state');
       const cartSummary = document.getElementById('cart-summary');
       const cartCount = document.getElementById('cartCount');
+      const hasDynamic = cart.length > 0;
+      const hasFixed = fixedItems.length > 0;
+      const hasItems = hasDynamic || hasFixed;
 
-      cartCount.textContent = cart.length;
-      cartContainer.innerHTML = '';
-      let subtotal = 0;
-
-      if (cart.length === 0) {
-        cartContainer.innerHTML = `
-          <div class="cart-empty">
-            <i class="fa fa-shopping-cart"></i>
-            <h3 class="mb-4">Giỏ hàng của bạn đang trống</h3>
-            <p class="text-muted mb-4">Hãy thêm sản phẩm vào giỏ hàng để tiếp tục mua sắm</p>
-            <a href="product.html" class="btn btn-primary rounded-pill py-3 px-5">
-              <i class="fa fa-shopping-bag me-2"></i>Khám phá sản phẩm
-            </a>
-          </div>`;
-        cartSummary.style.display = 'none';
-        return;
+      if (dynamicContainer) {
+        dynamicContainer.innerHTML = '';
       }
 
-      cartSummary.style.display = 'block';
+      if (fixedContainer) {
+        fixedContainer.style.display = hasFixed ? 'block' : 'none';
+      }
+
+      if (emptyState) {
+        emptyState.style.display = hasItems ? 'none' : 'block';
+      }
+
+      if (cartSummary) {
+        cartSummary.style.display = hasItems ? 'block' : 'none';
+      }
+
+      let dynamicSubtotal = 0;
 
       cart.forEach((item, i) => {
         const total = item.price * item.qty;
-        subtotal += total;
-
-        const actionButton = item.locked
-          ? `<button class="btn btn-outline-secondary btn-sm" disabled title="Sản phẩm mặc định không thể xóa">
-                <i class="fa fa-lock me-1"></i>Giữ lại
-             </button>`
-          : `<button class="btn btn-danger btn-sm" data-index="${i}">
-                <i class="fa fa-trash"></i>
-             </button>`;
+        dynamicSubtotal += total;
 
         const html = `
           <div class="cart-item">
@@ -415,18 +462,23 @@
                 <input type="number" min="1" value="${item.qty}" class="form-control form-control-sm text-center">
               </div>
               <div class="col-md-2 text-end">
-                ${actionButton}
-                ${item.locked ? '<div class="text-muted small mt-1">Sản phẩm mặc định</div>' : ''}
+                <button class="btn btn-danger btn-sm" data-index="${i}">
+                  <i class="fa fa-trash"></i>
+                </button>
               </div>
             </div>
           </div>`;
-        cartContainer.insertAdjacentHTML('beforeend', html);
+        if (dynamicContainer) {
+          dynamicContainer.insertAdjacentHTML('beforeend', html);
+        }
       });
 
+      const fixedSubtotal = fixedItems.reduce((sum, item) => sum + item.price * item.qty, 0);
+      const subtotal = fixedSubtotal + dynamicSubtotal;
       document.getElementById('subtotal').textContent = subtotal.toLocaleString('vi-VN') + '₫';
       document.getElementById('total').textContent = (subtotal + 30000).toLocaleString('vi-VN') + '₫';
 
-      document.querySelectorAll('#cart-items input[type=number]').forEach((input, index) => {
+      document.querySelectorAll('#dynamic-cart-items input[type=number]').forEach((input, index) => {
         input.onchange = () => {
           cart[index].qty = Number(input.value);
           localStorage.setItem('cart', JSON.stringify(cart));
@@ -434,15 +486,11 @@
         };
       });
 
-      document.querySelectorAll('#cart-items .btn-danger[data-index]').forEach(btn => {
+      document.querySelectorAll('#dynamic-cart-items .btn-danger[data-index]').forEach(btn => {
         btn.onclick = () => {
           const index = Number(btn.dataset.index);
           const targetItem = cart[index];
           if (!targetItem) return;
-          if (targetItem.locked) {
-            alert('Sản phẩm mặc định này được giữ lại và không thể xóa.');
-            return;
-          }
           if (confirm('Bạn có chắc muốn xóa sản phẩm này?')) {
             cart.splice(index, 1);
             localStorage.setItem('cart', JSON.stringify(cart));
@@ -450,6 +498,14 @@
           }
         };
       });
+
+      const dynamicQty = cart.reduce((sum, item) => sum + Number(item.qty || 0), 0);
+      const fixedQty = fixedItems.reduce((sum, item) => sum + Number(item.qty || 0), 0);
+      const totalQty = dynamicQty + fixedQty;
+      if (cartCount) {
+        cartCount.textContent = totalQty;
+      }
+      localStorage.setItem('fixedCartBaseCount', fixedQty);
     }
 
     function renderCheckoutInfoCard() {
@@ -619,7 +675,9 @@
 
     // ====== THANH TOÁN ======
     document.getElementById("checkoutBtn").addEventListener("click", () => {
-      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const dynamicCart = getDynamicCartItems();
+      const fixedItems = getFixedCartItems();
+      const cart = [...fixedItems, ...dynamicCart];
 
       if (cart.length === 0) {
         alert("Giỏ hàng của bạn đang trống!");

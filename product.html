@@ -139,6 +139,7 @@
             <a href="cart.html" class="btn btn-success btn-sm position-relative">
                 <i class="fas fa-shopping-cart"></i>
                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cartCount">0</span>
+                <span id="fixedCartBaseCountInfo" data-count="2" data-ids="KN001,VN001" class="d-none"></span>
             </a>
         </div>
 
@@ -640,15 +641,16 @@
                         alert('Bạn đã đăng xuất!');
                         window.location.reload();
                     });
+                } else {
+                    userSection.innerHTML = `
+                        <a href="user/login.html" class="btn btn-outline-primary btn-sm me-2">Đăng nhập</a>
+                        <a href="user/register.html" class="btn btn-primary btn-sm">Đăng ký</a>
+                    `;
                 }
             }
 
             const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-            const cartCount = document.getElementById('cartCount');
-            if (cartCount) {
-                const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
-                cartCount.textContent = totalQty;
-            }
+            updateCartBadgeDisplay(cart);
         });
     </script>
     <!-- Script xử lý thêm vào giỏ và mua ngay -->
@@ -722,11 +724,7 @@
         document.body.appendChild(toast);
         setTimeout(() => toast.remove(), 2000);
 
-        const cartCount = document.getElementById("cartCount");
-        if (cartCount) {
-            const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
-            cartCount.textContent = totalQty;
-        }
+        updateCartBadgeDisplay(cart);
 
         // Nếu là nút "Mua ngay" thì chuyển sang trang giỏ hàng
         if (btn.textContent.includes("Mua ngay")) {
