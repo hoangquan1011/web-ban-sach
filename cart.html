@@ -295,27 +295,61 @@
       }
     }
 
-    // Khởi tạo giỏ hàng mặc định nếu chưa có
+    const LOCKED_DEFAULT_ITEMS = [
+      {
+        id: "KN001",
+        name: "GOOD ENERGY - NĂNG LƯỢNG TỐT",
+        price: 85000,
+        qty: 1,
+        img: "img/38.jpg",
+        locked: true
+      },
+      {
+        id: "VN001",
+        name: "RUỒI TRÂU (TÁI BẢN 2018)",
+        price: 96000,
+        qty: 1,
+        img: "img/26.jpg",
+        locked: true
+      }
+    ];
+
+    // Khởi tạo giỏ hàng mặc định nếu chưa có và khóa 2 sản phẩm mặc định
     (function initDefaultCart() {
-      const existingCart = localStorage.getItem('cart');
-      if (!existingCart || existingCart === 'null' || existingCart === '[]') {
-        const defaultCart = [
-          {
-            id: Date.now() + 1,
-            name: "GOOD ENERGY - NĂNG LƯỢNG TỐT",
-            price: 85000,
-            qty: 1,
-            img: "img/38.jpg"
-          },
-          {
-            id: Date.now() + 2,
-            name: "RUỒI TRÂU (TÁI BẢN 2018)",
-            price: 96000,
-            qty: 1,
-            img: "img/26.jpg"
+      let cart;
+      try {
+        cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        if (!Array.isArray(cart)) cart = [];
+      } catch (error) {
+        cart = [];
+      }
+
+      let hasChanges = false;
+
+      if (cart.length === 0) {
+        cart = LOCKED_DEFAULT_ITEMS.map(item => ({ ...item }));
+        hasChanges = true;
+      } else {
+        LOCKED_DEFAULT_ITEMS.forEach(defaultItem => {
+          const existingItem = cart.find(item =>
+            item.id === defaultItem.id || item.name === defaultItem.name
+          );
+
+          if (!existingItem) {
+            cart.unshift({ ...defaultItem });
+            hasChanges = true;
+            return;
           }
-        ];
-        localStorage.setItem('cart', JSON.stringify(defaultCart));
+
+          if (!existingItem.locked) {
+            existingItem.locked = true;
+            hasChanges = true;
+          }
+        });
+      }
+
+      if (hasChanges) {
+        localStorage.setItem('cart', JSON.stringify(cart));
       }
     })();
 
@@ -357,6 +391,14 @@
         const total = item.price * item.qty;
         subtotal += total;
 
+        const actionButton = item.locked
+          ? `<button class="btn btn-outline-secondary btn-sm" disabled title="Sản phẩm mặc định không thể xóa">
+                <i class="fa fa-lock me-1"></i>Giữ lại
+             </button>`
+          : `<button class="btn btn-danger btn-sm" data-index="${i}">
+                <i class="fa fa-trash"></i>
+             </button>`;
+
         const html = `
           <div class="cart-item">
             <div class="row align-items-center">
@@ -373,7 +415,8 @@
                 <input type="number" min="1" value="${item.qty}" class="form-control form-control-sm text-center">
               </div>
               <div class="col-md-2 text-end">
-                <button class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button>
+                ${actionButton}
+                ${item.locked ? '<div class="text-muted small mt-1">Sản phẩm mặc định</div>' : ''}
               </div>
             </div>
           </div>`;
@@ -391,8 +434,15 @@
         };
       });
 
-      document.querySelectorAll('#cart-items .btn-danger').forEach((btn, index) => {
+      document.querySelectorAll('#cart-items .btn-danger[data-index]').forEach(btn => {
         btn.onclick = () => {
+          const index = Number(btn.dataset.index);
+          const targetItem = cart[index];
+          if (!targetItem) return;
+          if (targetItem.locked) {
+            alert('Sản phẩm mặc định này được giữ lại và không thể xóa.');
+            return;
+          }
           if (confirm('Bạn có chắc muốn xóa sản phẩm này?')) {
             cart.splice(index, 1);
             localStorage.setItem('cart', JSON.stringify(cart));

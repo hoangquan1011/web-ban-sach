@@ -137,6 +137,27 @@
         feedbackText: document.getElementById('feedbackText')
       };
 
+      // Dữ liệu mặc định khớp với trang Quản lý Sản phẩm
+      const DEFAULT_PRODUCTS = [
+        { ma: 'KN001', ten: 'GOOD ENERGY - NĂNG LƯỢNG TỐT', loai: 'Kỹ năng sống', gia: 85000, giagoc: 120000 },
+        { ma: 'KN002', ten: 'NGHỆ THUẬT TƯ DUY LOGIC', loai: 'Kỹ năng sống', gia: 126000, giagoc: 169000 },
+        { ma: 'KN003', ten: 'KỸ NĂNG TƯ DUY THỰC CHIẾN', loai: 'Kỹ năng sống', gia: 126000, giagoc: 169000 },
+        { ma: 'TN001', ten: 'THIÊN NHIÊN - TẠI SAO CHÚNG TA CẦN THIÊN NHIÊN XANH TƯƠI?', loai: 'Thiếu nhi', gia: 52000, giagoc: 70000 },
+        { ma: 'TN002', ten: 'GỢI MỞ TRÍ TƯỞNG TƯỢNG - NỖI BUỒN CỦA CÂY ÍCH KỶ', loai: 'Thiếu nhi', gia: 28000, giagoc: 35000 },
+        { ma: 'TN003', ten: 'RÈN TRÍ THÔNG MINH - TẬP 3', loai: 'Thiếu nhi', gia: 24000, giagoc: 30000 },
+        { ma: 'VN001', ten: 'RUỒI TRÂU (TÁI BẢN NĂM 2018)', loai: 'Văn học', gia: 96000, giagoc: 128000 },
+        { ma: 'VH002', ten: 'VĂN HỌC KINH ĐIỂN - LỀ THÓI THỊ THÀNH', loai: 'Văn học', gia: 164000, giagoc: 205000 },
+        { ma: 'VH003', ten: 'VĂN HỌC KINH ĐIỂN - CHÂN DUNG MỘT CUỘC HÔN NHÂN', loai: 'Văn học', gia: 215000, giagoc: 225000 },
+        { ma: 'KT001', ten: 'THE LITTLE BOOK - ĐẦU TƯ THEO CHIẾN LƯỢC PHÒNG THỦ', loai: 'Kinh tế', gia: 134000, giagoc: 179500 },
+        { ma: 'KT002', ten: 'TƯ DUY ĐẦU TƯ - TIỀN ĐẺ RA TIỀN', loai: 'Kinh tế', gia: 203000, giagoc: 239000 },
+        { ma: 'KT003', ten: 'TIỀN ĐẺ RA TIỀN - ĐẦU TƯ TÀI CHÍNH THÔNG MINH', loai: 'Kinh tế', gia: 128000, giagoc: 160000 },
+        { ma: 'GK001', ten: 'TUYỂN TẬP BÀI VĂN NGHỊ LUẬN XÃ HỘI CHON LỌC', loai: 'Giáo khoa', gia: 90000, giagoc: 120000 },
+        { ma: 'GK002', ten: 'LUYỆN THI VÀO 10 NGỮ VĂN - CHINH PHỤC BÀI NGHỊ LUẬN', loai: 'Giáo khoa', gia: 71500, giagoc: 89000 },
+        { ma: 'GK003', ten: 'TAKENOTE NGỮ PHÁP TRỌNG ĐIỂM TIẾNG ANH TRUNG HỌC CƠ SỞ', loai: 'Giáo khoa', gia: 71200, giagoc: 89000 }
+      ];
+
+      const cloneDefaultProducts = () => DEFAULT_PRODUCTS.map((product) => ({ ...product }));
+
       const formatCurrency = (value) =>
         Number(value || 0).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'đ');
 
@@ -199,13 +220,25 @@
       };
 
       const readProductsFromStorage = () => {
+        let stored = [];
         try {
-          const stored = JSON.parse(localStorage.getItem('products'));
-          return Array.isArray(stored) ? stored : [];
+          const parsed = JSON.parse(localStorage.getItem('products'));
+          if (Array.isArray(parsed)) {
+            stored = parsed;
+          }
         } catch (error) {
           console.warn('Không thể đọc dữ liệu sản phẩm:', error);
-          return [];
         }
+
+        if (stored.length) return stored;
+
+        const fallback = cloneDefaultProducts();
+        try {
+          localStorage.setItem('products', JSON.stringify(fallback));
+        } catch (error) {
+          console.warn('Không thể lưu dữ liệu mặc định:', error);
+        }
+        return fallback;
       };
 
       const normalizeProducts = (products) =>
