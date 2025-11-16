@@ -408,7 +408,7 @@
   <div class="container-fluid py-4">
     <!-- Banner -->
     <div class="admin-banner">
-      <h1><i class=""></i> Thức Store Admin</h1>
+      <h1><i class="fas fa-book"></i> Thức Store Admin</h1>
       <p>Quản lý Sản phẩm</p>
     </div>
 
@@ -590,7 +590,7 @@
                 <!-- Product 3 -->
                 <div class="product-card">
                   <a href="chitiet.html?ma=KN003"><img src="../img/34.jpg" alt="KỸ NĂNG TƯ DUY THỰC CHIẾN"></a>
-                 <a href="chitiet.html?ma=KN003" style="text-decoration: none; color: inherit;">
+                  <a href="chitiet.html?ma=KN003" style="text-decoration: none; color: inherit;">
                     <div class="product-card-body">
                       <div class="product-name">KỸ NĂNG TƯ DUY THỰC CHIẾN</div>
                       <div class="product-meta">Loại: Kỹ năng sống | Mã: KN003</div>
@@ -611,7 +611,7 @@
 
                 <!-- Product 4 -->
                 <div class="product-card">
-                 <a href="chitiet.html?ma=TN001"><img src="../img/23.jpg" alt="THIÊN NHIÊN"></a>
+                  <a href="chitiet.html?ma=TN001"><img src="../img/23.jpg" alt="THIÊN NHIÊN"></a>
                   <a href="chitiet.html?ma=TN001" style="text-decoration: none; color: inherit;">
                     <div class="product-card-body">
                       <div class="product-name">THIÊN NHIÊN - TẠI SAO CHÚNG TA CẦN THIÊN NHIÊN XANH TƯƠI?</div>
@@ -655,7 +655,7 @@
 
                 <!-- Product 6 -->
                 <div class="product-card">
-                 <a href="chitiet.html?ma=TN003"><img src="../img/25.jpg" alt="RÈN TRÍ THÔNG MINH"></a>
+                  <a href="chitiet.html?ma=TN003"><img src="../img/25.jpg" alt="RÈN TRÍ THÔNG MINH"></a>
                   <a href="chitiet.html?ma=TN003" style="text-decoration: none; color: inherit;">
                     <div class="product-card-body">
                       <div class="product-name">RÈN TRÍ THÔNG MINH - TẬP 3</div>
@@ -765,7 +765,7 @@
 
                 <!-- Product 11 -->
                 <div class="product-card">
-                 <a href="chitiet.html?ma=KT002"><img src="../img/30.jpg" alt="TƯ DUY ĐẦU TƯ"></a>
+                  <a href="chitiet.html?ma=KT002"><img src="../img/30.jpg" alt="TƯ DUY ĐẦU TƯ"></a>
                   <a href="chitiet.html?ma=KT002" style="text-decoration: none; color: inherit;">
                     <div class="product-card-body">
                       <div class="product-name">TƯ DUY ĐẦU TƯ - TIỀN ĐẺ RA TIỀN</div>
@@ -882,123 +882,124 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  
   <!-- Modal Sửa Sản Phẩm -->
-<div id="editModal" class="modal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h3><i class="fas fa-edit"></i> Chỉnh sửa sản phẩm</h3>
-      <button class="modal-close" id="closeModal">&times;</button>
-    </div>
-    <div class="modal-body">
-      <form id="editForm">
-        <div class="row g-3">
-          <!-- Thể loại -->
-          <div class="col-md-12">
-            <label class="form-label">Thể loại <span class="text-danger">*</span></label>
-            <div class="category-checkboxes">
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" id="editCat1" value="Văn học">
-                <label class="form-check-label" for="editCat1">Văn học</label>
-              </div>
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" id="editCat2" value="Kinh tế">
-                <label class="form-check-label" for="editCat2">Kinh tế</label>
-              </div>
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" id="editCat3" value="Kỹ năng sống">
-                <label class="form-check-label" for="editCat3">Kỹ năng sống</label>
-              </div>
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" id="editCat4" value="Thiếu nhi">
-                <label class="form-check-label" for="editCat4">Thiếu nhi</label>
-              </div>
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" id="editCat5" value="Giáo khoa">
-                <label class="form-check-label" for="editCat5">Giáo khoa</label>
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fas fa-edit"></i> Chỉnh sửa sản phẩm</h3>
+        <button class="modal-close" id="closeModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="editForm">
+          <div class="row g-3">
+            <!-- Thể loại -->
+            <div class="col-md-12">
+              <label class="form-label">Thể loại <span class="text-danger">*</span></label>
+              <div class="category-checkboxes">
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="checkbox" id="editCat1" value="Văn học">
+                  <label class="form-check-label" for="editCat1">Văn học</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="checkbox" id="editCat2" value="Kinh tế">
+                  <label class="form-check-label" for="editCat2">Kinh tế</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="checkbox" id="editCat3" value="Kỹ năng sống">
+                  <label class="form-check-label" for="editCat3">Kỹ năng sống</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="checkbox" id="editCat4" value="Thiếu nhi">
+                  <label class="form-check-label" for="editCat4">Thiếu nhi</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="checkbox" id="editCat5" value="Giáo khoa">
+                  <label class="form-check-label" for="editCat5">Giáo khoa</label>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="col-md-6">
-            <label class="form-label">Mã sản phẩm</label>
-            <input type="text" id="editMa" class="form-control" placeholder="VD: KN001">
+            <div class="col-md-6">
+              <label class="form-label">Mã sản phẩm</label>
+              <input type="text" id="editMa" class="form-control" placeholder="VD: KN001">
+            </div>
+            <div class="col-md-12">
+              <label class="form-label">Tên sách</label>
+              <input type="text" id="editTen" class="form-control" placeholder="Nhập tên sách">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Tác giả</label>
+              <input type="text" id="editTacGia" class="form-control" placeholder="Nhập tên tác giả">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Nhà xuất bản</label>
+              <input type="text" id="editNXB" class="form-control" placeholder="Nhập NXB">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Năm xuất bản</label>
+              <input type="text" id="editNam" class="form-control" placeholder="VD: 2024">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Bìa sách</label>
+              <input type="file" id="editHinh" class="form-control" accept="image/*">
+              <img id="editPreview" style="display:none;" alt="Preview">
+            </div>
+            <div class="col-md-12">
+              <label class="form-label">Mô tả</label>
+              <textarea id="editMota" class="form-control" rows="3" placeholder="Nhập mô tả sản phẩm"></textarea>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Giá bán</label>
+              <input type="number" id="editGia" class="form-control" placeholder="VD: 85000">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Giá gốc</label>
+              <input type="number" id="editGiagoc" class="form-control" placeholder="VD: 120000">
+            </div>
           </div>
-          <div class="col-md-12">
-            <label class="form-label">Tên sách</label>
-            <input type="text" id="editTen" class="form-control" placeholder="Nhập tên sách">
-          </div>
-          <div class="col-md-6">
-            <label class="form-label">Tác giả</label>
-            <input type="text" id="editTacGia" class="form-control" placeholder="Nhập tên tác giả">
-          </div>
-          <div class="col-md-6">
-            <label class="form-label">Nhà xuất bản</label>
-            <input type="text" id="editNXB" class="form-control" placeholder="Nhập NXB">
-          </div>
-          <div class="col-md-6">
-            <label class="form-label">Năm xuất bản</label>
-            <input type="text" id="editNam" class="form-control" placeholder="VD: 2024">
-          </div>
-          <div class="col-md-6">
-            <label class="form-label">Bìa sách</label>
-            <input type="file" id="editHinh" class="form-control" accept="image/*">
-            <img id="editPreview" style="display:none;" alt="Preview">
-          </div>
-          <div class="col-md-12">
-            <label class="form-label">Mô tả</label>
-            <textarea id="editMota" class="form-control" rows="3" placeholder="Nhập mô tả sản phẩm"></textarea>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label">Giá bán</label>
-            <input type="number" id="editGia" class="form-control" placeholder="VD: 85000">
-          </div>
-          <div class="col-md-6">
-            <label class="form-label">Giá gốc</label>
-            <input type="number" id="editGiagoc" class="form-control" placeholder="VD: 120000">
-          </div>
-        </div>
-      </form>
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn-modal-save" id="saveEdit">Lưu thay đổi</button>
-      <button type="button" class="btn-modal-cancel" id="cancelEdit">Hủy</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-modal-save" id="saveEdit">Lưu thay đổi</button>
+        <button type="button" class="btn-modal-cancel" id="cancelEdit">Hủy</button>
+      </div>
     </div>
   </div>
-</div>
 
-<script>
-  // Mở modal
-  function openEditModal() {
-    document.getElementById("editModal").style.display = "block";
-  }
+  <script>
+    // Mở modal
+    function openEditModal() {
+      document.getElementById("editModal").style.display = "block";
+    }
 
-  // Đóng modal
-  function closeEditModal() {
-    document.getElementById("editModal").style.display = "none";
-  }
+    // Đóng modal
+    function closeEditModal() {
+      document.getElementById("editModal").style.display = "none";
+    }
 
-  // Khi trang load xong
-  document.addEventListener("DOMContentLoaded", function() {
-    // Thêm sự kiện cho tất cả nút Sửa
-    const editButtons = document.querySelectorAll(".btn-edit");
-    editButtons.forEach(button => {
-      button.addEventListener("click", openEditModal);
+    // Khi trang load xong
+    document.addEventListener("DOMContentLoaded", function() {
+      // Thêm sự kiện cho tất cả nút Sửa
+      const editButtons = document.querySelectorAll(".btn-edit");
+      editButtons.forEach(button => {
+        button.addEventListener("click", openEditModal);
+      });
+
+      // Đóng modal khi click vào dấu X
+      document.getElementById("closeModal").addEventListener("click", closeEditModal);
+
+      // Đóng modal khi click vào nút Hủy
+      document.getElementById("cancelEdit").addEventListener("click", closeEditModal);
+
+      // Đóng modal khi click bên ngoài
+      window.addEventListener("click", function(event) {
+        const modal = document.getElementById("editModal");
+        if (event.target === modal) {
+          closeEditModal();
+        }
+      });
     });
-
-    // Đóng modal khi click vào dấu X
-    document.getElementById("closeModal").addEventListener("click", closeEditModal);
-
-    // Đóng modal khi click vào nút Hủy
-    document.getElementById("cancelEdit").addEventListener("click", closeEditModal);
-
-    // Đóng modal khi click bên ngoài
-    window.addEventListener("click", function(event) {
-      const modal = document.getElementById("editModal");
-      if (event.target === modal) {
-        closeEditModal();
-      }
-    });
-  });
-</script>
+  </script>
 </body>
 </html>
