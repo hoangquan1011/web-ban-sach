@@ -114,7 +114,23 @@
       </div>
     </div>
   </div>
-
+  <div id="defaultPricingData" class="d-none">
+    <div data-ma="KN001" data-ten="GOOD ENERGY - NĂNG LƯỢNG TỐT" data-loai="Kỹ năng sống" data-gia="85000" data-giagoc="120000"></div>
+    <div data-ma="KN002" data-ten="NGHỆ THUẬT TƯ DUY LOGIC" data-loai="Kỹ năng sống" data-gia="126000" data-giagoc="169000"></div>
+    <div data-ma="KN003" data-ten="KỸ NĂNG TƯ DUY THỰC CHIẾN" data-loai="Kỹ năng sống" data-gia="126000" data-giagoc="169000"></div>
+    <div data-ma="TN001" data-ten="THIÊN NHIÊN - TẠI SAO CHÚNG TA CẦN THIÊN NHIÊN XANH TƯƠI?" data-loai="Thiếu nhi" data-gia="52000" data-giagoc="70000"></div>
+    <div data-ma="TN002" data-ten="GỢI MỞ TRÍ TƯỞNG TƯỢNG - NỖI BUỒN CỦA CÂY ÍCH KỶ" data-loai="Thiếu nhi" data-gia="28000" data-giagoc="35000"></div>
+    <div data-ma="TN003" data-ten="RÈN TRÍ THÔNG MINH - TẬP 3" data-loai="Thiếu nhi" data-gia="24000" data-giagoc="30000"></div>
+    <div data-ma="VN001" data-ten="RUỒI TRÂU (TÁI BẢN NĂM 2018)" data-loai="Văn học" data-gia="96000" data-giagoc="128000"></div>
+    <div data-ma="VH002" data-ten="VĂN HỌC KINH ĐIỂN - LỀ THÓI THỊ THÀNH" data-loai="Văn học" data-gia="164000" data-giagoc="205000"></div>
+    <div data-ma="VH003" data-ten="VĂN HỌC KINH ĐIỂN - CHÂN DUNG MỘT CUỘC HÔN NHÂN" data-loai="Văn học" data-gia="215000" data-giagoc="225000"></div>
+    <div data-ma="KT001" data-ten="THE LITTLE BOOK - ĐẦU TƯ THEO CHIẾN LƯỢC PHÒNG THỦ" data-loai="Kinh tế" data-gia="134000" data-giagoc="179500"></div>
+    <div data-ma="KT002" data-ten="TƯ DUY ĐẦU TƯ - TIỀN ĐẺ RA TIỀN" data-loai="Kinh tế" data-gia="203000" data-giagoc="239000"></div>
+    <div data-ma="KT003" data-ten="TIỀN ĐẺ RA TIỀN - ĐẦU TƯ TÀI CHÍNH THÔNG MINH" data-loai="Kinh tế" data-gia="128000" data-giagoc="160000"></div>
+    <div data-ma="GK001" data-ten="TUYỂN TẬP BÀI VĂN NGHỊ LUẬN XÃ HỘI CHON LỌC" data-loai="Giáo khoa" data-gia="90000" data-giagoc="120000"></div>
+    <div data-ma="GK002" data-ten="LUYỆN THI VÀO 10 NGỮ VĂN - CHINH PHỤC BÀI NGHỊ LUẬN" data-loai="Giáo khoa" data-gia="71500" data-giagoc="89000"></div>
+    <div data-ma="GK003" data-ten="TAKENOTE NGỮ PHÁP TRỌNG ĐIỂM TIẾNG ANH TRUNG HỌC CƠ SỞ" data-loai="Giáo khoa" data-gia="71200" data-giagoc="89000"></div>
+  </div>
   <div id="feedback" class="feedback d-none">
     <div class="alert alert-success shadow mb-0" role="alert">
       <span id="feedbackText">Đã cập nhật giá.</span>
@@ -135,6 +151,18 @@
         downloadBtn: document.getElementById('btnDownload'),
         feedback: document.getElementById('feedback'),
         feedbackText: document.getElementById('feedbackText')
+      };
+
+      const readDefaultProductsFromDOM = () => {
+        const container = document.getElementById('defaultPricingData');
+        if (!container) return [];
+        return Array.from(container.querySelectorAll('[data-ma]')).map((item) => ({
+          ma: item.dataset.ma || '',
+          ten: item.dataset.ten || '',
+          loai: item.dataset.loai || '',
+          gia: Number(item.dataset.gia) || 0,
+          giagoc: Number(item.dataset.giagoc) || 0
+        }));
       };
 
       const formatCurrency = (value) =>
@@ -199,13 +227,26 @@
       };
 
       const readProductsFromStorage = () => {
+        let stored = [];
         try {
-          const stored = JSON.parse(localStorage.getItem('products'));
-          return Array.isArray(stored) ? stored : [];
+          const parsed = JSON.parse(localStorage.getItem('products'));
+          if (Array.isArray(parsed)) {
+            stored = parsed;
+          }
         } catch (error) {
           console.warn('Không thể đọc dữ liệu sản phẩm:', error);
-          return [];
         }
+
+        if (stored.length) return stored;
+
+        const fallback = readDefaultProductsFromDOM();
+        if (!fallback.length) return [];
+        try {
+          localStorage.setItem('products', JSON.stringify(fallback));
+        } catch (error) {
+          console.warn('Không thể lưu dữ liệu mặc định:', error);
+        }
+        return fallback;
       };
 
       const normalizeProducts = (products) =>

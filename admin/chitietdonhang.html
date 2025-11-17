@@ -58,9 +58,6 @@
               <a href="quanlydonhang.html" class="btn btn-outline-success btn-sm">
                 <i class="fa fa-arrow-left"></i> Quay lại
               </a>
-              <button id="btnSave" class="btn btn-success btn-sm">
-                <i class="fa fa-save me-1"></i> Lưu đơn hàng
-              </button>
             </div>
           </div>
 
@@ -71,7 +68,6 @@
               <div class="col-md-4">
                 <label class="form-label fw-semibold">Mã đơn hàng</label>
                 <input type="text" class="form-control" id="orderId" readonly>
-                <div class="form-text-sm">Tự sinh nếu tạo mới.</div>
               </div>
               <div class="col-md-4">
                 <label class="form-label fw-semibold">Ngày đặt</label>
@@ -112,7 +108,6 @@
           <div class="mb-4">
             <div class="d-flex justify-content-between align-items-center mb-2">
               <h5 class="fw-bold text-secondary">📦 Sản phẩm trong đơn hàng</h5>
-              <button id="btnAddItem" class="btn btn-outline-success btn-sm"><i class="fa fa-plus"></i> Thêm dòng</button>
             </div>
 
             <div class="table-responsive">
@@ -124,7 +119,6 @@
                     <th style="width:120px">Số lượng</th>
                     <th style="width:160px">Đơn giá (đ)</th>
                     <th style="width:160px">Thành tiền (đ)</th>
-                    <th style="width:60px">Xóa</th>
                   </tr>
                 </thead>
                 <tbody id="productList"></tbody>
@@ -144,13 +138,9 @@
                   <span>Tạm tính</span>
                   <strong id="subtotal">0đ</strong>
                 </div>
-                <div class="d-flex justify-content-between mb-2">
+                <div class="d-flex justify-content-between mb-2 align-items-center">
                   <span>Phí vận chuyển</span>
-                  <input type="number" id="shipping" class="form-control form-control-sm w-50 text-end" value="30000" min="0" />
-                </div>
-                <div class="d-flex justify-content-between mb-2">
-                  <span>Giảm giá</span>
-                  <input type="number" id="discount" class="form-control form-control-sm w-50 text-end" value="0" min="0" />
+                  <strong class="text-end" id="shippingDisplay">30,000đ</strong>
                 </div>
                 <hr>
                 <div class="d-flex justify-content-between">
@@ -200,10 +190,8 @@
     const tbody = document.getElementById('productList');
     const subtotalEl = document.getElementById('subtotal');
     const grandEl = document.getElementById('grandTotal');
-    const shippingInput = document.getElementById('shipping');
-    const discountInput = document.getElementById('discount');
+    const shippingDisplay = document.getElementById('shippingDisplay');
     const statusMessage = document.getElementById('statusMessage');
-    const btnAddItem = document.getElementById('btnAddItem');
     const btnSave = document.getElementById('btnSave');
 
     // ====== STATE ======
@@ -283,8 +271,9 @@
       emailInput.value = order.customer?.email || '';
       addressInput.value = order.customer?.address || '';
       noteInput.value = order.note || '';
-      shippingInput.value = order.totals?.shipping ?? 30000;
-      discountInput.value = order.totals?.discount ?? 0;
+      order.totals.shipping = 30000;
+      order.totals.discount = 0;
+      shippingDisplay.textContent = fmt(order.totals.shipping);
 
       renderItems();
       recalcTotals();
@@ -295,7 +284,7 @@
       console.log('🎨 Rendering items:', order.items);
       
       if (!order.items || order.items.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="text-muted">Chưa có sản phẩm. Nhấn <strong>Thêm dòng</strong> để bắt đầu.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" class="text-muted">Chưa có sản phẩm trong đơn.</td></tr>`;
         return;
       }
 
@@ -311,12 +300,10 @@
         <td><input type="number" class="form-control text-end" min="1" value="${item.qty || 1}" /></td>
         <td><input type="number" class="form-control text-end" min="0" value="${item.price || 0}" /></td>
         <td class="currency">${fmt((item.qty || 1) * (item.price || 0))}</td>
-        <td><button class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i></button></td>
       `;
 
       const [nameEl, qtyEl, priceEl] = [tr.children[1].firstElementChild, tr.children[2].firstElementChild, tr.children[3].firstElementChild];
       const totalCell = tr.children[4];
-      const delBtn = tr.children[5].firstElementChild;
 
       const onChange = () => {
         item.name = nameEl.value.trim();
@@ -330,38 +317,23 @@
       qtyEl.addEventListener('input', onChange);
       priceEl.addEventListener('input', onChange);
 
-      delBtn.addEventListener('click', () => {
-        order.items.splice(idx, 1);
-        renderItems();
-        recalcTotals();
-      });
-
       return tr;
     }
-
-    btnAddItem.addEventListener('click', () => {
-      if (!order.items) order.items = [];
-      order.items.push({ name: '', qty: 1, price: 0 });
-      renderItems();
-      recalcTotals();
-    });
 
     // ====== TÍNH TIỀN ======
     function recalcTotals() {
       const subtotal = (order.items || []).reduce((s, it) => s + (parseNum(it.qty) * parseNum(it.price)), 0);
-      const shipping = parseNum(shippingInput.value);
-      const discount = parseNum(discountInput.value);
+      const shipping = 30000;
+      const discount = 0;
       const total = Math.max(0, subtotal + shipping - discount);
 
       order.totals = { subtotal, shipping, discount, total };
       order.date = inputValueToISO(orderDateInput.value);
 
       subtotalEl.textContent = fmt(subtotal);
+      shippingDisplay.textContent = fmt(shipping);
       grandEl.textContent = fmt(total);
     }
-
-    shippingInput.addEventListener('input', recalcTotals);
-    discountInput.addEventListener('input', recalcTotals);
 
     // ====== LƯU ======
     btnSave.addEventListener('click', () => {

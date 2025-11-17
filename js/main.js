@@ -64,3 +64,79 @@
     
 })(jQuery);
 
+(function () {
+    function readFixedCartInfo() {
+        const infoEl = document.getElementById('fixedCartBaseCountInfo');
+        if (!infoEl) {
+            return { count: 0, ids: [] };
+        }
+        const countRaw = infoEl.dataset.count || infoEl.textContent || '0';
+        const idsRaw = infoEl.dataset.ids || '';
+        const countParsed = parseInt(countRaw, 10);
+        const ids = idsRaw
+            .split(',')
+            .map((id) => id.trim())
+            .filter(Boolean);
+        return { count: Number.isNaN(countParsed) ? 0 : countParsed, ids };
+    }
+
+    const fixedInfo = readFixedCartInfo();
+    const fixedIds = new Set(fixedInfo.ids);
+
+    function getFixedCartBaseQty() {
+        const stored = parseInt(localStorage.getItem('fixedCartBaseCount'), 10);
+        if (!Number.isNaN(stored) && stored >= 0) {
+            return stored;
+        }
+        return fixedInfo.count;
+    }
+
+    function sanitizeCartItems(cartItems = []) {
+        if (!Array.isArray(cartItems)) return [];
+        let hasChanges = false;
+        const filtered = cartItems.filter((item) => {
+            if (!item) {
+                hasChanges = true;
+                return false;
+            }
+            const id = String(item.id || item.ma || '');
+            const isFixed = item.locked || (id && fixedIds.has(id));
+            if (isFixed) {
+                hasChanges = true;
+                return false;
+            }
+            return true;
+        });
+        if (hasChanges) {
+            try {
+                localStorage.setItem('cart', JSON.stringify(filtered));
+            } catch (error) {
+                console.warn('Không thể đồng bộ giỏ hàng:', error);
+            }
+        }
+        return filtered;
+    }
+
+    function updateCartBadgeDisplay(cartItems = []) {
+        const cartCount = document.getElementById('cartCount');
+        if (!cartCount) return;
+        const sanitized = sanitizeCartItems(cartItems);
+        const dynamicQty = sanitized.reduce((sum, item) => sum + Number(item?.qty || 0), 0);
+        cartCount.textContent = dynamicQty + getFixedCartBaseQty();
+    }
+
+    window.getFixedCartBaseQty = getFixedCartBaseQty;
+    window.updateCartBadgeDisplay = updateCartBadgeDisplay;
+
+    document.addEventListener('DOMContentLoaded', function () {
+        let cart = [];
+        try {
+            cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            if (!Array.isArray(cart)) cart = [];
+        } catch (error) {
+            cart = [];
+        }
+        updateCartBadgeDisplay(cart);
+    });
+})();
+

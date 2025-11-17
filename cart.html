@@ -125,6 +125,7 @@
             <a href="cart.html" class="btn btn-success btn-sm position-relative">
                 <i class="fas fa-shopping-cart"></i>
                 <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="cartCount">2</span>
+                <span id="fixedCartBaseCountInfo" data-count="2" data-ids="KN001,VN001" class="d-none"></span>
             </a>
         </div>
        <!-- 🔹 Khu vực người dùng -->
@@ -149,7 +150,66 @@
   <!-- Cart Section -->
   <div class="container-xxl py-5">
     <div class="container">
-      <div id="cart-items"></div>
+      <div id="cart-items">
+        <div id="fixed-cart-items" class="mb-4">
+          <div class="cart-item fixed-cart-item mb-3" data-fixed-cart data-id="KN001" data-name="GOOD ENERGY - NĂNG LƯỢNG TỐT" data-price="85000" data-qty="1" data-img="img/38.jpg">
+            <div class="row align-items-center">
+              <div class="col-md-2 mb-3 mb-md-0">
+                <img src="img/38.jpg" class="img-fluid rounded" alt="GOOD ENERGY - NĂNG LƯỢNG TỐT">
+              </div>
+              <div class="col-md-4 mb-3 mb-md-0">
+                <h5 class="mb-1">GOOD ENERGY - NĂNG LƯỢNG TỐT</h5>
+                <span class="badge bg-success-subtle text-success">Sản phẩm mẫu cố định</span>
+              </div>
+              <div class="col-md-2 mb-3 mb-md-0 text-primary">
+                85.000₫
+              </div>
+              <div class="col-md-2 mb-3 mb-md-0">
+                <input type="number" class="form-control form-control-sm text-center" value="1" min="1" disabled>
+              </div>
+              <div class="col-md-2 text-end">
+                <button class="btn btn-danger btn-sm disabled opacity-75" title="Sản phẩm mặc định không thể xóa">
+                  <i class="fa fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="cart-item fixed-cart-item" data-fixed-cart data-id="VN001" data-name="RUỒI TRÂU (TÁI BẢN 2018)" data-price="96000" data-qty="1" data-img="img/26.jpg">
+            <div class="row align-items-center">
+              <div class="col-md-2 mb-3 mb-md-0">
+                <img src="img/26.jpg" class="img-fluid rounded" alt="RUỒI TRÂU (TÁI BẢN 2018)">
+              </div>
+              <div class="col-md-4 mb-3 mb-md-0">
+                <h5 class="mb-1">RUỒI TRÂU (TÁI BẢN 2018)</h5>
+                <span class="badge bg-success-subtle text-success">Sản phẩm mẫu cố định</span>
+              </div>
+              <div class="col-md-2 mb-3 mb-md-0 text-primary">
+                96.000₫
+              </div>
+              <div class="col-md-2 mb-3 mb-md-0">
+                <input type="number" class="form-control form-control-sm text-center" value="1" min="1" disabled>
+              </div>
+              <div class="col-md-2 text-end">
+                <button class="btn btn-danger btn-sm disabled opacity-75" title="Sản phẩm mặc định không thể xóa">
+                  <i class="fa fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="dynamic-cart-items"></div>
+
+        <div id="cart-empty-state" class="cart-empty" style="display:none;">
+          <i class="fa fa-shopping-cart"></i>
+          <h3 class="mb-4">Giỏ hàng của bạn đang trống</h3>
+          <p class="text-muted mb-4">Hãy thêm sản phẩm vào giỏ hàng để tiếp tục mua sắm</p>
+          <a href="product.html" class="btn btn-primary rounded-pill py-3 px-5">
+            <i class="fa fa-shopping-bag me-2"></i>Khám phá sản phẩm
+          </a>
+        </div>
+      </div>
 
       <div id="cart-summary" class="row" style="display:none;">
         <div class="col-lg-8"></div>
@@ -168,6 +228,23 @@
               <label for="summaryAddress" class="form-label">Địa chỉ giao hàng</label>
               <textarea id="summaryAddress" class="form-control" rows="2" placeholder="Nhập địa chỉ nhận hàng"></textarea>
               <div class="form-text" id="addressHint">Nhập địa chỉ nhận hàng cho đơn này.</div>
+            </div>
+            <div class="mb-4">
+              <small class="text-muted text-uppercase d-block mb-2">Phương thức thanh toán</small>
+              <div class="form-check border rounded p-3 mb-2 d-flex align-items-start">
+                <input class="form-check-input mt-1 me-3" type="radio" name="paymentMethod" id="paymentCard" value="card" checked>
+                <label class="form-check-label w-100" for="paymentCard">
+                  <span class="fw-semibold"><i class="fa fa-credit-card me-2 text-success"></i>Thanh toán bằng thẻ</span>
+                  <small class="d-block text-muted">Hỗ trợ Visa/MasterCard/ATM nội địa thông qua cổng thanh toán an toàn.</small>
+                </label>
+              </div>
+              <div class="form-check border rounded p-3 d-flex align-items-start">
+                <input class="form-check-input mt-1 me-3" type="radio" name="paymentMethod" id="paymentCash" value="cash">
+                <label class="form-check-label w-100" for="paymentCash">
+                  <span class="fw-semibold"><i class="fa fa-hand-holding-usd me-2 text-success"></i>Tiền mặt (COD)</span>
+                  <small class="d-block text-muted">Thanh toán trực tiếp với nhân viên giao hàng khi nhận sản phẩm.</small>
+                </label>
+              </div>
             </div>
             <h6 class="mb-3">Tóm tắt đơn hàng</h6>
             <div class="d-flex justify-content-between mb-3">
@@ -258,6 +335,8 @@
       document.getElementById('spinner').classList.remove('show');
     });
 
+    const PAYMENT_METHOD_STORAGE_KEY = 'preferredPaymentMethod';
+
     // ====== QUẢN LÝ TRẠNG THÁI ĐĂNG NHẬP (GIAO DIỆN MỚI) ======
     function checkLoginStatus() {
       const userSection = document.getElementById('userSection');
@@ -295,67 +374,97 @@
       }
     }
 
-    // Khởi tạo giỏ hàng mặc định nếu chưa có
-    (function initDefaultCart() {
-      const existingCart = localStorage.getItem('cart');
-      if (!existingCart || existingCart === 'null' || existingCart === '[]') {
-        const defaultCart = [
-          {
-            id: Date.now() + 1,
-            name: "GOOD ENERGY - NĂNG LƯỢNG TỐT",
-            price: 85000,
-            qty: 1,
-            img: "img/38.jpg"
-          },
-          {
-            id: Date.now() + 2,
-            name: "RUỒI TRÂU (TÁI BẢN 2018)",
-            price: 96000,
-            qty: 1,
-            img: "img/26.jpg"
+    function getFixedCartItems() {
+      return Array.from(document.querySelectorAll('[data-fixed-cart]')).map(item => ({
+        id: item.dataset.id || item.dataset.name || `fixed-${Math.random()}`,
+        name: item.dataset.name || item.querySelector('h5')?.textContent.trim() || 'Sản phẩm cố định',
+        price: Number(item.dataset.price) || 0,
+        qty: Number(item.dataset.qty) || 1,
+        img: item.dataset.img || item.querySelector('img')?.getAttribute('src') || ''
+      }));
+    }
+
+    function getFixedCartIds() {
+      return new Set(getFixedCartItems().map(item => String(item.id)));
+    }
+
+    function syncFixedCartBaseCount() {
+      const fixedQty = getFixedCartItems().reduce((sum, item) => sum + item.qty, 0);
+      localStorage.setItem('fixedCartBaseCount', fixedQty);
+      return fixedQty;
+    }
+
+    function getDynamicCartItems() {
+      try {
+        const parsed = JSON.parse(localStorage.getItem('cart') || '[]');
+        if (!Array.isArray(parsed)) return [];
+        const fixedIds = getFixedCartIds();
+        let hasChanges = false;
+        const filtered = parsed.filter(item => {
+          if (!item) {
+            hasChanges = true;
+            return false;
           }
-        ];
-        localStorage.setItem('cart', JSON.stringify(defaultCart));
+          const id = String(item.id || item.ma || '');
+          const shouldRemove = item.locked || (id && fixedIds.has(id));
+          if (shouldRemove) {
+            hasChanges = true;
+            return false;
+          }
+          return true;
+        });
+        if (hasChanges) {
+          localStorage.setItem('cart', JSON.stringify(filtered));
+        }
+        return filtered;
+      } catch (error) {
+        return [];
       }
-    })();
+    }
 
     document.addEventListener('DOMContentLoaded', () => {
       checkLoginStatus();
+      syncFixedCartBaseCount();
       renderCart();
       renderCheckoutInfoCard();
+      initPaymentMethodSelector();
       handleBuyNowRedirect();
       renderOrderHistory();
     });
 
     function renderCart() {
-      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-      const cartContainer = document.getElementById('cart-items');
+      const cart = getDynamicCartItems();
+      const fixedItems = getFixedCartItems();
+      const dynamicContainer = document.getElementById('dynamic-cart-items');
+      const fixedContainer = document.getElementById('fixed-cart-items');
+      const emptyState = document.getElementById('cart-empty-state');
       const cartSummary = document.getElementById('cart-summary');
       const cartCount = document.getElementById('cartCount');
+      const hasDynamic = cart.length > 0;
+      const hasFixed = fixedItems.length > 0;
+      const hasItems = hasDynamic || hasFixed;
 
-      cartCount.textContent = cart.length;
-      cartContainer.innerHTML = '';
-      let subtotal = 0;
-
-      if (cart.length === 0) {
-        cartContainer.innerHTML = `
-          <div class="cart-empty">
-            <i class="fa fa-shopping-cart"></i>
-            <h3 class="mb-4">Giỏ hàng của bạn đang trống</h3>
-            <p class="text-muted mb-4">Hãy thêm sản phẩm vào giỏ hàng để tiếp tục mua sắm</p>
-            <a href="product.html" class="btn btn-primary rounded-pill py-3 px-5">
-              <i class="fa fa-shopping-bag me-2"></i>Khám phá sản phẩm
-            </a>
-          </div>`;
-        cartSummary.style.display = 'none';
-        return;
+      if (dynamicContainer) {
+        dynamicContainer.innerHTML = '';
       }
 
-      cartSummary.style.display = 'block';
+      if (fixedContainer) {
+        fixedContainer.style.display = hasFixed ? 'block' : 'none';
+      }
+
+      if (emptyState) {
+        emptyState.style.display = hasItems ? 'none' : 'block';
+      }
+
+      if (cartSummary) {
+        cartSummary.style.display = hasItems ? 'block' : 'none';
+      }
+
+      let dynamicSubtotal = 0;
 
       cart.forEach((item, i) => {
         const total = item.price * item.qty;
-        subtotal += total;
+        dynamicSubtotal += total;
 
         const html = `
           <div class="cart-item">
@@ -373,17 +482,23 @@
                 <input type="number" min="1" value="${item.qty}" class="form-control form-control-sm text-center">
               </div>
               <div class="col-md-2 text-end">
-                <button class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></button>
+                <button class="btn btn-danger btn-sm" data-index="${i}">
+                  <i class="fa fa-trash"></i>
+                </button>
               </div>
             </div>
           </div>`;
-        cartContainer.insertAdjacentHTML('beforeend', html);
+        if (dynamicContainer) {
+          dynamicContainer.insertAdjacentHTML('beforeend', html);
+        }
       });
 
+      const fixedSubtotal = fixedItems.reduce((sum, item) => sum + item.price * item.qty, 0);
+      const subtotal = fixedSubtotal + dynamicSubtotal;
       document.getElementById('subtotal').textContent = subtotal.toLocaleString('vi-VN') + '₫';
       document.getElementById('total').textContent = (subtotal + 30000).toLocaleString('vi-VN') + '₫';
 
-      document.querySelectorAll('#cart-items input[type=number]').forEach((input, index) => {
+      document.querySelectorAll('#dynamic-cart-items input[type=number]').forEach((input, index) => {
         input.onchange = () => {
           cart[index].qty = Number(input.value);
           localStorage.setItem('cart', JSON.stringify(cart));
@@ -391,8 +506,11 @@
         };
       });
 
-      document.querySelectorAll('#cart-items .btn-danger').forEach((btn, index) => {
+      document.querySelectorAll('#dynamic-cart-items .btn-danger[data-index]').forEach(btn => {
         btn.onclick = () => {
+          const index = Number(btn.dataset.index);
+          const targetItem = cart[index];
+          if (!targetItem) return;
           if (confirm('Bạn có chắc muốn xóa sản phẩm này?')) {
             cart.splice(index, 1);
             localStorage.setItem('cart', JSON.stringify(cart));
@@ -400,6 +518,14 @@
           }
         };
       });
+
+      const dynamicQty = cart.reduce((sum, item) => sum + Number(item.qty || 0), 0);
+      const fixedQty = fixedItems.reduce((sum, item) => sum + Number(item.qty || 0), 0);
+      const totalQty = dynamicQty + fixedQty;
+      if (cartCount) {
+        cartCount.textContent = totalQty;
+      }
+      localStorage.setItem('fixedCartBaseCount', fixedQty);
     }
 
     function renderCheckoutInfoCard() {
@@ -437,6 +563,46 @@
       addressInput.addEventListener('input', () => {
         addressInput.dataset.dirty = 'true';
       }, { once: true });
+    }
+
+    function updatePaymentMethodHint(method, hintEl) {
+      if (!hintEl) return;
+      if (method === 'card') {
+        hintEl.textContent = 'Bạn sẽ được chuyển tới bước nhập thông tin thẻ an toàn sau khi xác nhận đơn.';
+      } else if (method === 'cash') {
+        hintEl.textContent = 'Bạn sẽ thanh toán bằng tiền mặt cho shipper khi nhận hàng (COD).';
+      } else {
+        hintEl.textContent = 'Vui lòng chọn phương thức thanh toán phù hợp.';
+      }
+    }
+
+    function initPaymentMethodSelector() {
+      const radios = document.querySelectorAll('input[name="paymentMethod"]');
+      if (!radios.length) return;
+      const hintEl = document.getElementById('paymentMethodHint');
+      const validValues = Array.from(radios).map(radio => radio.value);
+      let storedMethod = localStorage.getItem(PAYMENT_METHOD_STORAGE_KEY);
+      if (!storedMethod || !validValues.includes(storedMethod)) {
+        storedMethod = validValues[0];
+      }
+
+      radios.forEach((radio, index) => {
+        radio.checked = radio.value === storedMethod || (!storedMethod && index === 0);
+        radio.addEventListener('change', () => {
+          if (radio.checked) {
+            localStorage.setItem(PAYMENT_METHOD_STORAGE_KEY, radio.value);
+            updatePaymentMethodHint(radio.value, hintEl);
+          }
+        });
+      });
+
+      updatePaymentMethodHint(storedMethod, hintEl);
+    }
+
+    function getPaymentMethodLabel(method) {
+      if (method === 'card') return 'Thanh toán bằng thẻ';
+      if (method === 'cash') return 'Tiền mặt (COD)';
+      return 'Chưa cung cấp';
     }
 
     function renderOrderHistory() {
@@ -495,6 +661,7 @@
 
         const totalAmount = order.totals?.total || order.total || 0;
         const orderDate = order.date ? new Date(order.date).toLocaleString('vi-VN') : 'Không rõ';
+        const orderPaymentLabel = order.payment?.label || getPaymentMethodLabel(order.payment?.method);
 
         const orderHTML = `
           <div class="bg-white border rounded p-4 mb-3 shadow-sm">
@@ -512,6 +679,7 @@
               <div class="col-md-6">
                 <p class="mb-2"><strong><i class="fa fa-map-marker-alt me-2"></i>Địa chỉ:</strong> ${order.customer?.address || 'Không có'}</p>
                 <p class="mb-2"><strong><i class="fa fa-phone me-2"></i>SĐT:</strong> ${order.customer?.phone || 'Không có'}</p>
+                <p class="mb-2"><strong><i class="fa fa-credit-card me-2"></i>Thanh toán:</strong> ${orderPaymentLabel}</p>
               </div>
             </div>
             <p class="mb-2"><strong><i class="fa fa-box me-2"></i>Sản phẩm:</strong></p>
@@ -569,7 +737,9 @@
 
     // ====== THANH TOÁN ======
     document.getElementById("checkoutBtn").addEventListener("click", () => {
-      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const dynamicCart = getDynamicCartItems();
+      const fixedItems = getFixedCartItems();
+      const cart = [...fixedItems, ...dynamicCart];
 
       if (cart.length === 0) {
         alert("Giỏ hàng của bạn đang trống!");
@@ -607,6 +777,14 @@
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
       }
 
+      const paymentMethodInput = document.querySelector('input[name="paymentMethod"]:checked');
+      if (!paymentMethodInput) {
+        alert('Vui lòng chọn phương thức thanh toán.');
+        return;
+      }
+      const paymentMethod = paymentMethodInput.value;
+      localStorage.setItem(PAYMENT_METHOD_STORAGE_KEY, paymentMethod);
+
       const timestamp = new Date();
       const isoTimestamp = timestamp.toISOString();
 
@@ -620,6 +798,10 @@
           phone: currentUser.phone || '',
           email: currentUser.email || '',
           address: shippingAddress || ''
+        },
+        payment: {
+          method: paymentMethod,
+          label: getPaymentMethodLabel(paymentMethod)
         },
         items: cart.map(item => ({
           name: item.name,
