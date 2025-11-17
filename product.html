@@ -84,6 +84,51 @@
         .product-item:hover .product-overlay {
             opacity: 1;
         }
+
+        .advanced-filter {
+            background: #f8fff8;
+            border: 1px solid #e0f1e0;
+            border-radius: 18px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(33, 37, 41, 0.08);
+        }
+
+        .advanced-filter label {
+            font-weight: 600;
+            color: #1b4332;
+        }
+
+        .filter-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .filter-chip {
+            border-radius: 50px;
+            border: 1px solid #2d6a4f;
+            color: #2d6a4f;
+            padding: 0.35rem 0.85rem;
+            background: #fff;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .filter-chip:hover,
+        .filter-chip.active {
+            background: #2d6a4f;
+            color: #fff;
+        }
+
+        #filterSummary {
+            font-weight: 600;
+            color: #2f9e44;
+        }
+
+        #noResultsMessage {
+            border-radius: 1rem;
+        }
     </style>
 </head>
 
@@ -175,11 +220,58 @@
                 <h1 class="mb-4">Danh mục sản phẩm sách</h1>
             </div>
 
+            <div class="advanced-filter mb-4">
+                <div class="row g-3 align-items-end">
+                    <div class="col-lg-4">
+                        <label for="productSearch" class="form-label">Tìm kiếm nâng cao</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+                            <input id="productSearch" type="text" class="form-control" placeholder="Nhập mã sách hoặc tên sách...">
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <label for="productCategory" class="form-label">Danh mục</label>
+                        <select id="productCategory" class="form-select">
+                            <option value="">-- Tất cả --</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <label class="form-label">Khoảng giá (VNĐ)</label>
+                        <div class="d-flex gap-2">
+                            <input id="priceMin" type="number" class="form-control" placeholder="Từ">
+                            <input id="priceMax" type="number" class="form-control" placeholder="Đến">
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4">
+                        <button id="filterReset" type="button" class="btn btn-outline-success w-100">
+                            <i class="bi bi-arrow-counterclockwise me-1"></i>Đặt lại bộ lọc
+                        </button>
+                    </div>
+                </div>
+                <div class="filter-chips">
+                    <button type="button" class="filter-chip btn btn-sm btn-outline-success" data-price-min="0" data-price-max="50000">Dưới 50K</button>
+                    <button type="button" class="filter-chip btn btn-sm btn-outline-success" data-price-min="50000" data-price-max="100000">50K - 100K</button>
+                    <button type="button" class="filter-chip btn btn-sm btn-outline-success" data-price-min="100000" data-price-max="150000">100K - 150K</button>
+                    <button type="button" class="filter-chip btn btn-sm btn-outline-success" data-price-min="150000">Trên 150K</button>
+                </div>
+                <div class="d-flex flex-wrap align-items-center justify-content-between mt-3 gap-2">
+                    <div id="filterSummary">0 sản phẩm</div>
+                    <div id="activeFilterBadges" class="d-flex flex-wrap gap-2 small"></div>
+                </div>
+            </div>
 
+            <div id="noResultsMessage" class="alert alert-warning d-none">
+                Không tìm thấy sản phẩm phù hợp với bộ lọc hiện tại. Vui lòng thử điều kiện khác nhé!
+            </div>
+    
             <!-- Danh sách sản phẩm -->
-            <div class="row gx-4 gy-4">
+            <div id="productGrid" class="row gx-4 gy-4">
                 <!-- Product 1 -->
-                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="0.1s">
+                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="0.1s"
+                    data-product-code="KN001"
+                    data-product-name="GOOD ENERGY - NĂNG LƯỢNG TỐT"
+                    data-product-category="Kỹ năng sống"
+                    data-product-price="85000">
                     <div class="product-item border rounded shadow-sm overflow-hidden position-relative">
                         <div class="position-relative">
                             <a href="chitiet.html?ma=KN001">
@@ -204,7 +296,11 @@
                 </div>
 
                 <!-- Product 2 -->
-                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="0.2s">
+                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="0.2s"
+                    data-product-code="KN002"
+                    data-product-name="NGHỆ THUẬT TƯ DUY LOGIC"
+                    data-product-category="Kỹ năng sống"
+                    data-product-price="126000">
                     <div class="product-item border rounded shadow-sm overflow-hidden position-relative">
                         <div class="position-relative">
                             <a href="chitiet.html?ma=KN002">
@@ -229,7 +325,11 @@
                 </div>
 
                 <!-- Product 3 -->
-                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="0.3s">
+                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="0.3s"
+                    data-product-code="KN003"
+                    data-product-name="KỸ NĂNG TƯ DUY THỰC CHIẾN"
+                    data-product-category="Kỹ năng sống"
+                    data-product-price="126000">
                     <div class="product-item border rounded shadow-sm overflow-hidden position-relative">
                         <div class="position-relative">
                             <a href="chitiet.html?ma=KN003">
@@ -254,7 +354,11 @@
                 </div>
 
                 <!-- Product 4 -->
-                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="0.4s">
+                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="0.4s"
+                    data-product-code="TN001"
+                    data-product-name="THIÊN NHIÊN - TẠI SAO CHÚNG TA CẦN THIÊN NHIÊN XANH TƯƠI?"
+                    data-product-category="Thiếu nhi"
+                    data-product-price="52000">
                     <div class="product-item border rounded shadow-sm overflow-hidden position-relative">
                         <div class="position-relative">
                             <a href="chitiet.html?ma=TN001">
@@ -279,7 +383,11 @@
                 </div>
 
                 <!-- Product 5 -->
-                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="0.5s">
+                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="0.5s"
+                    data-product-code="TN002"
+                    data-product-name="GỢI MỞ TRÍ TƯỞNG TƯỢNG - NỖI BUỒN CỦA CÂY ÍCH KỶ"
+                    data-product-category="Thiếu nhi"
+                    data-product-price="28000">
                     <div class="product-item border rounded shadow-sm overflow-hidden position-relative">
                         <div class="position-relative">
                             <a href="chitiet.html?ma=TN002">
@@ -304,7 +412,11 @@
                 </div>
 
                 <!-- Product 6 -->
-                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="0.6s">
+                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="0.6s"
+                    data-product-code="TN003"
+                    data-product-name="RÈN TRÍ THÔNG MINH - TẬP 3"
+                    data-product-category="Thiếu nhi"
+                    data-product-price="24000">
                     <div class="product-item border rounded shadow-sm overflow-hidden position-relative">
                         <div class="position-relative">
                             <a href="chitiet.html?ma=TN003">
@@ -329,7 +441,11 @@
                 </div>
 
                 <!-- Product 7 -->
-                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="0.7s">
+                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="0.7s"
+                    data-product-code="VN001"
+                    data-product-name="RUỒI TRÂU (TÁI BẢN NĂM 2018)"
+                    data-product-category="Văn học"
+                    data-product-price="96000">
                     <div class="product-item border rounded shadow-sm overflow-hidden position-relative">
                         <div class="position-relative">
                             <a href="chitiet.html?ma=VN001">
@@ -354,7 +470,11 @@
                 </div>
 
                 <!-- Product 8 -->
-                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="0.8s">
+                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="0.8s"
+                    data-product-code="VH002"
+                    data-product-name="VĂN HỌC KINH ĐIỂN - LỀ THÓI THỊ THÀNH"
+                    data-product-category="Văn học"
+                    data-product-price="164000">
                     <div class="product-item border rounded shadow-sm overflow-hidden position-relative">
                         <div class="position-relative">
                             <a href="chitiet.html?ma=VH002">
@@ -379,7 +499,11 @@
                 </div>
 
                 <!-- Product 9 -->
-                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="0.9s">
+                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="0.9s"
+                    data-product-code="VH003"
+                    data-product-name="VĂN HỌC KINH ĐIỂN - CHÂN DUNG MỘT CUỘC HÔN NHÂN"
+                    data-product-category="Văn học"
+                    data-product-price="215000">
                     <div class="product-item border rounded shadow-sm overflow-hidden position-relative">
                         <div class="position-relative">
                             <a href="chitiet.html?ma=VH003">
@@ -404,7 +528,11 @@
                 </div>
 
                 <!-- Product 10 -->
-                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="1.0s">
+                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="1.0s"
+                    data-product-code="KT001"
+                    data-product-name="THE LITTLE BOOK - ĐẦU TƯ THEO CHIẾN LƯỢC PHÒNG THỦ"
+                    data-product-category="Kinh tế"
+                    data-product-price="134000">
                     <div class="product-item border rounded shadow-sm overflow-hidden position-relative">
                         <div class="position-relative">
                             <a href="chitiet.html?ma=KT001">
@@ -429,7 +557,11 @@
                 </div>
 
                 <!-- Product 11 -->
-                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="1.1s">
+                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="1.1s"
+                    data-product-code="KT002"
+                    data-product-name="TƯ DUY ĐẦU TƯ - TIỀN ĐẺ RA TIỀN"
+                    data-product-category="Kinh tế"
+                    data-product-price="203000">
                     <div class="product-item border rounded shadow-sm overflow-hidden position-relative">
                         <div class="position-relative">
                             <a href="chitiet.html?ma=KT002">
@@ -454,7 +586,11 @@
                 </div>
 
                 <!-- Product 12 -->
-                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="1.2s">
+                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="1.2s"
+                    data-product-code="KT003"
+                    data-product-name="TIỀN ĐẺ RA TIỀN - ĐẦU TƯ TÀI CHÍNH THÔNG MINH"
+                    data-product-category="Kinh tế"
+                    data-product-price="128000">
                     <div class="product-item border rounded shadow-sm overflow-hidden position-relative">
                         <div class="position-relative">
                             <a href="chitiet.html?ma=KT003">
@@ -479,7 +615,11 @@
                 </div>
 
                 <!-- Product 13 -->
-                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="1.3s">
+                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="1.3s"
+                    data-product-code="GK001"
+                    data-product-name="TUYỂN TẬP BÀI VĂN NGHỊ LUẬN XÃ HỘI CHON LỌC"
+                    data-product-category="Giáo khoa"
+                    data-product-price="90000">
                     <div class="product-item border rounded shadow-sm overflow-hidden position-relative">
                         <div class="position-relative">
                             <a href="chitiet.html?ma=GK001">
@@ -504,7 +644,11 @@
                 </div>
 
                <!-- Product 14 -->
-                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="1.4s">
+                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="1.4s"
+                    data-product-code="GK002"
+                    data-product-name="LUYỆN THI VÀO 10 NGỮ VĂN - CHINH PHỤC BÀI NGHỊ LUẬN"
+                    data-product-category="Giáo khoa"
+                    data-product-price="71500">
                     <div class="product-item border rounded shadow-sm overflow-hidden position-relative">
                         <div class="position-relative">
                             <a href="chitiet.html?ma=GK002">
@@ -529,7 +673,11 @@
                 </div>
 
                 <!-- Product 15 -->
-                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="1.5s">
+                <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="1.5s"
+                    data-product-code="GK003"
+                    data-product-name="TAKENOTE NGỮ PHÁP TRỌNG ĐIỂM TIẾNG ANH TRUNG HỌC CƠ SỞ"
+                    data-product-category="Giáo khoa"
+                    data-product-price="71200">
                     <div class="product-item border rounded shadow-sm overflow-hidden position-relative">
                         <div class="position-relative">
                             <a href="chitiet.html?ma=GK003">
@@ -623,6 +771,283 @@
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
 
+    <!-- Script lọc và phân trang sản phẩm -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const grid = document.getElementById('productGrid');
+            if (!grid) return;
+
+            const container = document.querySelector('.container-xxl');
+            const paginationEl = document.getElementById('pagination');
+            const summaryEl = document.getElementById('filterSummary');
+            const badgesEl = document.getElementById('activeFilterBadges');
+            const noResultsEl = document.getElementById('noResultsMessage');
+            const searchInput = document.getElementById('productSearch');
+            const categorySelect = document.getElementById('productCategory');
+            const minInput = document.getElementById('priceMin');
+            const maxInput = document.getElementById('priceMax');
+            const resetBtn = document.getElementById('filterReset');
+            const chips = Array.from(document.querySelectorAll('.filter-chip'));
+            const productsPerPage = 12;
+            let currentPage = 1;
+
+            const removeAccents = (str = '') =>
+                str
+                    .toString()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .replace(/đ/g, 'd')
+                    .replace(/Đ/g, 'D');
+
+            const normalizeText = (value) => removeAccents((value || '').toLowerCase().trim());
+
+            const parseInputNumber = (value) => {
+                if (value === undefined || value === null) return null;
+                const trimmed = value.toString().trim();
+                if (!trimmed) return null;
+                const num = Number(trimmed);
+                return Number.isFinite(num) ? num : null;
+            };
+
+            const formatCurrency = (value) =>
+                Number(value || 0)
+                    .toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })
+                    .replace('₫', 'đ');
+
+            const products = Array.from(grid.querySelectorAll('[data-product-code]')).map((card) => {
+                const name = (card.dataset.productName || '').trim();
+                const code = (card.dataset.productCode || '').trim();
+                return {
+                    element: card,
+                    code,
+                    name,
+                    category: (card.dataset.productCategory || 'Khác').trim(),
+                    price: Number(card.dataset.productPrice || 0),
+                    searchable: normalizeText(`${code} ${name}`)
+                };
+            });
+
+            let filteredProducts = [...products];
+
+            const populateCategories = () => {
+                if (!categorySelect) return;
+                const current = categorySelect.value;
+                const categories = [...new Set(products.map((p) => p.category).filter(Boolean))].sort((a, b) =>
+                    a.localeCompare(b, 'vi', { sensitivity: 'base' })
+                );
+                categorySelect.innerHTML = '<option value="">-- Tất cả --</option>';
+                categories.forEach((cat) => {
+                    const option = document.createElement('option');
+                    option.value = cat;
+                    option.textContent = cat;
+                    categorySelect.appendChild(option);
+                });
+                if (current && categories.includes(current)) {
+                    categorySelect.value = current;
+                }
+            };
+
+            const setCardVisibility = (card, visible) => {
+                if (!card) return;
+                card.classList.toggle('d-none', !visible);
+            };
+
+            const updateSummary = (count) => {
+                if (!summaryEl) return;
+                const total = products.length;
+                const display = total && count !== total ? `${count}/${total}` : count;
+                summaryEl.textContent = `${display} sản phẩm`;
+            };
+
+            const updateBadges = (filters) => {
+                if (!badgesEl) return;
+                const badges = [];
+                if (filters.rawSearch) {
+                    badges.push(
+                        `<span class="badge rounded-pill bg-light text-success border border-success">Từ khóa: ${filters.rawSearch}</span>`
+                    );
+                }
+                if (filters.category) {
+                    badges.push(
+                        `<span class="badge rounded-pill bg-light text-success border border-success">Danh mục: ${filters.categoryLabel || filters.category}</span>`
+                    );
+                }
+                if (filters.min !== null || filters.max !== null) {
+                    if (filters.min !== null && filters.max !== null) {
+                        badges.push(
+                            `<span class="badge rounded-pill bg-light text-success border border-success">Giá: ${formatCurrency(filters.min)} - ${formatCurrency(filters.max)}</span>`
+                        );
+                    } else if (filters.min !== null) {
+                        badges.push(
+                            `<span class="badge rounded-pill bg-light text-success border border-success">Giá từ ${formatCurrency(filters.min)}</span>`
+                        );
+                    } else if (filters.max !== null) {
+                        badges.push(
+                            `<span class="badge rounded-pill bg-light text-success border border-success">Giá đến ${formatCurrency(filters.max)}</span>`
+                        );
+                    }
+                }
+                badgesEl.innerHTML = badges.length ? badges.join('') : '<span class="text-muted">Chưa áp dụng bộ lọc nào.</span>';
+            };
+
+            const syncChipState = (filters) => {
+                let matched = false;
+                chips.forEach((chip) => {
+                    const chipMin = parseInputNumber(chip.dataset.priceMin);
+                    const chipMax = parseInputNumber(chip.dataset.priceMax);
+                    const isMatch =
+                        (filters.min !== null || filters.max !== null) &&
+                        chipMin === filters.min &&
+                        chipMax === filters.max;
+                    chip.classList.toggle('active', Boolean(isMatch));
+                    if (isMatch) matched = true;
+                });
+                if (!matched && filters.min === null && filters.max === null) {
+                    chips.forEach((chip) => chip.classList.remove('active'));
+                }
+            };
+
+            const renderPagination = (totalPages) => {
+                if (!paginationEl) return;
+                if (!filteredProducts.length || totalPages <= 1) {
+                    paginationEl.innerHTML = '';
+                    return;
+                }
+
+                let html = `
+                    <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                        <a class="page-link" href="#" onclick="showPage(${currentPage - 1}); return false;">Trước</a>
+                    </li>
+                `;
+
+                for (let i = 1; i <= totalPages; i++) {
+                    html += `
+                        <li class="page-item ${i === currentPage ? 'active' : ''}">
+                            <a class="page-link" href="#" onclick="showPage(${i}); return false;">${i}</a>
+                        </li>
+                    `;
+                }
+
+                html += `
+                    <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                        <a class="page-link" href="#" onclick="showPage(${currentPage + 1}); return false;">Sau</a>
+                    </li>
+                `;
+
+                paginationEl.innerHTML = html;
+            };
+
+            const renderPage = () => {
+                const totalPages = Math.ceil(filteredProducts.length / productsPerPage) || 1;
+                products.forEach((p) => setCardVisibility(p.element, false));
+
+                if (!filteredProducts.length) {
+                    if (paginationEl) paginationEl.innerHTML = '';
+                    return;
+                }
+
+                if (currentPage > totalPages) {
+                    currentPage = totalPages;
+                }
+
+                const start = (currentPage - 1) * productsPerPage;
+                const end = start + productsPerPage;
+                filteredProducts.slice(start, end).forEach((p) => setCardVisibility(p.element, true));
+
+                renderPagination(totalPages);
+            };
+
+            const getFilters = () => {
+                const rawSearch = (searchInput?.value || '').trim();
+                const rawCategoryValue = categorySelect?.value || '';
+                const categoryLabel =
+                    rawCategoryValue && categorySelect?.selectedOptions?.length
+                        ? categorySelect.selectedOptions[0].textContent.trim()
+                        : '';
+                return {
+                    search: normalizeText(rawSearch),
+                    rawSearch,
+                    category: rawCategoryValue,
+                    categoryLabel,
+                    min: parseInputNumber(minInput?.value),
+                    max: parseInputNumber(maxInput?.value)
+                };
+            };
+
+            const applyFilters = () => {
+                const filters = getFilters();
+                filteredProducts = products.filter((product) => {
+                    const matchesSearch = !filters.search || product.searchable.includes(filters.search);
+                    const matchesCategory = !filters.category || product.category === filters.category;
+                    const matchesMin = filters.min === null || product.price >= filters.min;
+                    const matchesMax = filters.max === null || product.price <= filters.max;
+                    return matchesSearch && matchesCategory && matchesMin && matchesMax;
+                });
+
+                currentPage = 1;
+                updateSummary(filteredProducts.length);
+                if (noResultsEl) noResultsEl.classList.toggle('d-none', Boolean(filteredProducts.length));
+                updateBadges(filters);
+                syncChipState(filters);
+                renderPage();
+            };
+
+            const goToPage = (page) => {
+                if (!filteredProducts.length) return;
+                const totalPages = Math.ceil(filteredProducts.length / productsPerPage) || 1;
+                if (page < 1) page = 1;
+                if (page > totalPages) page = totalPages;
+                currentPage = page;
+                renderPage();
+            };
+
+            window.showPage = (page) => {
+                goToPage(page);
+                if (container) {
+                    container.scrollIntoView({ behavior: 'smooth' });
+                }
+            };
+
+            searchInput?.addEventListener('input', applyFilters);
+            categorySelect?.addEventListener('change', applyFilters);
+            minInput?.addEventListener('input', () => {
+                chips.forEach((chip) => chip.classList.remove('active'));
+                applyFilters();
+            });
+            maxInput?.addEventListener('input', () => {
+                chips.forEach((chip) => chip.classList.remove('active'));
+                applyFilters();
+            });
+            resetBtn?.addEventListener('click', () => {
+                if (searchInput) searchInput.value = '';
+                if (categorySelect) categorySelect.value = '';
+                if (minInput) minInput.value = '';
+                if (maxInput) maxInput.value = '';
+                chips.forEach((chip) => chip.classList.remove('active'));
+                applyFilters();
+            });
+
+            chips.forEach((chip) => {
+                chip.addEventListener('click', () => {
+                    const isActive = chip.classList.contains('active');
+                    chips.forEach((c) => c.classList.remove('active'));
+                    if (isActive) {
+                        if (minInput) minInput.value = '';
+                        if (maxInput) maxInput.value = '';
+                    } else {
+                        if (minInput) minInput.value = chip.dataset.priceMin || '';
+                        if (maxInput) maxInput.value = chip.dataset.priceMax || '';
+                        chip.classList.add('active');
+                    }
+                    applyFilters();
+                });
+            });
+
+            populateCategories();
+            applyFilters();
+        });
+    </script>
+
     <!-- Script hiển thị người dùng và số lượng giỏ hàng -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -653,7 +1078,7 @@
             updateCartBadgeDisplay(cart);
         });
     </script>
-    <!-- Script xử lý thêm vào giỏ và mua ngay -->
+<!-- Script xử lý thêm vào giỏ và mua ngay -->
 <script>
     // ✅ Thêm vào giỏ & Mua ngay
     document.addEventListener("click", function (e) {
@@ -734,76 +1159,6 @@
             );
             window.location.href = "cart.html";
         }
-    });
-</script>
-<!-- Script phân trang -->
-<script>
-    let currentPage = 1;
-    const productsPerPage = 12;
-
-    function showPage(page) {
-        const productItems = document.querySelectorAll('.product-item');
-        const totalPages = Math.ceil(productItems.length / productsPerPage);
-        
-        // Đảm bảo page nằm trong phạm vi hợp lệ
-        if (page < 1) page = 1;
-        if (page > totalPages) page = totalPages;
-        currentPage = page;
-
-        const start = (currentPage - 1) * productsPerPage;
-        const end = start + productsPerPage;
-
-        // Ẩn/hiện sản phẩm
-        productItems.forEach((item, index) => {
-            if (index >= start && index < end) {
-                item.closest('.col-6').style.display = 'block';
-            } else {
-                item.closest('.col-6').style.display = 'none';
-            }
-        });
-
-        // Render phân trang
-        renderPagination(totalPages);
-        
-        // Scroll lên đầu danh sách sản phẩm
-        document.querySelector('.container-xxl').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    function renderPagination(totalPages) {
-        const paginationContainer = document.getElementById('pagination');
-        if (!paginationContainer) return;
-
-        let html = '';
-
-        // Nút "Trước"
-        html += `
-            <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-                <a class="page-link" href="#" onclick="showPage(${currentPage - 1}); return false;">Trước</a>
-            </li>
-        `;
-
-        // Các số trang
-        for (let i = 1; i <= totalPages; i++) {
-            html += `
-                <li class="page-item ${i === currentPage ? 'active' : ''}">
-                    <a class="page-link" href="#" onclick="showPage(${i}); return false;">${i}</a>
-                </li>
-            `;
-        }
-
-        // Nút "Sau"
-        html += `
-            <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
-                <a class="page-link" href="#" onclick="showPage(${currentPage + 1}); return false;">Sau</a>
-            </li>
-        `;
-
-        paginationContainer.innerHTML = html;
-    }
-
-    // Khởi tạo trang đầu tiên khi load
-    document.addEventListener('DOMContentLoaded', function() {
-        showPage(1);
     });
 </script>
 </body>
