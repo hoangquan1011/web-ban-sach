@@ -140,6 +140,7 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       let state = [];
+      let productData = [];
       const el = {
         search: document.getElementById('searchInput'),
         category: document.getElementById('categoryFilter'),
@@ -163,6 +164,13 @@
           gia: Number(item.dataset.gia) || 0,
           giagoc: Number(item.dataset.giagoc) || 0
         }));
+      };
+
+      const getProducts = () => {
+        if (!productData.length) {
+          productData = readDefaultProductsFromDOM();
+        }
+        return productData;
       };
 
       const formatCurrency = (value) =>
@@ -226,29 +234,6 @@
         return [];
       };
 
-      const readProductsFromStorage = () => {
-        let stored = [];
-        try {
-          const parsed = JSON.parse(localStorage.getItem('products'));
-          if (Array.isArray(parsed)) {
-            stored = parsed;
-          }
-        } catch (error) {
-          console.warn('Không thể đọc dữ liệu sản phẩm:', error);
-        }
-
-        if (stored.length) return stored;
-
-        const fallback = readDefaultProductsFromDOM();
-        if (!fallback.length) return [];
-        try {
-          localStorage.setItem('products', JSON.stringify(fallback));
-        } catch (error) {
-          console.warn('Không thể lưu dữ liệu mặc định:', error);
-        }
-        return fallback;
-      };
-
       const normalizeProducts = (products) =>
         products.map((product, index) => {
           const categories = normalizeCategories(product?.loai);
@@ -265,7 +250,7 @@
         });
 
       const syncState = () => {
-        state = normalizeProducts(readProductsFromStorage());
+        state = normalizeProducts(getProducts());
       };
 
       const populateCategories = () => {
@@ -392,7 +377,7 @@
           return;
         }
 
-        const products = readProductsFromStorage();
+        const products = getProducts();
         const targetIndex = findProductIndex(dataset, products);
         if (targetIndex === -1) {
           alert('Không tìm thấy sản phẩm để cập nhật. Vui lòng tải lại trang.');
@@ -400,7 +385,6 @@
         }
 
         products[targetIndex].gia = value;
-        localStorage.setItem('products', JSON.stringify(products));
         syncState();
         renderTable();
 
@@ -428,7 +412,7 @@
       });
 
       el.downloadBtn?.addEventListener('click', () => {
-        const data = readProductsFromStorage();
+        const data = getProducts();
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -436,13 +420,6 @@
         a.download = 'thuc-store-pricing.json';
         a.click();
         URL.revokeObjectURL(url);
-      });
-
-      window.addEventListener('storage', (event) => {
-        if (event.key === 'products') {
-          syncState();
-          renderTable();
-        }
       });
 
       syncState();

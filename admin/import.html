@@ -15,9 +15,6 @@
     .content-area { background:#fff; border-radius:1rem; box-shadow:0 3px 8px rgba(0,0,0,0.04); padding:1.5rem; min-height:65vh; }
     .card { border:none; box-shadow:0 4px 16px rgba(0,0,0,0.05); border-radius:1rem; }
     .card-header { background-color:#f8fdf9; border-bottom:1px solid #e6f3ea; border-radius:1rem 1rem 0 0 !important; }
-    .badge-status { border-radius:999px; padding:4px 12px; font-size:.85rem; }
-    .badge-draft { background:#fff7e6; color:#ad6800; }
-    .badge-done { background:#e4f5ed; color:#1b4332; }
     .form-muted { font-size:.9rem; color:#6c757d; }
     .table thead { background:#f5f8f6; font-weight:600; color:#2d6a4f; }
     .combo-hint { font-size:.85rem; color:#6c757d; margin-top:4px; }
@@ -70,17 +67,25 @@
                 </div>
                 <div class="col-md-8">
                   <label class="form-label">Sản phẩm (từ danh sách Quản lý sản phẩm)</label>
-                  <select id="productSelect" class="form-select">
-                    <option value="">Đang tải danh sách...</option>
-                  </select>
-                  <div class="combo-hint"></div>
-                </div>
-                <div class="col-md-4">
-                  <label class="form-label">Trạng thái phiếu</label>
-                  <select id="receiptStatus" class="form-select">
-                    <option value="draft">Bản nháp</option>
-                    <option value="done">Hoàn tất</option>
-                  </select>
+                  <input id="productInput" class="form-control" list="productSuggestions" placeholder="Nhập mã hoặc tên sản phẩm...">
+                  <datalist id="productSuggestions">
+                    <option value="KN001 — GOOD ENERGY - NĂNG LƯỢNG TỐT"></option>
+                    <option value="KN002 — NGHỆ THUẬT TƯ DUY LOGIC"></option>
+                    <option value="KN003 — KỸ NĂNG TƯ DUY THỰC CHIẾN"></option>
+                    <option value="TN001 — THIÊN NHIÊN - TẠI SAO CHÚNG TA CẦN THIÊN NHIÊN XANH TƯƠI?"></option>
+                    <option value="TN002 — GỢI MỞ TRÍ TƯỞNG TƯỢNG - NỖI BUỒN CỦA CÂY ÍCH KỶ"></option>
+                    <option value="TN003 — RÈN TRÍ THÔNG MINH - TẬP 3"></option>
+                    <option value="VN001 — RUỒI TRÂU (TÁI BẢN NĂM 2018)"></option>
+                    <option value="VH002 — VĂN HỌC KINH ĐIỂN - LỀ THÓI THỊ THÀNH"></option>
+                    <option value="VH003 — VĂN HỌC KINH ĐIỂN - CHÂN DUNG MỘT CUỘC HÔN NHÂN"></option>
+                    <option value="KT001 — THE LITTLE BOOK - ĐẦU TƯ THEO CHIẾN LƯỢC PHÒNG THỦ"></option>
+                    <option value="KT002 — TƯ DUY ĐẦU TƯ - TIỀN ĐẺ RA TIỀN"></option>
+                    <option value="KT003 — TIỀN ĐẺ RA TIỀN - ĐẦU TƯ TÀI CHÍNH THÔNG MINH"></option>
+                    <option value="GK001 — TUYỂN TẬP BÀI VĂN NGHỊ LUẬN XÃ HỘI CHỌN LỌC"></option>
+                    <option value="GK002 — LUYỆN THI VÀO 10 NGỮ VĂN - CHINH PHỤC BÀI NGHỊ LUẬN"></option>
+                    <option value="GK003 — TAKENOTE NGỮ PHÁP TRỌNG ĐIỂM TIẾNG ANH THCS"></option>
+                  </datalist>
+                  <div class="combo-hint">Gõ mã hoặc tên để hiện gợi ý ngay lập tức.</div>
                 </div>
                 <div class="col-md-3">
                   <label class="form-label">Số lượng</label>
@@ -111,12 +116,6 @@
               <h5 class="mb-0 text-success"><i class="fa-solid fa-clipboard-list me-2"></i>Danh sách phiếu gần đây</h5>
               <div class="d-flex flex-wrap gap-2">
                 <input type="text" class="form-control form-control-sm" placeholder="🔍 Tìm theo mã phiếu...">
-                <select class="form-select form-select-sm">
-                  <option value="">Tất cả trạng thái</option>
-                  <option value="draft">Bản nháp</option>
-                  <option value="done">Hoàn tất</option>
-                </select>
-              
               </div>
             </div>
             <div class="card-body">
@@ -129,7 +128,6 @@
                       <th>Sản phẩm</th>
                       <th>Số lượng</th>
                       <th>Tổng tiền</th>
-                      <th>Trạng thái</th>
                       <th>Ghi chú</th>
                     </tr>
                   </thead>
@@ -158,8 +156,7 @@
         code: document.getElementById('receiptCode'),
         date: document.getElementById('receiptDate'),
         supplier: document.getElementById('supplierInput'),
-        product: document.getElementById('productSelect'),
-        status: document.getElementById('receiptStatus'),
+        product: document.getElementById('productInput'),
         qty: document.getElementById('quantityInput'),
         price: document.getElementById('priceInput'),
         totalPreview: document.getElementById('totalPreview'),
@@ -185,14 +182,12 @@
       const renderReceipts = () => {
         if (!refs.table) return;
         if (!receipts.length) {
-          refs.table.innerHTML = '<tr><td colspan="7" class="text-center text-muted">Chưa có phiếu nào.</td></tr>';
+          refs.table.innerHTML = '<tr><td colspan="6" class="text-center text-muted">Chưa có phiếu nào.</td></tr>';
           return;
         }
 
         refs.table.innerHTML = receipts
           .map((r) => {
-            const badge = r.status === 'done' ? 'badge-done' : 'badge-draft';
-            const label = r.status === 'done' ? 'Hoàn tất' : 'Bản nháp';
             return `
               <tr>
                 <td><strong>${r.code}</strong></td>
@@ -200,7 +195,6 @@
                 <td>${r.product || '—'}</td>
                 <td>${r.qty || 0}</td>
                 <td>${formatCurrency(r.total || 0)}</td>
-                <td><span class="badge-status ${badge}">${label}</span></td>
                 <td>${r.note || '—'}</td>
               </tr>
             `;
@@ -228,7 +222,6 @@
         if (refs.date) refs.date.value = '';
         if (refs.supplier) refs.supplier.value = '';
         if (refs.product) refs.product.value = '';
-        if (refs.status) refs.status.value = 'draft';
         if (refs.qty) refs.qty.value = '';
         if (refs.price) refs.price.value = '';
         if (refs.note) refs.note.value = '';
@@ -243,8 +236,8 @@
       };
 
       const handleSave = () => {
-        const productOption = refs.product?.options?.[refs.product.selectedIndex];
-        if (!productOption || !refs.product.value) {
+        const productValue = refs.product?.value?.trim() || '';
+        if (!productValue) {
           alert('Vui lòng chọn sản phẩm.');
           return;
         }
@@ -255,7 +248,9 @@
           return;
         }
 
-        const productName = (productOption.textContent || '').split('—').pop()?.trim() || productOption.textContent;
+        const productName = productValue.includes('—')
+          ? productValue.split('—').pop()?.trim() || productValue
+          : productValue;
         const newReceipt = {
           code: refs.code?.value || generateCode(),
           date: refs.date?.value || new Date().toISOString().slice(0, 10),
@@ -263,7 +258,6 @@
           product: productName,
           qty,
           total: qty * price,
-          status: refs.status?.value || 'draft',
           note: refs.note?.value?.trim() || ''
         };
 
@@ -274,34 +268,11 @@
         resetForm();
       };
 
-      const populateProducts = () => {
-        const select = refs.product;
-        if (!select) return;
-        const stored = JSON.parse(localStorage.getItem('products') || '[]');
-        const fallback = [
-          { ma: 'VH001', ten: 'Đắc Nhân Tâm' },
-          { ma: 'VH002', ten: 'Nhà Giả Kim' },
-          { ma: 'KT001', ten: 'Tư Duy Đầu Tư' },
-          { ma: 'KT002', ten: 'The Little Book' },
-          { ma: 'TN001', ten: 'Dế Mèn Phiêu Lưu Ký' }
-        ];
-        const source = stored.length ? stored : fallback;
-
-        select.innerHTML = '<option value="">-- Chọn sản phẩm --</option>';
-        source.forEach((product, index) => {
-          const option = document.createElement('option');
-          option.value = product.ma || `p-${index}`;
-          option.textContent = `${product.ma || 'N/A'} — ${product.ten || product.title || 'Sản phẩm không tên'}`;
-          select.appendChild(option);
-        });
-      };
-
       refs.qty?.addEventListener('input', updateTotalPreview);
       refs.price?.addEventListener('input', updateTotalPreview);
       refs.resetBtn?.addEventListener('click', resetForm);
       refs.saveBtn?.addEventListener('click', handleSave);
 
-      populateProducts();
       loadReceipts();
       updateTempCode();
     });
