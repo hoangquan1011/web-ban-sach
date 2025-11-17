@@ -19,7 +19,43 @@
     .sku-pill { font-weight:600; color:#1b4332; }
     .badge-cat { background:#ecfdf5; color:#065f46; border-radius:999px; padding:2px 8px; font-size:.8rem; }
     .text-muted-small { font-size:.9rem; color:#6c757d; }
-
+    
+    /* Thêm style cho tồn kho */
+    .stock-badge {
+      display: inline-block;
+      font-size: 1.1rem;
+      font-weight: 800;
+      padding: 0.4rem 0.9rem;
+      border-radius: 0.5rem;
+      min-width: 50px;
+      text-align: center;
+    }
+    
+    .stock-high {
+      background: #d1f4e0;
+      color: #0f5132;
+      border: 2px solid #52b788;
+    }
+    
+    .stock-medium {
+      background: #fff3cd;
+      color: #997404;
+      border: 2px solid #ffc107;
+    }
+    
+    .stock-low {
+      background: #f8d7da;
+      color: #842029;
+      border: 2px solid #dc3545;
+    }
+    
+    .price-original {
+      text-decoration: line-through;
+      color: #95a5a6;
+      font-size: 0.85rem;
+      display: block;
+      margin-top: 0.2rem;
+    }
   </style>
 </head>
 <body>
@@ -51,9 +87,7 @@
           <div class="d-flex flex-column flex-md-row justify-content-between gap-2 align-items-md-center mb-3">
             <div>
               <h4 class="text-success mb-1">Quản lý Kho - Danh sách sản phẩm</h4>
-      
             </div>
-            
           </div>
 
           <div class="card mb-4">
@@ -67,9 +101,13 @@
                   <label class="form-label">Lọc theo nhóm</label>
                   <select id="categoryFilter" class="form-select">
                     <option value="">-- Tất cả loại --</option>
+                    <option value="Kỹ năng sống">Kỹ năng sống</option>
+                    <option value="Thiếu nhi">Thiếu nhi</option>
+                    <option value="Văn học">Văn học</option>
+                    <option value="Kinh tế">Kinh tế</option>
+                    <option value="Giáo khoa">Giáo khoa</option>
                   </select>
                 </div>
-               
               </div>
             </div>
           </div>
@@ -77,7 +115,7 @@
           <div class="card">
             <div class="card-header d-flex justify-content-between flex-wrap gap-2 align-items-center">
               <h5 class="mb-0 text-success"><i class="fa-solid fa-boxes-stacked me-2"></i>Danh sách tồn kho</h5>
-              <span id="listSummary" class="text-muted-small">0 sản phẩm</span>
+              <span class="text-muted-small">15 sản phẩm</span>
             </div>
             <div class="card-body">
               <div class="table-responsive">
@@ -92,9 +130,185 @@
                       <th style="min-width: 160px;">Ghi chú</th>
                     </tr>
                   </thead>
-                  <tbody id="stockTable">
+                  <tbody>
                     <tr>
-                      <td colspan="6" class="text-center text-muted">Đang tải dữ liệu...</td>
+                      <td><span class="sku-pill">KN001</span></td>
+                      <td>GOOD ENERGY - NĂNG LƯỢNG TỐT</td>
+                      <td><span class="badge-cat">Kỹ năng sống</span></td>
+                      <td><span class="stock-badge stock-medium">68</span></td>
+                      <td>
+                        85.000đ
+                        <span class="price-original">120.000đ</span>
+                      </td>
+                      <td>First News</td>
+                    </tr>
+                    
+                    <tr>
+                      <td><span class="sku-pill">KN002</span></td>
+                      <td>NGHỆ THUẬT TƯ DUY LOGIC</td>
+                      <td><span class="badge-cat">Kỹ năng sống</span></td>
+                      <td><span class="stock-badge stock-low">42</span></td>
+                      <td>
+                        126.000đ
+                        <span class="price-original">169.000đ</span>
+                      </td>
+                      <td>Thái Hà Books</td>
+                    </tr>
+                    
+                    <tr>
+                      <td><span class="sku-pill">KN003</span></td>
+                      <td>KỸ NĂNG TƯ DUY THỰC CHIẾN</td>
+                      <td><span class="badge-cat">Kỹ năng sống</span></td>
+                      <td><span class="stock-badge stock-high">95</span></td>
+                      <td>
+                        126.000đ
+                        <span class="price-original">169.000đ</span>
+                      </td>
+                      <td>Alphabooks</td>
+                    </tr>
+                    
+                    <tr>
+                      <td><span class="sku-pill">TN001</span></td>
+                      <td>THIÊN NHIÊN - TẠI SAO CHÚNG TA CẦN THIÊN NHIÊN XANH TƯƠI?</td>
+                      <td><span class="badge-cat">Thiếu nhi</span></td>
+                      <td><span class="stock-badge stock-high">156</span></td>
+                      <td>
+                        52.000đ
+                        <span class="price-original">70.000đ</span>
+                      </td>
+                      <td>Kim Đồng</td>
+                    </tr>
+                    
+                    <tr>
+                      <td><span class="sku-pill">TN002</span></td>
+                      <td>GỢI MỞ TRÍ TƯỞNG TƯỢNG - NỖI BUỒN CỦA CÂY ÍCH KỶ</td>
+                      <td><span class="badge-cat">Thiếu nhi</span></td>
+                      <td><span class="stock-badge stock-high">128</span></td>
+                      <td>
+                        28.000đ
+                        <span class="price-original">35.000đ</span>
+                      </td>
+                      <td>Dân Trí</td>
+                    </tr>
+                    
+                    <tr>
+                      <td><span class="sku-pill">TN003</span></td>
+                      <td>RÈN TRÍ THÔNG MINH - TẬP 3</td>
+                      <td><span class="badge-cat">Thiếu nhi</span></td>
+                      <td><span class="stock-badge stock-high">183</span></td>
+                      <td>
+                        24.000đ
+                        <span class="price-original">30.000đ</span>
+                      </td>
+                      <td>Kim Đồng</td>
+                    </tr>
+                    
+                    <tr>
+                      <td><span class="sku-pill">VN001</span></td>
+                      <td>RUỒI TRÂU (TÁI BẢN NĂM 2018)</td>
+                      <td><span class="badge-cat">Văn học</span></td>
+                      <td><span class="stock-badge stock-medium">74</span></td>
+                      <td>
+                        96.000đ
+                        <span class="price-original">128.000đ</span>
+                      </td>
+                      <td>NXB Văn Học</td>
+                    </tr>
+                    
+                    <tr>
+                      <td><span class="sku-pill">VH002</span></td>
+                      <td>VĂN HỌC KINH ĐIỂN - LỀ THÓI THỊ THÀNH</td>
+                      <td><span class="badge-cat">Văn học</span></td>
+                      <td><span class="stock-badge stock-low">38</span></td>
+                      <td>
+                        164.000đ
+                        <span class="price-original">205.000đ</span>
+                      </td>
+                      <td>NXB Văn Học</td>
+                    </tr>
+                    
+                    <tr>
+                      <td><span class="sku-pill">VH003</span></td>
+                      <td>VĂN HỌC KINH ĐIỂN - CHÂN DUNG MỘT CUỘC HÔN NHÂN</td>
+                      <td><span class="badge-cat">Văn học</span></td>
+                      <td><span class="stock-badge stock-low">29</span></td>
+                      <td>
+                        215.000đ
+                        <span class="price-original">225.000đ</span>
+                      </td>
+                      <td>NXB Hội Nhà Văn</td>
+                    </tr>
+                    
+                    <tr>
+                      <td><span class="sku-pill">KT001</span></td>
+                      <td>THE LITTLE BOOK - ĐẦU TƯ THEO CHIẾN LƯỢC PHÒNG THỦ</td>
+                      <td><span class="badge-cat">Kinh tế</span></td>
+                      <td><span class="stock-badge stock-medium">56</span></td>
+                      <td>
+                        134.000đ
+                        <span class="price-original">179.500đ</span>
+                      </td>
+                      <td>AZ Việt Nam</td>
+                    </tr>
+                    
+                    <tr>
+                      <td><span class="sku-pill">KT002</span></td>
+                      <td>TƯ DUY ĐẦU TƯ - TIỀN ĐẺ RA TIỀN</td>
+                      <td><span class="badge-cat">Kinh tế</span></td>
+                      <td><span class="stock-badge stock-low">32</span></td>
+                      <td>
+                        203.000đ
+                        <span class="price-original">239.000đ</span>
+                      </td>
+                      <td>1980 Books</td>
+                    </tr>
+                    
+                    <tr>
+                      <td><span class="sku-pill">KT003</span></td>
+                      <td>TIỀN ĐẺ RA TIỀN - ĐẦU TƯ TÀI CHÍNH THÔNG MINH</td>
+                      <td><span class="badge-cat">Kinh tế</span></td>
+                      <td><span class="stock-badge stock-medium">63</span></td>
+                      <td>
+                        128.000đ
+                        <span class="price-original">160.000đ</span>
+                      </td>
+                      <td>NXB Lao Động</td>
+                    </tr>
+                    
+                    <tr>
+                      <td><span class="sku-pill">GK001</span></td>
+                      <td>TUYỂN TẬP BÀI VĂN NGHỊ LUẬN XÃ HỘI CHON LỌC</td>
+                      <td><span class="badge-cat">Giáo khoa</span></td>
+                      <td><span class="stock-badge stock-high">142</span></td>
+                      <td>
+                        90.000đ
+                        <span class="price-original">120.000đ</span>
+                      </td>
+                      <td>NXB Đại Học</td>
+                    </tr>
+                    
+                    <tr>
+                      <td><span class="sku-pill">GK002</span></td>
+                      <td>LUYỆN THI VÀO 10 NGỮ VĂN - CHINH PHỤC BÀI NGHỊ LUẬN</td>
+                      <td><span class="badge-cat">Giáo khoa</span></td>
+                      <td><span class="stock-badge stock-high">118</span></td>
+                      <td>
+                        71.500đ
+                        <span class="price-original">89.000đ</span>
+                      </td>
+                      <td>Hồng Đức</td>
+                    </tr>
+                    
+                    <tr>
+                      <td><span class="sku-pill">GK003</span></td>
+                      <td>TAKENOTE NGỮ PHÁP TRỌNG ĐIỂM TIẾNG ANH TRUNG HỌC CƠ SỞ</td>
+                      <td><span class="badge-cat">Giáo khoa</span></td>
+                      <td><span class="stock-badge stock-high">158</span></td>
+                      <td>
+                        71.200đ
+                        <span class="price-original">89.000đ</span>
+                      </td>
+                      <td>Đinh Tị</td>
                     </tr>
                   </tbody>
                 </table>
@@ -105,109 +319,5 @@
       </div>
     </div>
   </div>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const fallbackProducts = [
-        { ma: 'VH001', ten: 'Đắc Nhân Tâm', loai: ['Văn học'], gia: 86000, stock: 120 },
-        { ma: 'VH002', ten: 'Nhà Giả Kim', loai: ['Văn học'], gia: 72000, stock: 80 },
-        { ma: 'KT001', ten: 'Tư Duy Đầu Tư', loai: ['Kinh tế'], gia: 130000, stock: 60 },
-        { ma: 'KT002', ten: 'The Little Book', loai: ['Kinh tế'], gia: 150000, stock: 40 },
-        { ma: 'TN001', ten: 'Dế Mèn Phiêu Lưu Ký', loai: ['Thiếu nhi'], gia: 55000, stock: 150 }
-      ];
-
-      const refs = {
-        search: document.getElementById('searchInput'),
-        category: document.getElementById('categoryFilter'),
-        source: document.getElementById('sourceFilter'),
-        table: document.getElementById('stockTable'),
-        summary: document.getElementById('listSummary')
-      };
-
-      const getStoredProducts = () => JSON.parse(localStorage.getItem('products') || '[]');
-
-      const getProducts = () => {
-        const stored = getStoredProducts();
-        return refs.source?.value === 'fallback'
-          ? [...fallbackProducts]
-          : refs.source?.value === 'products'
-            ? (stored.length ? stored : [])
-            : (stored.length ? stored : fallbackProducts);
-      };
-
-      const formatCurrency = (val) =>
-        Number(val || 0).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'đ');
-
-      const normalizeCategories = (p) => {
-        if (Array.isArray(p.loai)) return p.loai.filter(Boolean);
-        if (typeof p.loai === 'string' && p.loai.trim()) return p.loai.split(',').map((c) => c.trim()).filter(Boolean);
-        return [];
-      };
-
-      const populateCategoryOptions = (products) => {
-        if (!refs.category) return;
-        const cats = new Set();
-        products.forEach((p) => normalizeCategories(p).forEach((cat) => cats.add(cat)));
-
-        const current = refs.category.value;
-        refs.category.innerHTML = '<option value="">-- Tất cả loại --</option>';
-        Array.from(cats).sort().forEach((cat) => {
-          const option = document.createElement('option');
-          option.value = cat;
-          option.textContent = cat;
-          refs.category.appendChild(option);
-        });
-        if (current && cats.has(current)) refs.category.value = current;
-      };
-
-      const renderTable = () => {
-        if (!refs.table) return;
-        const searchTerm = refs.search?.value?.trim().toLowerCase() || '';
-        const selectedCat = refs.category?.value || '';
-        const products = getProducts();
-
-        populateCategoryOptions(products);
-
-        const filtered = products.filter((p) => {
-          const name = (p.ten || p.title || '').toLowerCase();
-          const sku = (p.ma || p.id || '').toLowerCase();
-          const matchesSearch = !searchTerm || name.includes(searchTerm) || sku.includes(searchTerm);
-          const cats = normalizeCategories(p);
-          const matchesCategory = !selectedCat || cats.includes(selectedCat);
-          return matchesSearch && matchesCategory;
-        });
-
-        if (refs.summary) refs.summary.textContent = `${filtered.length} sản phẩm`;
-
-        if (!filtered.length) {
-          refs.table.innerHTML = '<tr><td colspan="6" class="text-center text-muted">Không tìm thấy sản phẩm phù hợp.</td></tr>';
-          return;
-        }
-
-        refs.table.innerHTML = filtered
-          .map((p) => {
-            const cats = normalizeCategories(p);
-            const badgeCats = cats.length ? cats.map((cat) => `<span class="badge-cat me-1">${cat}</span>`).join('') : '<span class="text-muted">—</span>';
-            return `
-              <tr>
-                <td><span class="sku-pill">${p.ma || p.id || 'N/A'}</span></td>
-                <td>${p.ten || p.title || 'Chưa đặt tên'}</td>
-                <td>${badgeCats}</td>
-                <td>${Number(p.stock || 0)}</td>
-                <td>${formatCurrency(p.gia || p.price || 0)}</td>
-                <td>${p.nhaxuatban || p.supplier || '<span class="text-muted">Không có ghi chú</span>'}</td>
-              </tr>
-            `;
-          })
-          .join('');
-      };
-
-      refs.search?.addEventListener('input', () => renderTable());
-      refs.category?.addEventListener('change', () => renderTable());
-      refs.source?.addEventListener('change', () => renderTable());
-
-      renderTable();
-    });
-  </script>
 </body>
 </html>
