@@ -229,6 +229,23 @@
               <textarea id="summaryAddress" class="form-control" rows="2" placeholder="Nhập địa chỉ nhận hàng"></textarea>
               <div class="form-text" id="addressHint">Nhập địa chỉ nhận hàng cho đơn này.</div>
             </div>
+            <div class="mb-4">
+              <small class="text-muted text-uppercase d-block mb-2">Phương thức thanh toán</small>
+              <div class="form-check border rounded p-3 mb-2 d-flex align-items-start">
+                <input class="form-check-input mt-1 me-3" type="radio" name="paymentMethod" id="paymentCard" value="card" checked>
+                <label class="form-check-label w-100" for="paymentCard">
+                  <span class="fw-semibold"><i class="fa fa-credit-card me-2 text-success"></i>Thanh toán bằng thẻ</span>
+                  <small class="d-block text-muted">Hỗ trợ Visa/MasterCard/ATM nội địa thông qua cổng thanh toán an toàn.</small>
+                </label>
+              </div>
+              <div class="form-check border rounded p-3 d-flex align-items-start">
+                <input class="form-check-input mt-1 me-3" type="radio" name="paymentMethod" id="paymentCash" value="cash">
+                <label class="form-check-label w-100" for="paymentCash">
+                  <span class="fw-semibold"><i class="fa fa-hand-holding-usd me-2 text-success"></i>Tiền mặt (COD)</span>
+                  <small class="d-block text-muted">Thanh toán trực tiếp với nhân viên giao hàng khi nhận sản phẩm.</small>
+                </label>
+              </div>
+            </div>
             <h6 class="mb-3">Tóm tắt đơn hàng</h6>
             <div class="d-flex justify-content-between mb-3">
               <span>Tạm tính:</span>
@@ -317,6 +334,8 @@
     window.addEventListener('load', () => {
       document.getElementById('spinner').classList.remove('show');
     });
+
+    const PAYMENT_METHOD_STORAGE_KEY = 'preferredPaymentMethod';
 
     // ====== QUẢN LÝ TRẠNG THÁI ĐĂNG NHẬP (GIAO DIỆN MỚI) ======
     function checkLoginStatus() {
@@ -408,6 +427,7 @@
       syncFixedCartBaseCount();
       renderCart();
       renderCheckoutInfoCard();
+      initPaymentMethodSelector();
       handleBuyNowRedirect();
       renderOrderHistory();
     });
@@ -545,6 +565,46 @@
       }, { once: true });
     }
 
+    function updatePaymentMethodHint(method, hintEl) {
+      if (!hintEl) return;
+      if (method === 'card') {
+        hintEl.textContent = 'Bạn sẽ được chuyển tới bước nhập thông tin thẻ an toàn sau khi xác nhận đơn.';
+      } else if (method === 'cash') {
+        hintEl.textContent = 'Bạn sẽ thanh toán bằng tiền mặt cho shipper khi nhận hàng (COD).';
+      } else {
+        hintEl.textContent = 'Vui lòng chọn phương thức thanh toán phù hợp.';
+      }
+    }
+
+    function initPaymentMethodSelector() {
+      const radios = document.querySelectorAll('input[name="paymentMethod"]');
+      if (!radios.length) return;
+      const hintEl = document.getElementById('paymentMethodHint');
+      const validValues = Array.from(radios).map(radio => radio.value);
+      let storedMethod = localStorage.getItem(PAYMENT_METHOD_STORAGE_KEY);
+      if (!storedMethod || !validValues.includes(storedMethod)) {
+        storedMethod = validValues[0];
+      }
+
+      radios.forEach((radio, index) => {
+        radio.checked = radio.value === storedMethod || (!storedMethod && index === 0);
+        radio.addEventListener('change', () => {
+          if (radio.checked) {
+            localStorage.setItem(PAYMENT_METHOD_STORAGE_KEY, radio.value);
+            updatePaymentMethodHint(radio.value, hintEl);
+          }
+        });
+      });
+
+      updatePaymentMethodHint(storedMethod, hintEl);
+    }
+
+    function getPaymentMethodLabel(method) {
+      if (method === 'card') return 'Thanh toán bằng thẻ';
+      if (method === 'cash') return 'Tiền mặt (COD)';
+      return 'Chưa cung cấp';
+    }
+
     function renderOrderHistory() {
       const orders = JSON.parse(localStorage.getItem('orders') || '[]');
       const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
@@ -601,6 +661,7 @@
 
         const totalAmount = order.totals?.total || order.total || 0;
         const orderDate = order.date ? new Date(order.date).toLocaleString('vi-VN') : 'Không rõ';
+        const orderPaymentLabel = order.payment?.label || getPaymentMethodLabel(order.payment?.method);
 
         const orderHTML = `
           <div class="bg-white border rounded p-4 mb-3 shadow-sm">
@@ -618,6 +679,7 @@
               <div class="col-md-6">
                 <p class="mb-2"><strong><i class="fa fa-map-marker-alt me-2"></i>Địa chỉ:</strong> ${order.customer?.address || 'Không có'}</p>
                 <p class="mb-2"><strong><i class="fa fa-phone me-2"></i>SĐT:</strong> ${order.customer?.phone || 'Không có'}</p>
+                <p class="mb-2"><strong><i class="fa fa-credit-card me-2"></i>Thanh toán:</strong> ${orderPaymentLabel}</p>
               </div>
             </div>
             <p class="mb-2"><strong><i class="fa fa-box me-2"></i>Sản phẩm:</strong></p>
@@ -715,6 +777,14 @@
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
       }
 
+      const paymentMethodInput = document.querySelector('input[name="paymentMethod"]:checked');
+      if (!paymentMethodInput) {
+        alert('Vui lòng chọn phương thức thanh toán.');
+        return;
+      }
+      const paymentMethod = paymentMethodInput.value;
+      localStorage.setItem(PAYMENT_METHOD_STORAGE_KEY, paymentMethod);
+
       const timestamp = new Date();
       const isoTimestamp = timestamp.toISOString();
 
@@ -728,6 +798,10 @@
           phone: currentUser.phone || '',
           email: currentUser.email || '',
           address: shippingAddress || ''
+        },
+        payment: {
+          method: paymentMethod,
+          label: getPaymentMethodLabel(paymentMethod)
         },
         items: cart.map(item => ({
           name: item.name,
