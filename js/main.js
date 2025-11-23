@@ -91,52 +91,28 @@
         return fixedInfo.count;
     }
 
-    function sanitizeCartItems(cartItems = []) {
-        if (!Array.isArray(cartItems)) return [];
-        let hasChanges = false;
-        const filtered = cartItems.filter((item) => {
-            if (!item) {
-                hasChanges = true;
-                return false;
-            }
-            const id = String(item.id || item.ma || '');
-            const isFixed = item.locked || (id && fixedIds.has(id));
-            if (isFixed) {
-                hasChanges = true;
-                return false;
-            }
-            return true;
-        });
-        if (hasChanges) {
-            try {
-                localStorage.setItem('cart', JSON.stringify(filtered));
-            } catch (error) {
-                console.warn('Không thể đồng bộ giỏ hàng:', error);
-            }
+    function sanitizeCartItems() {
+        try {
+            localStorage.removeItem('cart');
+        } catch (error) {
+            console.warn('Không thể làm trống giỏ hàng động:', error);
         }
-        return filtered;
+        return [];
     }
 
-    function updateCartBadgeDisplay(cartItems = []) {
+    function updateCartBadgeDisplay() {
         const cartCount = document.getElementById('cartCount');
         if (!cartCount) return;
-        const sanitized = sanitizeCartItems(cartItems);
-        const dynamicQty = sanitized.reduce((sum, item) => sum + Number(item?.qty || 0), 0);
-        cartCount.textContent = dynamicQty + getFixedCartBaseQty();
+        sanitizeCartItems();
+        cartCount.textContent = getFixedCartBaseQty();
     }
 
     window.getFixedCartBaseQty = getFixedCartBaseQty;
     window.updateCartBadgeDisplay = updateCartBadgeDisplay;
 
     document.addEventListener('DOMContentLoaded', function () {
-        let cart = [];
-        try {
-            cart = JSON.parse(localStorage.getItem('cart') || '[]');
-            if (!Array.isArray(cart)) cart = [];
-        } catch (error) {
-            cart = [];
-        }
-        updateCartBadgeDisplay(cart);
+        sanitizeCartItems();
+        updateCartBadgeDisplay();
     });
 })();
 

@@ -189,7 +189,7 @@
         </div>
 
         <!-- Khu vực người dùng -->
-        <div id="userSection" class="ms-3">
+        <div id="userSection" class="ms-3" data-base-path="">
             <a href="user/login.html" class="btn btn-outline-primary btn-sm me-2">Đăng nhập</a>
             <a href="user/register.html" class="btn btn-primary btn-sm">Đăng ký</a>
         </div>
@@ -344,6 +344,7 @@
     <script src="lib/counterup/counterup.min.js"></script>
 
     <!-- Template Javascript -->
+    <script src="js/order-history-widget.js"></script>
     <script src="js/main.js"></script>
 
 <script>
@@ -752,68 +753,20 @@ mota: "Tô Hoài - cây đại thụ cuối cùng của lớp tác giả văn xu
         }
     }
 
-    // ✅ Thêm vào giỏ hàng
+    // ✅ Thêm vào giỏ hàng (đã vô hiệu hóa)
     function addToCart() {
-        if (!currentProduct) return;
-
-        const qty = parseInt(document.getElementById('quantity').value);
-
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        const existing = cart.find(item => item.id === currentProduct.id);
-
-        if (existing) {
-            existing.qty += qty;
-        } else {
-            cart.push({
-                id: currentProduct.id,
-                name: currentProduct.ten,
-                price: parseFloat(currentProduct.gia),
-                img: currentProduct.hinh,
-                qty: qty
-            });
-        }
-
-        localStorage.setItem('cart', JSON.stringify(cart));
-        
-        // Hiển thị thông báo
-        showToast(`✅ Đã thêm ${qty} "${currentProduct.ten}" vào giỏ hàng!`);
-        updateCartCount();
+        // Không thực hiện gì
     }
 
     // ✅ Mua ngay
     function buyNow() {
-        if (!currentProduct) return;
-
-        addToCart();
-        sessionStorage.setItem(
-            'redirectFromBuyNow',
-            JSON.stringify({ productId: currentProduct.id, at: Date.now() })
-        );
         window.location.href = 'cart.html';
-    }
-
-    // ✅ Hiển thị toast thông báo
-    function showToast(message) {
-        const toast = document.createElement('div');
-        toast.textContent = message;
-        toast.style.position = 'fixed';
-        toast.style.bottom = '30px';
-        toast.style.right = '30px';
-        toast.style.background = '#28a745';
-        toast.style.color = '#fff';
-        toast.style.padding = '15px 25px';
-        toast.style.borderRadius = '8px';
-        toast.style.fontWeight = '600';
-        toast.style.boxShadow = '0 4px 15px rgba(0,0,0,0.3)';
-        toast.style.zIndex = '9999';
-        document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 3000);
     }
 
     // ✅ Cập nhật số lượng giỏ hàng
     function updateCartCount() {
-        const cart = JSON.parse(localStorage.getItem('cart')) || [];
-        updateCartBadgeDisplay(cart);
+        localStorage.removeItem('cart');
+        updateCartBadgeDisplay();
     }
 
     // ✅ Hiển thị thông tin người dùng

@@ -202,7 +202,7 @@
         </div>
 
         <!-- Khu vực người dùng -->
-        <div id="userSection" class="ms-3">
+        <div id="userSection" class="ms-3" data-base-path="">
             <a href="user/login.html" class="btn btn-outline-primary btn-sm me-2" id="loginBtn">Đăng nhập</a>
             <a href="user/register.html" class="btn btn-primary btn-sm" id="registerBtn">Đăng ký</a>
         </div>
@@ -1120,292 +1120,163 @@
     <script src="lib/lightbox/js/lightbox.min.js"></script>
 
     <!-- Template Javascript -->
+    <script src="js/order-history-widget.js"></script>
     <script src="js/main.js"></script>
 
-    <!-- Script lọc và phân trang sản phẩm -->
+    <!-- Script phân trang + lọc theo danh mục -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const grid = document.getElementById('productGrid');
-            if (!grid) return;
-
-            const container = document.querySelector('.container-xxl');
             const paginationEl = document.getElementById('pagination');
             const summaryEl = document.getElementById('filterSummary');
             const badgesEl = document.getElementById('activeFilterBadges');
             const noResultsEl = document.getElementById('noResultsMessage');
-            const searchInput = document.getElementById('productSearch');
-            const minInput = document.getElementById('priceMin');
-            const maxInput = document.getElementById('priceMax');
-            const resetBtn = document.getElementById('filterReset');
-            const chips = Array.from(document.querySelectorAll('.filter-chip'));
             const categoryDropdownLabel = document.getElementById('categoryDropdownLabel');
             const categoryLinks = document.querySelectorAll('.category-link');
+            const resetBtn = document.getElementById('filterReset');
+
+            if (!grid) return;
+
+            const cards = Array.from(grid.querySelectorAll('[data-product-code]'));
             const productsPerPage = 12;
             let currentPage = 1;
-            let selectedCategory = '';
+            let selectedCategoryName = '';
+            let filteredCards = cards.slice();
 
-            const removeAccents = (str = '') =>
-                str
-                    .toString()
-                    .normalize('NFD')
-                    .replace(/[\u0300-\u036f]/g, '')
-                    .replace(/đ/g, 'd')
-                    .replace(/Đ/g, 'D');
-
-            const normalizeText = (value) => removeAccents((value || '').toLowerCase().trim());
-
-            const parseInputNumber = (value) => {
-                if (value === undefined || value === null) return null;
-                const trimmed = value.toString().trim();
-                if (!trimmed) return null;
-                const num = Number(trimmed);
-                return Number.isFinite(num) ? num : null;
+            const slugToCategory = {
+                giaokho: 'Giáo khoa',
+                kinhte: 'Kinh tế',
+                kynang: 'Kỹ năng sống',
+                thieunhi: 'Thiếu nhi',
+                vanhoc: 'Văn học'
             };
 
-            const formatCurrency = (value) =>
-                Number(value || 0)
-                    .toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })
-                    .replace('₫', 'đ');
+            const initialSlug = new URLSearchParams(window.location.search).get('category');
+            if (initialSlug && initialSlug !== 'all') {
+                selectedCategoryName = slugToCategory[initialSlug] || '';
+            }
 
-            const products = Array.from(grid.querySelectorAll('[data-product-code]')).map((card) => {
-                const name = (card.dataset.productName || '').trim();
-                const code = (card.dataset.productCode || '').trim();
-                return {
-                    element: card,
-                    code,
-                    name,
-                    category: (card.dataset.productCategory || 'Khác').trim(),
-                    price: Number(card.dataset.productPrice || 0),
-                    searchable: normalizeText(`${code} ${name}`)
-                };
-            });
+            if (noResultsEl) {
+                noResultsEl.classList.add('d-none');
+            }
 
-            let filteredProducts = [...products];
+            function syncDropdownLabel() {
+                if (!categoryDropdownLabel) return;
+                categoryDropdownLabel.textContent = selectedCategoryName || 'Danh mục sản phẩm';
+            }
 
-            // Xử lý URL parameters khi tải trang
-            const urlParams = new URLSearchParams(window.location.search);
-            const categoryParam = urlParams.get('category');
-            
-            if (categoryParam && categoryParam !== 'all') {
-                const categoryMap = {
-                    'giaokho': 'Giáo khoa',
-                    'kinhte': 'Kinh tế',
-                    'kynang': 'Kỹ năng sống',
-                    'thieunhi': 'Thiếu nhi',
-                    'vanhoc': 'Văn học'
-                };
-                selectedCategory = categoryMap[categoryParam] || '';
-                if (selectedCategory && categoryDropdownLabel) {
-                    categoryDropdownLabel.textContent = selectedCategory;
+            function updateBadges() {
+                if (!badgesEl) return;
+                if (selectedCategoryName) {
+                    badgesEl.innerHTML = `<span class="badge rounded-pill bg-light text-success border border-success">Danh mục: ${selectedCategoryName}</span>`;
+                } else {
+                    badgesEl.innerHTML = '<span class="text-muted">Chưa chọn danh mục cụ thể.</span>';
                 }
             }
 
-            // Xử lý click vào menu dropdown
-            categoryLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const category = this.dataset.category;
-                    selectedCategory = category;
-                    
-                    if (categoryDropdownLabel) {
-                        categoryDropdownLabel.textContent = category || 'Danh mục sản phẩm';
-                    }
-                    
-                    applyFilters();
-                });
-            });
-
-            const setCardVisibility = (card, visible) => {
-                if (!card) return;
-                card.classList.toggle('d-none', !visible);
-            };
-
-            const updateSummary = (count) => {
+            function updateSummary(firstIndex, lastIndex, total, filteredTotal) {
                 if (!summaryEl) return;
-                const total = products.length;
-                const display = total && count !== total ? `${count}/${total}` : count;
-                summaryEl.textContent = `${display} sản phẩm`;
-            };
+                if (!filteredTotal) {
+                    summaryEl.textContent = '0 sản phẩm';
+                    return;
+                }
+                summaryEl.textContent = `Hiển thị ${firstIndex}-${lastIndex} / ${filteredTotal} sản phẩm`;
+            }
 
-            const updateBadges = (filters) => {
-                if (!badgesEl) return;
-                const badges = [];
-                if (filters.rawSearch) {
-                    badges.push(
-                        `<span class="badge rounded-pill bg-light text-success border border-success">Từ khóa: ${filters.rawSearch}</span>`
-                    );
-                }
-                if (filters.category) {
-                    badges.push(
-                        `<span class="badge rounded-pill bg-light text-success border border-success">Danh mục: ${filters.category}</span>`
-                    );
-                }
-                if (filters.min !== null || filters.max !== null) {
-                    if (filters.min !== null && filters.max !== null) {
-                        badges.push(
-                            `<span class="badge rounded-pill bg-light text-success border border-success">Giá: ${formatCurrency(filters.min)} - ${formatCurrency(filters.max)}</span>`
-                        );
-                    } else if (filters.min !== null) {
-                        badges.push(
-                            `<span class="badge rounded-pill bg-light text-success border border-success">Giá từ ${formatCurrency(filters.min)}</span>`
-                        );
-                    } else if (filters.max !== null) {
-                        badges.push(
-                            `<span class="badge rounded-pill bg-light text-success border border-success">Giá đến ${formatCurrency(filters.max)}</span>`
-                        );
-                    }
-                }
-                badgesEl.innerHTML = badges.length ? badges.join('') : '<span class="text-muted">Chưa áp dụng bộ lọc nào.</span>';
-            };
+            function applyCategoryFilter() {
+                filteredCards = selectedCategoryName
+                    ? cards.filter(card => (card.dataset.productCategory || '').trim() === selectedCategoryName)
+                    : cards.slice();
 
-            const syncChipState = (filters) => {
-                let matched = false;
-                chips.forEach((chip) => {
-                    const chipMin = parseInputNumber(chip.dataset.priceMin);
-                    const chipMax = parseInputNumber(chip.dataset.priceMax);
-                    const isMatch =
-                        (filters.min !== null || filters.max !== null) &&
-                        chipMin === filters.min &&
-                        chipMax === filters.max;
-                    chip.classList.toggle('active', Boolean(isMatch));
-                    if (isMatch) matched = true;
-                });
-                if (!matched && filters.min === null && filters.max === null) {
-                    chips.forEach((chip) => chip.classList.remove('active'));
-                }
-            };
+                currentPage = 1;
+                syncDropdownLabel();
+                updateBadges();
+                renderPage();
+            }
 
-            const renderPagination = (totalPages) => {
+            function renderPagination(totalPages) {
                 if (!paginationEl) return;
-                if (!filteredProducts.length || totalPages <= 1) {
+                if (totalPages <= 1) {
                     paginationEl.innerHTML = '';
                     return;
                 }
 
+                const prevDisabled = currentPage === 1;
+                const nextDisabled = currentPage === totalPages;
                 let html = `
-                    <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
-                        <a class="page-link" href="#" onclick="showPage(${currentPage - 1}); return false;">Trước</a>
+                    <li class="page-item ${prevDisabled ? 'disabled' : ''}">
+                        <a class="page-link" href="#" ${prevDisabled ? 'tabindex="-1" aria-disabled="true"' : `data-page="${currentPage - 1}"`}>Trước</a>
                     </li>
                 `;
 
                 for (let i = 1; i <= totalPages; i++) {
                     html += `
                         <li class="page-item ${i === currentPage ? 'active' : ''}">
-                            <a class="page-link" href="#" onclick="showPage(${i}); return false;">${i}</a>
+                            <a class="page-link" href="#" ${i === currentPage ? 'aria-current="page"' : `data-page="${i}"`}>${i}</a>
                         </li>
                     `;
                 }
 
                 html += `
-                    <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
-                        <a class="page-link" href="#" onclick="showPage(${currentPage + 1}); return false;">Sau</a>
+                    <li class="page-item ${nextDisabled ? 'disabled' : ''}">
+                        <a class="page-link" href="#" ${nextDisabled ? 'tabindex="-1" aria-disabled="true"' : `data-page="${currentPage + 1}"`}>Sau</a>
                     </li>
                 `;
 
                 paginationEl.innerHTML = html;
-            };
+            }
 
-            const renderPage = () => {
-                const totalPages = Math.ceil(filteredProducts.length / productsPerPage) || 1;
-                products.forEach((p) => setCardVisibility(p.element, false));
-
-                if (!filteredProducts.length) {
+            function renderPage() {
+                const filteredTotal = filteredCards.length;
+                if (!filteredTotal) {
+                    cards.forEach(card => card.classList.add('d-none'));
                     if (paginationEl) paginationEl.innerHTML = '';
+                    updateSummary(0, 0, cards.length, 0);
+                    if (noResultsEl) noResultsEl.classList.remove('d-none');
                     return;
                 }
 
-                if (currentPage > totalPages) {
-                    currentPage = totalPages;
-                }
+                if (noResultsEl) noResultsEl.classList.add('d-none');
+                const totalPages = Math.ceil(filteredTotal / productsPerPage);
+                currentPage = Math.min(currentPage, totalPages);
 
-                const start = (currentPage - 1) * productsPerPage;
-                const end = start + productsPerPage;
-                filteredProducts.slice(start, end).forEach((p) => setCardVisibility(p.element, true));
+                const startIdx = (currentPage - 1) * productsPerPage;
+                const endIdx = Math.min(startIdx + productsPerPage, filteredTotal);
 
+                cards.forEach(card => card.classList.add('d-none'));
+                filteredCards.slice(startIdx, endIdx).forEach(card => card.classList.remove('d-none'));
+
+                updateSummary(startIdx + 1, endIdx, cards.length, filteredTotal);
                 renderPagination(totalPages);
-            };
+            }
 
-            const getFilters = () => {
-                const rawSearch = (searchInput?.value || '').trim();
-                return {
-                    search: normalizeText(rawSearch),
-                    rawSearch,
-                    category: selectedCategory,
-                    min: parseInputNumber(minInput?.value),
-                    max: parseInputNumber(maxInput?.value)
-                };
-            };
-
-            const applyFilters = () => {
-                const filters = getFilters();
-                filteredProducts = products.filter((product) => {
-                    const matchesSearch = !filters.search || product.searchable.includes(filters.search);
-                    const matchesCategory = !filters.category || product.category === filters.category;
-                    const matchesMin = filters.min === null || product.price >= filters.min;
-                    const matchesMax = filters.max === null || product.price <= filters.max;
-                    return matchesSearch && matchesCategory && matchesMin && matchesMax;
+            if (paginationEl) {
+                paginationEl.addEventListener('click', (event) => {
+                    const link = event.target.closest('a[data-page]');
+                    if (!link) return;
+                    event.preventDefault();
+                    const page = Number(link.dataset.page);
+                    if (!Number.isFinite(page) || page === currentPage) return;
+                    currentPage = Math.max(1, page);
+                    renderPage();
+                    grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 });
+            }
 
-                currentPage = 1;
-                updateSummary(filteredProducts.length);
-                if (noResultsEl) noResultsEl.classList.toggle('d-none', Boolean(filteredProducts.length));
-                updateBadges(filters);
-                syncChipState(filters);
-                renderPage();
-            };
-
-            const goToPage = (page) => {
-                if (!filteredProducts.length) return;
-                const totalPages = Math.ceil(filteredProducts.length / productsPerPage) || 1;
-                if (page < 1) page = 1;
-                if (page > totalPages) page = totalPages;
-                currentPage = page;
-                renderPage();
-            };
-
-            window.showPage = (page) => {
-                goToPage(page);
-                if (container) {
-                    container.scrollIntoView({ behavior: 'smooth' });
-                }
-            };
-
-            searchInput?.addEventListener('input', applyFilters);
-            minInput?.addEventListener('input', () => {
-                chips.forEach((chip) => chip.classList.remove('active'));
-                applyFilters();
+            categoryLinks.forEach(link => {
+                link.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    selectedCategoryName = link.dataset.category || '';
+                    applyCategoryFilter();
+                });
             });
-            maxInput?.addEventListener('input', () => {
-                chips.forEach((chip) => chip.classList.remove('active'));
-                applyFilters();
-            });
+
             resetBtn?.addEventListener('click', () => {
-                if (searchInput) searchInput.value = '';
-                selectedCategory = '';
-                if (categoryDropdownLabel) categoryDropdownLabel.textContent = 'Danh mục sản phẩm';
-                if (minInput) minInput.value = '';
-                if (maxInput) maxInput.value = '';
-                chips.forEach((chip) => chip.classList.remove('active'));
-                applyFilters();
+                selectedCategoryName = '';
+                applyCategoryFilter();
             });
 
-            chips.forEach((chip) => {
-                chip.addEventListener('click', () => {
-                    const isActive = chip.classList.contains('active');
-                    chips.forEach((c) => c.classList.remove('active'));
-                    if (isActive) {
-                        if (minInput) minInput.value = '';
-                        if (maxInput) maxInput.value = '';
-                    } else {
-                        if (minInput) minInput.value = chip.dataset.priceMin || '';
-                        if (maxInput) maxInput.value = chip.dataset.priceMax || '';
-                        chip.classList.add('active');
-                    }
-                    applyFilters();
-                });
-            });
-
-            applyFilters();
+            applyCategoryFilter();
         });
     </script>
 
@@ -1435,98 +1306,9 @@
                 }
             }
 
-            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-            updateCartBadgeDisplay(cart);
+            localStorage.removeItem('cart');
+            updateCartBadgeDisplay();
         });
     </script>
-<!-- Script xử lý thêm vào giỏ và mua ngay -->
-<script>
-    // ✅ Thêm vào giỏ & Mua ngay
-    document.addEventListener("click", function (e) {
-        const btn = e.target.closest("button");
-        if (!btn) return;
-
-        // Lấy mã sản phẩm từ link gần nhất
-        const productCard = btn.closest('.product-item');
-        if (!productCard) return;
-
-        const productLink = productCard.querySelector('a[href^="chitiet.html?ma="]');
-        if (!productLink) return;
-
-        const productCode = new URLSearchParams(productLink.href.split('?')[1]).get('ma');
-        if (!productCode) return;
-
-        // Danh sách sản phẩm
-        const allProducts = {
-            "KN001": { id: "KN001", ten: "GOOD ENERGY - NĂNG LƯỢNG TỐT", gia: 85000, hinh: "img/38.jpg" },
-            "KN002": { id: "KN002", ten: "NGHỆ THUẬT TƯ DUY LOGIC", gia: 126000, hinh: "img/33.jpg" },
-            "KN003": { id: "KN003", ten: "KỸ NĂNG TƯ DUY THỰC CHIẾN", gia: 126000, hinh: "img/34.jpg" },
-            "TN001": { id: "TN001", ten: "THIÊN NHIÊN - TẠI SAO CHÚNG TA CẦN THIÊN NHIÊN XANH TƯƠI?", gia: 52000, hinh: "img/23.jpg" },
-            "TN002": { id: "TN002", ten: "GỢI MỞ TRÍ TƯỞNG TƯỢNG - NỖI BUỒN CỦA CÂY ÍCH KỶ", gia: 28000, hinh: "img/24.jpg" },
-            "TN003": { id: "TN003", ten: "RÈN TRÍ THÔNG MINH - TẬP 3", gia: 24000, hinh: "img/25.jpg" },
-            "VN001": { id: "VN001", ten: "RUỒI TRÂU (TÁI BẢN NĂM 2018)", gia: 96000, hinh: "img/26.jpg" },
-            "VH002": { id: "VH002", ten: "VĂN HỌC KINH ĐIỂN - LỀ THÓI THỊ THÀNH", gia: 164000, hinh: "img/27.jpg" },
-            "VH003": { id: "VH003", ten: "VĂN HỌC KINH ĐIỂN - CHÂN DUNG MỘT CUỘC HÔN NHÂN", gia: 215000, hinh: "img/28.jpg" },
-            "KT001": { id: "KT001", ten: "THE LITTLE BOOK - ĐẦU TƯ THEO CHIẾN LƯỢC PHÒNG THỦ", gia: 134000, hinh: "img/29.jpg" },
-            "KT002": { id: "KT002", ten: "TƯ DUY ĐẦU TƯ - TIỀN ĐẺ RA TIỀN", gia: 203000, hinh: "img/30.jpg" },
-            "KT003": { id: "KT003", ten: "TIỀN ĐẺ RA TIỀN - ĐẦU TƯ TÀI CHÍNH THÔNG MINH", gia: 128000, hinh: "img/31.jpg" },
-            "GK001": { id: "GK001", ten: "TUYỂN TẬP BÀI VĂN NGHỊ LUẬN XÃ HỘI CHON LỌC", gia: 90000, hinh: "img/35.jpg" },
-            "GK002": { id: "GK002", ten: "LUYỆN THI VÀO 10 NGỮ VĂN - CHINH PHỤC BÀI NGHỊ LUẬN", gia: 71500, hinh: "img/36.jpg" },
-            "GK003": { id: "GK003", ten: "TAKENOTE NGỮ PHÁP TRỌNG ĐIỂM TIẾNG ANH TRUNG HỌC CƠ SỞ", gia: 71200, hinh: "img/37.jpg" },
-            "GK004": { id: "GK004", ten: "BÀI TẬP NÂNG CAO TOÁN HỌC LỚP 9", gia: 85000, hinh: "img/1.jpg" },
-            "GK005": { id: "GK005", ten: "TỔNG ÔN VẬT LÝ THPT - LÝ THUYẾT VÀ BÀI TẬP", gia: 95000, hinh: "img/2.jpg" },
-            "GK006": { id: "GK006", ten: "HÓA HỌC PHỔ THÔNG - BÀI TẬP TRẮC NGHIỆM NÂNG CAO", gia: 78000, hinh: "img/3.jpg" },
-            "GK007": { id: "GK007", ten: "LUYỆN ĐỌC HIỂU TIẾNG ANH - READING COMPREHENSION", gia: 82000, hinh: "img/4.jpg" },
-            "GK008": { id: "GK008", ten: "BỒI DƯỠNG HỌC SINH GIỎI SINH HỌC LỚP 10-11-12", gia: 105000, hinh: "img/5.jpg" },
-            "GK009": { id: "GK009", ten: "LỊCH SỬ VIỆT NAM - TRỌNG TÂM ÔN THI THPT QUỐC GIA", gia: 88000, hinh: "img/6.jpg" }
-        };
-
-        const product = allProducts[productCode];
-        if (!product) return;
-
-        let cart = JSON.parse(localStorage.getItem("cart")) || [];
-        const existing = cart.find(item => item.id === product.id);
-
-        if (existing) {
-            existing.qty += 1;
-        } else {
-            cart.push({
-                id: product.id,
-                name: product.ten,
-                price: product.gia,
-                img: product.hinh,
-                qty: 1
-            });
-        }
-
-        localStorage.setItem("cart", JSON.stringify(cart));
-
-        const toast = document.createElement("div");
-        toast.textContent = `🛒 Đã thêm "${product.ten}" vào giỏ hàng!`;
-        toast.style.position = "fixed";
-        toast.style.bottom = "30px";
-        toast.style.right = "30px";
-        toast.style.background = "#28a745";
-        toast.style.color = "#fff";
-        toast.style.padding = "12px 18px";
-        toast.style.borderRadius = "8px";
-        toast.style.fontWeight = "500";
-        toast.style.boxShadow = "0 4px 10px rgba(0,0,0,0.2)";
-        toast.style.zIndex = "9999";
-        document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 2000);
-
-        updateCartBadgeDisplay(cart);
-
-        // Nếu là nút "Mua ngay" thì chuyển sang trang giỏ hàng
-        if (btn.textContent.includes("Mua ngay")) {
-            sessionStorage.setItem(
-                "redirectFromBuyNow",
-                JSON.stringify({ productId: product.id, at: Date.now() })
-            );
-            window.location.href = "cart.html";
-        }
-    });
-</script>
 </body>
 </html>

@@ -96,8 +96,37 @@
                   <input type="number" id="priceInput" class="form-control" min="0" step="1000" placeholder="VD: 85.000">
                 </div>
                 <div class="col-md-6">
-                  <label class="form-label">Tổng tiền dự kiến</label>
-                  <input type="text" id="totalPreview" class="form-control" placeholder="Tự tính theo SL * Giá" disabled>
+                  <label class="form-label">Tổng tiền dự kiến (tất cả sách đã thêm)</label>
+                  <input type="text" id="totalPreview" class="form-control" placeholder="Thêm sản phẩm để tự tính" disabled>
+                  <div class="combo-hint">Mỗi lần thêm sách vào danh sách tạm, hệ thống sẽ tự cộng tổng.</div>
+                </div>
+                <div class="col-12">
+                  <div class="d-flex flex-wrap align-items-center gap-2 mt-2">
+                    <button type="button" id="addItemBtn" class="btn btn-outline-success">
+                      <i class="fa fa-plus me-1"></i>Thêm vào danh sách tạm
+                    </button>
+                  
+                  </div>
+                  <div class="table-responsive mt-3">
+                    <table class="table table-sm table-hover align-middle mb-0">
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>Mã</th>
+                          <th>Sản phẩm</th>
+                          <th class="text-center">SL</th>
+                          <th class="text-end">Giá nhập</th>
+                          <th class="text-end">Thành tiền</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody id="currentItemsTable">
+                        <tr>
+                          <td colspan="7" class="text-center text-muted">Chưa có sản phẩm nào trong phiếu.</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
                 <div class="col-md-12">
                   <label class="form-label">Ghi chú</label>
@@ -147,9 +176,36 @@
     document.addEventListener('DOMContentLoaded', () => {
       const STORAGE_KEY = 'importDemoReceipts';
       const DEFAULT_RECEIPTS = [
-        { code: 'PN-2025-001', date: '2025-01-08', product: 'Đắc Nhân Tâm', qty: 120, total: 10800000, status: 'done', note: 'Bổ sung đợt Tết' },
-        { code: 'PN-2025-002', date: '2025-01-11', product: 'Nhà Giả Kim', qty: 80, total: 7200000, status: 'draft', note: 'Chờ xác nhận giá' },
-        { code: 'PN-2025-003', date: '2025-01-15', product: 'Tư Duy Đầu Tư', qty: 150, total: 19500000, status: 'done', note: 'Đã nhập kho chính' }
+        {
+          code: 'PN-2025-001',
+          date: '2025-01-08',
+          supplier: 'NXB Kim Đồng',
+          note: 'Bổ sung đợt Tết',
+          items: [
+            { code: 'TN001', name: 'THIÊN NHIÊN - TẠI SAO CHÚNG TA CẦN THIÊN NHIÊN XANH TƯƠI?', qty: 60, price: 52000 },
+            { code: 'TN002', name: 'GỢI MỞ TRÍ TƯỞNG TƯỢNG - NỖI BUỒN CỦA CÂY ÍCH KỶ', qty: 40, price: 28000 },
+            { code: 'TN003', name: 'RÈN TRÍ THÔNG MINH - TẬP 3', qty: 20, price: 24000 }
+          ]
+        },
+        {
+          code: 'PN-2025-002',
+          date: '2025-01-11',
+          supplier: 'NXB Trẻ',
+          note: 'Chờ xác nhận giá',
+          items: [
+            { code: 'KN001', name: 'GOOD ENERGY - NĂNG LƯỢNG TỐT', qty: 50, price: 85000 },
+            { code: 'KN002', name: 'NGHỆ THUẬT TƯ DUY LOGIC', qty: 30, price: 126000 }
+          ]
+        },
+        {
+          code: 'PN-2025-003',
+          date: '2025-01-15',
+          supplier: 'NXB Thế Giới',
+          note: 'Đã nhập kho chính',
+          items: [
+            { code: 'KT001', name: 'THE LITTLE BOOK - ĐẦU TƯ THEO CHIẾN LƯỢC PHÒNG THỦ', qty: 100, price: 120000 }
+          ]
+        }
       ];
 
       const refs = {
@@ -163,10 +219,13 @@
         note: document.getElementById('noteInput'),
         table: document.getElementById('receiptTable'),
         resetBtn: document.getElementById('resetFormBtn'),
-        saveBtn: document.getElementById('saveReceiptBtn')
+        saveBtn: document.getElementById('saveReceiptBtn'),
+        addItemBtn: document.getElementById('addItemBtn'),
+        itemsTable: document.getElementById('currentItemsTable')
       };
 
       let receipts = [];
+      let currentItems = [];
 
       const formatCurrency = (value) =>
         Number(value || 0).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'đ');
@@ -175,6 +234,50 @@
         if (!value) return '—';
         const dt = new Date(value);
         return Number.isNaN(dt.getTime()) ? value : dt.toLocaleDateString('vi-VN');
+      };
+
+      const getItemTotal = (item = {}) => {
+        const qty = Number(item.qty || 0);
+        const price = Number(item.price || 0);
+        return qty > 0 && price >= 0 ? qty * price : 0;
+      };
+
+      const getReceiptItems = (receipt = {}) =>
+        Array.isArray(receipt.items) && receipt.items.length ? receipt.items : [];
+
+      const calculateReceiptTotal = (receipt = {}) => {
+        const items = getReceiptItems(receipt);
+        if (items.length) {
+          return items.reduce((sum, item) => sum + getItemTotal(item), 0);
+        }
+        return Number(receipt.total) || 0;
+      };
+
+      const calculateReceiptQty = (receipt = {}) => {
+        const items = getReceiptItems(receipt);
+        if (items.length) {
+          return items.reduce((sum, item) => sum + Number(item.qty || 0), 0);
+        }
+        return Number(receipt.qty) || 0;
+      };
+
+      const buildReceiptProductDisplay = (receipt = {}) => {
+        const items = getReceiptItems(receipt);
+        if (!items.length) {
+          return receipt.product || '—';
+        }
+        const preview = items
+          .slice(0, 2)
+          .map(
+            (item) =>
+              `<div>${item.name || item.code || 'Sản phẩm'} <small class="text-muted">(x${item.qty || 0})</small></div>`
+          )
+          .join('');
+        const remain =
+          items.length > 2
+            ? `<div class="text-muted small">+ ${items.length - 2} sản phẩm khác</div>`
+            : '';
+        return preview + remain;
       };
 
       const persist = () => localStorage.setItem(STORAGE_KEY, JSON.stringify(receipts));
@@ -188,13 +291,15 @@
 
         refs.table.innerHTML = receipts
           .map((r) => {
+            const totalQty = calculateReceiptQty(r);
+            const totalAmount = calculateReceiptTotal(r);
             return `
               <tr>
                 <td><strong>${r.code}</strong></td>
                 <td>${formatDate(r.date)}</td>
-                <td>${r.product || '—'}</td>
-                <td>${r.qty || 0}</td>
-                <td>${formatCurrency(r.total || 0)}</td>
+                <td>${buildReceiptProductDisplay(r)}</td>
+                <td>${totalQty}</td>
+                <td>${formatCurrency(totalAmount)}</td>
                 <td>${r.note || '—'}</td>
               </tr>
             `;
@@ -217,6 +322,54 @@
         if (refs.code) refs.code.value = generateCode();
       };
 
+      const parseProductInput = (value = '') => {
+        const parts = value.split('—');
+        if (parts.length >= 2) {
+          return {
+            code: parts[0]?.trim() || '',
+            name: parts.slice(1).join('—').trim()
+          };
+        }
+        return { code: '', name: value.trim() };
+      };
+
+      const updateTotalPreview = () => {
+        if (!refs.totalPreview) return;
+        const total = currentItems.reduce((sum, item) => sum + getItemTotal(item), 0);
+        refs.totalPreview.value = total ? formatCurrency(total) : '';
+      };
+
+      const renderCurrentItems = () => {
+        if (!refs.itemsTable) return;
+        if (!currentItems.length) {
+          refs.itemsTable.innerHTML =
+            '<tr><td colspan="7" class="text-center text-muted">Chưa có sản phẩm nào trong phiếu.</td></tr>';
+          updateTotalPreview();
+          return;
+        }
+
+        refs.itemsTable.innerHTML = currentItems
+          .map((item, index) => {
+            return `
+              <tr>
+                <td>${index + 1}</td>
+                <td>${item.code || '—'}</td>
+                <td>${item.name || 'Sản phẩm'}</td>
+                <td class="text-center">${item.qty}</td>
+                <td class="text-end">${formatCurrency(item.price)}</td>
+                <td class="text-end">${formatCurrency(getItemTotal(item))}</td>
+                <td class="text-end">
+                  <button type="button" class="btn btn-link text-danger p-0" data-remove-index="${index}" title="Xóa dòng này">
+                    <i class="fa fa-times"></i>
+                  </button>
+                </td>
+              </tr>
+            `;
+          })
+          .join('');
+        updateTotalPreview();
+      };
+
       const resetForm = () => {
         updateTempCode();
         if (refs.date) refs.date.value = '';
@@ -225,56 +378,92 @@
         if (refs.qty) refs.qty.value = '';
         if (refs.price) refs.price.value = '';
         if (refs.note) refs.note.value = '';
-        if (refs.totalPreview) refs.totalPreview.value = '';
+        currentItems = [];
+        renderCurrentItems();
       };
 
-      const updateTotalPreview = () => {
-        if (!refs.totalPreview) return;
-        const qty = Number(refs.qty?.value || 0);
-        const price = Number(refs.price?.value || 0);
-        refs.totalPreview.value = qty > 0 && price >= 0 ? formatCurrency(qty * price) : '';
-      };
-
-      const handleSave = () => {
-        const productValue = refs.product?.value?.trim() || '';
-        if (!productValue) {
-          alert('Vui lòng chọn sản phẩm.');
+      const handleAddItem = () => {
+        const rawValue = refs.product?.value?.trim() || '';
+        if (!rawValue) {
+          alert('Vui lòng nhập mã hoặc tên sách trước.');
           return;
         }
         const qty = Number(refs.qty?.value);
         const price = Number(refs.price?.value);
-        if (!qty || qty <= 0 || !price || price < 0) {
-          alert('Vui lòng nhập số lượng và giá hợp lệ.');
+        if (!qty || qty <= 0) {
+          alert('Số lượng phải lớn hơn 0.');
+          return;
+        }
+        if (price === null || Number.isNaN(price) || price < 0) {
+          alert('Giá nhập không hợp lệ.');
           return;
         }
 
-        const productName = productValue.includes('—')
-          ? productValue.split('—').pop()?.trim() || productValue
-          : productValue;
+        const parsed = parseProductInput(rawValue);
+        currentItems.push({
+          code: parsed.code,
+          name: parsed.name || parsed.code || rawValue,
+          qty,
+          price
+        });
+        renderCurrentItems();
+        if (refs.product) refs.product.value = '';
+        if (refs.qty) refs.qty.value = '';
+        if (refs.price) refs.price.value = '';
+      };
+
+      const handleSave = () => {
+        if (!currentItems.length) {
+          alert('Vui lòng thêm ít nhất một loại sách vào danh sách tạm.');
+          return;
+        }
+
+        const itemsPayload = currentItems.map((item) => ({
+          code: item.code,
+          name: item.name,
+          qty: Number(item.qty) || 0,
+          price: Number(item.price) || 0,
+          total: getItemTotal(item)
+        }));
+        const totalQty = itemsPayload.reduce((sum, item) => sum + (item.qty || 0), 0);
+        const totalAmount = itemsPayload.reduce((sum, item) => sum + (item.total || 0), 0);
+        const summaryName =
+          itemsPayload.length === 1
+            ? `${itemsPayload[0].name} (x${itemsPayload[0].qty})`
+            : `${itemsPayload[0].name} + ${itemsPayload.length - 1} SP khác`;
+
         const newReceipt = {
           code: refs.code?.value || generateCode(),
           date: refs.date?.value || new Date().toISOString().slice(0, 10),
           supplier: refs.supplier?.value?.trim() || '',
-          product: productName,
-          qty,
-          total: qty * price,
+          product: summaryName,
+          items: itemsPayload,
+          qty: totalQty,
+          total: totalAmount,
           note: refs.note?.value?.trim() || ''
         };
 
         receipts.unshift(newReceipt);
         persist();
         renderReceipts();
-        alert('Đã lưu phiếu (demo). Phiếu này chỉ hiển thị trên danh sách bên dưới.');
+        alert('Đã lưu phiếu (demo). Phiếu này chỉ hiển thị trong danh sách phía dưới.');
         resetForm();
       };
 
-      refs.qty?.addEventListener('input', updateTotalPreview);
-      refs.price?.addEventListener('input', updateTotalPreview);
       refs.resetBtn?.addEventListener('click', resetForm);
       refs.saveBtn?.addEventListener('click', handleSave);
+      refs.addItemBtn?.addEventListener('click', handleAddItem);
+      refs.itemsTable?.addEventListener('click', (event) => {
+        const btn = event.target.closest('[data-remove-index]');
+        if (!btn) return;
+        const index = Number(btn.dataset.removeIndex);
+        if (Number.isNaN(index)) return;
+        currentItems.splice(index, 1);
+        renderCurrentItems();
+      });
 
       loadReceipts();
-      updateTempCode();
+      resetForm();
     });
   </script>
 </body>

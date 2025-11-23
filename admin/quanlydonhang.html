@@ -98,6 +98,14 @@
                 </select>
               </div>
               <div class="col-md-2">
+                <label class="form-label fw-semibold">Từ ngày</label>
+                <input type="date" id="filterDateFrom" class="form-control">
+              </div>
+              <div class="col-md-2">
+                <label class="form-label fw-semibold">Đến ngày</label>
+                <input type="date" id="filterDateTo" class="form-control">
+              </div>
+              <div class="col-md-2">
                 <button id="btnFilter" class="btn btn-success w-100">
                   <i class="fa fa-filter me-2"></i>Lọc
                 </button>
@@ -200,6 +208,18 @@
     return date.toLocaleString('vi-VN');
   };
 
+  const getDateBoundary = (value, endOfDay = false) => {
+    if (!value) return null;
+    const date = new Date(value);
+    if (isNaN(date)) return null;
+    if (endOfDay) {
+      date.setHours(23, 59, 59, 999);
+    } else {
+      date.setHours(0, 0, 0, 0);
+    }
+    return date.getTime();
+  };
+
   // Convert status sang badge
   const getStatusBadge = (status) => {
     const statusMap = {
@@ -238,6 +258,8 @@
     const searchOrderId = document.getElementById('searchOrderId').value.toLowerCase().trim();
     const searchUsername = document.getElementById('searchUsername').value.toLowerCase().trim();
     const filterStatus = document.getElementById('filterStatus').value;
+    const fromTimestamp = getDateBoundary(document.getElementById('filterDateFrom').value);
+    const toTimestamp = getDateBoundary(document.getElementById('filterDateTo').value, true);
 
     filteredOrders = allOrders.filter(order => {
       const matchOrderId = !searchOrderId || (order.id || '').toLowerCase().includes(searchOrderId);
@@ -246,8 +268,11 @@
       const matchUsername = !searchUsername || username.includes(searchUsername);
       
       const matchStatus = !filterStatus || order.status === filterStatus;
+      const orderTime = order.date ? new Date(order.date).getTime() : null;
+      const matchDateFrom = !fromTimestamp || (orderTime !== null && orderTime >= fromTimestamp);
+      const matchDateTo = !toTimestamp || (orderTime !== null && orderTime <= toTimestamp);
 
-      return matchOrderId && matchUsername && matchStatus;
+      return matchOrderId && matchUsername && matchStatus && matchDateFrom && matchDateTo;
     });
 
     renderOrders(filteredOrders);
@@ -259,6 +284,8 @@
     document.getElementById('searchOrderId').value = '';
     document.getElementById('searchUsername').value = '';
     document.getElementById('filterStatus').value = '';
+    document.getElementById('filterDateFrom').value = '';
+    document.getElementById('filterDateTo').value = '';
     
     filteredOrders = [...allOrders];
     renderOrders(filteredOrders);

@@ -32,6 +32,7 @@
     .price-card__price { display:flex; flex-direction:column; gap:0.35rem; }
     .price-card__actions { display:flex; gap:0.5rem; align-items:center; }
     .price-card__actions .btn { flex:1; white-space:nowrap; }
+    .price-card__adjust label { font-size:0.75rem; text-transform:uppercase; color:#6c757d; letter-spacing:0.03em; display:block; margin-bottom:0.25rem; }
     .pricing-empty { text-align:center; color:#7a827c; padding:2.5rem 1rem; border:2px dashed #dfe8e2; border-radius:1rem; width:100%; background:#fff; }
     @media (max-width: 576px) {
       .price-card__actions { flex-direction:column; align-items:stretch; }
@@ -77,24 +78,29 @@
               <div class="row g-3">
                 <div class="col-md-5">
                   <label class="form-label">Tìm kiếm (tên hoặc mã sản phẩm)</label>
-                  <input id="searchInput" class="form-control" placeholder="Ví dụ: VH001 / Đắc Nhân Tâm">
+                  <input class="form-control" placeholder="Ví dụ: VH001 / Đắc Nhân Tâm">
                 </div>
                 <div class="col-md-4">
                   <label class="form-label">Lọc theo nhóm</label>
                   <select id="categoryFilter" class="form-select">
                     <option value="">-- Tất cả loại --</option>
+                    <option value="Giáo khoa">Giáo khoa</option>
+                    <option value="Kinh tế">Kinh tế</option>
+                    <option value="Kỹ năng sống">Kỹ năng sống</option>
+                    <option value="Thiếu nhi">Thiếu nhi</option>
+                    <option value="Văn học">Văn học</option>
                   </select>
                 </div>
                 <div class="col-md-3">
                   <label class="form-label">Khoảng giá bán</label>
                   <div class="d-flex gap-2">
-                    <input id="minPrice" type="number" class="form-control" placeholder="Từ">
-                    <input id="maxPrice" type="number" class="form-control" placeholder="Đến">
+                    <input type="number" class="form-control" placeholder="Từ">
+                    <input type="number" class="form-control" placeholder="Đến">
                   </div>
                 </div>
               </div>
               <div class="text-end mt-3">
-                <button id="btnReset" class="btn btn-outline-secondary btn-sm">Đặt lại bộ lọc</button>
+                <button class="btn btn-outline-secondary btn-sm">Đặt lại bộ lọc</button>
               </div>
             </div>
           </div>
@@ -102,7 +108,10 @@
           <div class="card">
             <div class="card-header d-flex flex-wrap gap-2 justify-content-between align-items-center">
               <h5 class="mb-0 text-success"><i class="fa-solid fa-tags me-2"></i>Danh sách sản phẩm</h5>
-              <span id="tableSummary" class="text-muted">0 sản phẩm</span>
+              <div class="d-flex align-items-center gap-2">
+                <span id="tableSummary" class="text-muted">0 sản phẩm</span>
+                <button id="btnDownload" class="btn btn-outline-primary btn-sm"><i class="fa-solid fa-file-arrow-down me-1"></i>Tải danh sách</button>
+              </div>
             </div>
             <div class="card-body">
               <div id="pricingTable" class="pricing-grid">
@@ -142,13 +151,8 @@
       let state = [];
       let productData = [];
       const el = {
-        search: document.getElementById('searchInput'),
-        category: document.getElementById('categoryFilter'),
-        minPrice: document.getElementById('minPrice'),
-        maxPrice: document.getElementById('maxPrice'),
         table: document.getElementById('pricingTable'),
         summary: document.getElementById('tableSummary'),
-        resetBtn: document.getElementById('btnReset'),
         downloadBtn: document.getElementById('btnDownload'),
         feedback: document.getElementById('feedback'),
         feedbackText: document.getElementById('feedbackText')
@@ -181,6 +185,19 @@
         return Math.round(((price - cost) / cost) * 1000) / 10;
       };
 
+      const clampPercent = (value, min, max) => {
+        if (!Number.isFinite(value)) return null;
+        if (min !== undefined && value < min) return min;
+        if (max !== undefined && value > max) return max;
+        return value;
+      };
+
+      const roundPriceValue = (value) => {
+        const numeric = Number(value);
+        if (!Number.isFinite(numeric)) return '';
+        return Math.max(0, Math.round(numeric));
+      };
+
       const removeAccents = (str = '') =>
         str
           .toString()
@@ -188,8 +205,6 @@
           .replace(/[\u0300-\u036f]/g, '')
           .replace(/đ/g, 'd')
           .replace(/Đ/g, 'D');
-
-      const normalizeText = (value) => removeAccents((value || '').toString().toLowerCase());
 
       const showFeedback = (msg) => {
         if (!el.feedback) return;
@@ -203,12 +218,6 @@
         if (!value) return 0;
         const numeric = Number(value.toString().replace(/[^\d.-]/g, ''));
         return Number.isFinite(numeric) ? numeric : 0;
-      };
-
-      const parseInputNumber = (value) => {
-        if (value === '' || value === null || value === undefined) return null;
-        const parsed = Number(value);
-        return Number.isFinite(parsed) ? parsed : null;
       };
 
       const sanitizeKey = (value) =>
@@ -253,44 +262,30 @@
         state = normalizeProducts(getProducts());
       };
 
-      const populateCategories = () => {
-        if (!el.category) return;
-        const existing = el.category.value;
-        const cats = [...new Set(state.flatMap((p) => p.categories))];
-        el.category.innerHTML = '<option value="">-- Tất cả loại --</option>';
-        cats.forEach((c) => {
-          const option = document.createElement('option');
-          option.value = c;
-          option.textContent = c;
-          el.category.appendChild(option);
-        });
-        if (existing && cats.includes(existing)) el.category.value = existing;
+      const getPriceInputTarget = (inputEl) => {
+        if (!inputEl) return null;
+        const targetId = inputEl.dataset.target;
+        return targetId ? document.getElementById(targetId) : null;
       };
 
-      const getFilters = () => ({
-        search: normalizeText(el.search?.value?.trim() || ''),
-        category: el.category?.value || '',
-        min: parseInputNumber(el.minPrice?.value),
-        max: parseInputNumber(el.maxPrice?.value)
-      });
+      const applyProfitPercent = (inputEl) => {
+        const cost = Number(inputEl?.dataset.cost) || 0;
+        if (!cost) return;
+        if (inputEl.value === '') return;
+        const percent = clampPercent(Number(inputEl.value), -99, 999);
+        if (percent === null) return;
+        inputEl.value = percent;
+        const targetInput = getPriceInputTarget(inputEl);
+        if (!targetInput) return;
+        const computed = cost * (1 + percent / 100);
+        targetInput.value = roundPriceValue(computed);
+      };
 
       const renderTable = () => {
         if (!el.table) return;
-        populateCategories();
-        const filters = getFilters();
-        const rows = state.filter((p) => {
-          const code = normalizeText(p.code);
-          const name = normalizeText(p.name);
-          const matchesSearch = !filters.search || code.includes(filters.search) || name.includes(filters.search);
-          const matchesCategory = !filters.category || p.categories.includes(filters.category);
-          const matchesMin = filters.min === null || p.price >= filters.min;
-          const matchesMax = filters.max === null || p.price <= filters.max;
-          return matchesSearch && matchesCategory && matchesMin && matchesMax;
-        });
-
-        const total = state.length;
-        const summaryCount = total && rows.length !== total ? `${rows.length}/${total}` : rows.length;
-        el.summary.textContent = `${summaryCount} sản phẩm`;
+        const rows = [...state];
+        const total = rows.length;
+        el.summary.textContent = `${total} sản phẩm`;
 
         if (!rows.length) {
           const message = state.length
@@ -305,6 +300,7 @@
             const profit = calcProfitPercent(p.cost, p.price);
             const profitValue = p.price - p.cost;
             const inputId = `price-${p.storageIndex}`;
+            const profitInputValue = Number.isFinite(profit) ? profit : '';
             return `
               <div class="price-card">
                 <div class="price-card__header">
@@ -331,12 +327,13 @@
                   <div class="price-card__actions">
                     <input
                       id="${inputId}"
-                      type="number"
+                      type="text"
                       class="form-control price-input"
                       data-index="${p.storageIndex}"
                       data-key="${p.key}"
                       value="${p.price || ''}"
                       min="0"
+                      readonly
                     >
                     <button
                       class="btn btn-success update-price"
@@ -346,6 +343,17 @@
                     >
                       <i class="fa-solid fa-floppy-disk me-1"></i>Lưu giá
                     </button>
+                  </div>
+                  <div class="price-card__adjust mt-2">
+                    <label>Lợi nhuận (%)</label>
+                    <input
+                      type="number"
+                      class="form-control form-control-sm profit-input"
+                      data-target="${inputId}"
+                      data-cost="${p.cost}"
+                      value="${profitInputValue}"
+                      placeholder="+10"
+                    >
                   </div>
                 </div>
               </div>
@@ -392,22 +400,16 @@
         showFeedback(`Đã cập nhật giá cho ${updated?.name || 'sản phẩm'}.`);
       };
 
-      el.search?.addEventListener('input', renderTable);
-      el.category?.addEventListener('change', renderTable);
-      el.minPrice?.addEventListener('input', renderTable);
-      el.maxPrice?.addEventListener('input', renderTable);
-      el.resetBtn?.addEventListener('click', () => {
-        if (el.search) el.search.value = '';
-        if (el.category) el.category.value = '';
-        if (el.minPrice) el.minPrice.value = '';
-        if (el.maxPrice) el.maxPrice.value = '';
-        renderTable();
-      });
-
       document.addEventListener('click', (e) => {
         if (e.target.closest('.update-price')) {
           const btn = e.target.closest('.update-price');
           handlePriceUpdate(btn.dataset);
+        }
+      });
+
+      document.addEventListener('input', (e) => {
+        if (e.target.matches('.profit-input')) {
+          applyProfitPercent(e.target);
         }
       });
 
