@@ -76,10 +76,14 @@
       border: 1px solid #ced4da;
       display: flex;
       flex-wrap: wrap;
-      gap: 15px;
+      gap: 10px;
+      align-items: center;
     }
 
-    .form-check-inline {
+    .category-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
       margin: 0;
       padding: 8px 12px;
       background: #f8f9fa;
@@ -87,26 +91,129 @@
       transition: all 0.3s;
     }
 
-    .form-check-inline:hover {
+    .category-item:hover {
       background: #e9ecef;
     }
 
-    .form-check-input {
+    .category-item input[type="checkbox"] {
       cursor: pointer;
-      margin-top: 0.2em;
+      margin: 0;
     }
 
-    .form-check-input:checked {
+    .category-item input[type="checkbox"]:checked {
       background-color: #2d6a4f;
       border-color: #2d6a4f;
     }
 
-    .form-check-label {
+    .category-item label {
       cursor: pointer;
       user-select: none;
       font-weight: 500;
       color: #495057;
-      margin-left: 6px;
+      margin: 0;
+    }
+
+    .category-item .btn-remove-category {
+      background: #dc3545;
+      color: white;
+      border: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 0.75rem;
+      padding: 0;
+      margin-left: 4px;
+    }
+
+    .category-item .btn-remove-category:hover {
+      background: #c82333;
+      transform: scale(1.1);
+    }
+
+    /* Nút thêm thể loại */
+    .btn-add-category {
+      background: #2d6a4f;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .btn-add-category:hover {
+      background: #1b4332;
+      transform: translateY(-1px);
+    }
+
+    /* Form thêm thể loại mới */
+    .add-category-form {
+      display: none;
+      padding: 12px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border: 2px dashed #2d6a4f;
+      width: 100%;
+      margin-top: 10px;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .add-category-form.show {
+      display: flex;
+    }
+
+    .add-category-form input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid #ced4da;
+      border-radius: 6px;
+      font-size: 0.95rem;
+    }
+
+    .add-category-form input:focus {
+      outline: none;
+      border-color: #2d6a4f;
+      box-shadow: 0 0 0 0.2rem rgba(45, 106, 79, 0.15);
+    }
+
+    .btn-confirm-category, .btn-cancel-category {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s;
+      font-size: 0.9rem;
+    }
+
+    .btn-confirm-category {
+      background: #2d6a4f;
+      color: white;
+    }
+
+    .btn-confirm-category:hover {
+      background: #1b4332;
+    }
+
+    .btn-cancel-category {
+      background: #6c757d;
+      color: white;
+    }
+
+    .btn-cancel-category:hover {
+      background: #5a6268;
     }
 
     .btn-add-product {
@@ -401,6 +508,23 @@
         padding: 15px;
       }
     }
+    .pagination .page-link {
+  color: #2d6a4f !important;
+  border-color: #2d6a4f !important;
+}
+.pagination .page-link:hover {
+  background-color: #e8f5e9 !important;
+  color: #1b4332 !important;
+}
+.pagination .page-item.active .page-link {
+  background-color: #2d6a4f !important;
+  border-color: #2d6a4f !important;
+  color: #fff !important;
+}
+.pagination .page-item.disabled .page-link {
+  color: #6c757d !important;
+  border-color: #dee2e6 !important;
+}
   </style>
 </head>
 
@@ -440,27 +564,56 @@
                   <!-- Thể loại - Checkbox -->
                   <div class="col-md-12">
                     <label class="form-label">Thể loại <span class="text-danger">*</span></label>
-                    <div class="category-checkboxes">
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="cat1" value="Văn học">
-                        <label class="form-check-label" for="cat1">Văn học</label>
+                    <div class="category-checkboxes" id="categoryCheckboxes">
+                      <div class="category-item">
+                        <input type="checkbox" id="cat1" value="Văn học">
+                        <label for="cat1">Văn học</label>
+                        <button type="button" class="btn-remove-category" onclick="removeCategory(this)" title="Xóa thể loại">
+                          <i class="fas fa-times"></i>
+                        </button>
                       </div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="cat2" value="Kinh tế">
-                        <label class="form-check-label" for="cat2">Kinh tế</label>
+                      <div class="category-item">
+                        <input type="checkbox" id="cat2" value="Kinh tế">
+                        <label for="cat2">Kinh tế</label>
+                        <button type="button" class="btn-remove-category" onclick="removeCategory(this)" title="Xóa thể loại">
+                          <i class="fas fa-times"></i>
+                        </button>
                       </div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="cat3" value="Kỹ năng sống">
-                        <label class="form-check-label" for="cat3">Kỹ năng sống</label>
+                      <div class="category-item">
+                        <input type="checkbox" id="cat3" value="Kỹ năng sống">
+                        <label for="cat3">Kỹ năng sống</label>
+                        <button type="button" class="btn-remove-category" onclick="removeCategory(this)" title="Xóa thể loại">
+                          <i class="fas fa-times"></i>
+                        </button>
                       </div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="cat4" value="Thiếu nhi">
-                        <label class="form-check-label" for="cat4">Thiếu nhi</label>
+                      <div class="category-item">
+                        <input type="checkbox" id="cat4" value="Thiếu nhi">
+                        <label for="cat4">Thiếu nhi</label>
+                        <button type="button" class="btn-remove-category" onclick="removeCategory(this)" title="Xóa thể loại">
+                          <i class="fas fa-times"></i>
+                        </button>
                       </div>
-                      <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="cat5" value="Giáo khoa">
-                        <label class="form-check-label" for="cat5">Giáo khoa</label>
+                      <div class="category-item">
+                        <input type="checkbox" id="cat5" value="Giáo khoa">
+                        <label for="cat5">Giáo khoa</label>
+                        <button type="button" class="btn-remove-category" onclick="removeCategory(this)" title="Xóa thể loại">
+                          <i class="fas fa-times"></i>
+                        </button>
                       </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 mt-2">
+                      <button type="button" class="btn-add-category" onclick="toggleAddCategoryForm()">
+                        <i class="fas fa-plus"></i> Thêm thể loại
+                      </button>
+                    </div>
+                    <div class="add-category-form" id="addCategoryForm">
+                      <input type="text" id="newCategoryInput" placeholder="Nhập tên thể loại mới..." maxlength="30">
+                      <button type="button" class="btn-confirm-category" onclick="addNewCategory()">
+                        <i class="fas fa-check"></i> Thêm
+                      </button>
+                      <button type="button" class="btn-cancel-category" onclick="cancelAddCategory()">
+                        <i class="fas fa-times"></i> Hủy
+                      </button>
                     </div>
                   </div>
 
@@ -568,7 +721,7 @@
                     </div>
                   </a>
                   <div class="product-actions">
-                    <button class="btn-action btn-edit">Sửa</button>
+                    <button class="btn-action btn-edit" onclick="openEditModal()">Sửa</button>
                     <button class="btn-action btn-toggle">Ẩn</button>
                     <button class="btn-action btn-delete">Xóa</button>
                   </div>
@@ -594,12 +747,11 @@
                     </div>
                   </a>
                   <div class="product-actions">
-                    <button class="btn-action btn-edit">Sửa</button>
+                    <button class="btn-action btn-edit" onclick="openEditModal()">Sửa</button>
                     <button class="btn-action btn-toggle">Ẩn</button>
                     <button class="btn-action btn-delete">Xóa</button>
                   </div>
                 </div>
-
                 <!-- Product 3 -->
                 <div class="product-card"
                   data-product-code="KN003"
@@ -1248,7 +1400,7 @@
     <button class="btn-action btn-delete">Xóa</button>
   </div>
 </div>
-
+                
               </div>
 
               <nav class="mt-4">
@@ -1261,22 +1413,203 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <style>
-    /* Màu đen cho phân trang */
-    .pagination .page-link {
-      color: #000 !important;
-    }
-    .pagination .page-item.active .page-link {
-      background-color: #2c522d !important;
-      border-color: #000 !important;
-      color: #fff !important;
-    }
-    .pagination .page-item.disabled .page-link {
-      color: #6c757d !important;
-    }
-  </style>
+  <!-- Modal Sửa Sản Phẩm -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fas fa-edit"></i> Chỉnh sửa sản phẩm</h3>
+        <button class="modal-close" onclick="closeEditModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="editForm">
+          <div class="row g-3">
+            <!-- Thể loại -->
+            <div class="col-md-12">
+              <label class="form-label">Thể loại <span class="text-danger">*</span></label>
+              <div class="category-checkboxes" id="editCategoryCheckboxes">
+                <div class="category-item">
+                  <input type="checkbox" class="form-check-input" id="editCat1" value="Văn học">
+                  <label class="form-check-label" for="editCat1">Văn học</label>
+                  <button type="button" class="btn-remove-category" onclick="this.parentElement.remove()" title="Xóa thể loại">×</button>
+                </div>
+                <div class="category-item">
+                  <input type="checkbox" class="form-check-input" id="editCat2" value="Kinh tế">
+                  <label class="form-check-label" for="editCat2">Kinh tế</label>
+                  <button type="button" class="btn-remove-category" onclick="this.parentElement.remove()" title="Xóa thể loại">×</button>
+                </div>
+                <div class="category-item">
+                  <input type="checkbox" class="form-check-input" id="editCat3" value="Kỹ năng sống">
+                  <label class="form-check-label" for="editCat3">Kỹ năng sống</label>
+                  <button type="button" class="btn-remove-category" onclick="this.parentElement.remove()" title="Xóa thể loại">×</button>
+                </div>
+                <div class="category-item">
+                  <input type="checkbox" class="form-check-input" id="editCat4" value="Thiếu nhi">
+                  <label class="form-check-label" for="editCat4">Thiếu nhi</label>
+                  <button type="button" class="btn-remove-category" onclick="this.parentElement.remove()" title="Xóa thể loại">×</button>
+                </div>
+                <div class="category-item">
+                  <input type="checkbox" class="form-check-input" id="editCat5" value="Giáo khoa">
+                  <label class="form-check-label" for="editCat5">Giáo khoa</label>
+                  <button type="button" class="btn-remove-category" onclick="this.parentElement.remove()" title="Xóa thể loại">×</button>
+                </div>
+              </div>
+
+              <!-- Form thêm thể loại mới -->
+              <div class="add-category-section mt-3">
+                <div class="input-group">
+                  <input type="text" id="newCategoryInputEdit" class="form-control" placeholder="Nhập tên thể loại mới..." maxlength="30">
+                  <button type="button" class="btn btn-success" onclick="addNewCategoryEdit()">
+                    <i class="fas fa-plus"></i> Thêm
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Mã sản phẩm</label>
+              <input type="text" id="editMa" class="form-control" placeholder="VD: KN001">
+            </div>
+            <div class="col-md-12">
+              <label class="form-label">Tên sách</label>
+              <input type="text" id="editTen" class="form-control" placeholder="Nhập tên sách">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Tác giả</label>
+              <input type="text" id="editTacGia" class="form-control" placeholder="Nhập tên tác giả">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Nhà xuất bản</label>
+              <input type="text" id="editNXB" class="form-control" placeholder="Nhập NXB">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Năm xuất bản</label>
+              <input type="text" id="editNam" class="form-control" placeholder="VD: 2024">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Bìa sách</label>
+              <input type="file" id="editHinh" class="form-control" accept="image/*">
+              <img id="editPreview" style="display:none;" alt="Preview">
+            </div>
+            <div class="col-md-12">
+              <label class="form-label">Mô tả</label>
+              <textarea id="editMota" class="form-control" rows="3" placeholder="Nhập mô tả sản phẩm"></textarea>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Giá bán</label>
+              <input type="number" id="editGia" class="form-control" placeholder="VD: 85000">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Giá gốc</label>
+              <input type="number" id="editGiagoc" class="form-control" placeholder="VD: 120000">
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-modal-save" id="saveEdit">Lưu thay đổi</button>
+        <button type="button" class="btn-modal-cancel" id="cancelEdit">Hủy</button>
+      </div>
+    </div>
+  </div>
+
   <script>
+    let categoryCounter = 6;
+
+    // Hàm thêm thể loại mới (Form thêm sản phẩm)
+    function addNewCategory() {
+      const input = document.getElementById('newCategoryInput');
+      const categoryName = input.value.trim();
+      
+      if (!categoryName) {
+        alert('Vui lòng nhập tên thể loại!');
+        return;
+      }
+
+      // Kiểm tra trùng lặp
+      const existingCategories = Array.from(document.querySelectorAll('#categoryCheckboxes .category-item label'))
+        .map(label => label.textContent.trim().toLowerCase());
+      
+      if (existingCategories.includes(categoryName.toLowerCase())) {
+        alert('Thể loại này đã tồn tại!');
+        return;
+      }
+
+      // Tạo category item mới
+      const newCategoryItem = document.createElement('div');
+      newCategoryItem.className = 'category-item';
+      newCategoryItem.innerHTML = `
+        <input type="checkbox" class="form-check-input" id="cat${categoryCounter}" value="${categoryName}">
+        <label class="form-check-label" for="cat${categoryCounter}">${categoryName}</label>
+        <button type="button" class="btn-remove-category" onclick="this.parentElement.remove()" title="Xóa thể loại">×</button>
+      `;
+
+      document.getElementById('categoryCheckboxes').appendChild(newCategoryItem);
+      
+      // Thêm vào dropdown filter
+      const categorySelect = document.getElementById('productCategorySelect');
+      const newOption = document.createElement('option');
+      newOption.value = categoryName;
+      newOption.textContent = categoryName;
+      categorySelect.appendChild(newOption);
+
+      categoryCounter++;
+      input.value = '';
+      alert(`Đã thêm thể loại "${categoryName}" thành công!`);
+    }
+
+    // Hàm thêm thể loại mới (Modal sửa)
+    function addNewCategoryEdit() {
+      const input = document.getElementById('newCategoryInputEdit');
+      const categoryName = input.value.trim();
+      
+      if (!categoryName) {
+        alert('Vui lòng nhập tên thể loại!');
+        return;
+      }
+
+      // Kiểm tra trùng lặp
+      const existingCategories = Array.from(document.querySelectorAll('#editCategoryCheckboxes .category-item label'))
+        .map(label => label.textContent.trim().toLowerCase());
+      
+      if (existingCategories.includes(categoryName.toLowerCase())) {
+        alert('Thể loại này đã tồn tại!');
+        return;
+      }
+
+      // Tạo category item mới
+      const newCategoryItem = document.createElement('div');
+      newCategoryItem.className = 'category-item';
+      newCategoryItem.innerHTML = `
+        <input type="checkbox" class="form-check-input" id="editCat${categoryCounter}" value="${categoryName}">
+        <label class="form-check-label" for="editCat${categoryCounter}">${categoryName}</label>
+        <button type="button" class="btn-remove-category" onclick="this.parentElement.remove()" title="Xóa thể loại">×</button>
+      `;
+
+      document.getElementById('editCategoryCheckboxes').appendChild(newCategoryItem);
+      
+      // Đồng bộ với form thêm sản phẩm
+      const mainCategoryItem = document.createElement('div');
+      mainCategoryItem.className = 'category-item';
+      mainCategoryItem.innerHTML = `
+        <input type="checkbox" class="form-check-input" id="cat${categoryCounter}" value="${categoryName}">
+        <label class="form-check-label" for="cat${categoryCounter}">${categoryName}</label>
+        <button type="button" class="btn-remove-category" onclick="this.parentElement.remove()" title="Xóa thể loại">×</button>
+      `;
+      document.getElementById('categoryCheckboxes').appendChild(mainCategoryItem);
+
+      // Thêm vào dropdown filter
+      const categorySelect = document.getElementById('productCategorySelect');
+      const newOption = document.createElement('option');
+      newOption.value = categoryName;
+      newOption.textContent = categoryName;
+      categorySelect.appendChild(newOption);
+
+      categoryCounter++;
+      input.value = '';
+      alert(`Đã thêm thể loại "${categoryName}" thành công!`);
+    }
+
+    // ============ QUẢN LÝ DANH SÁCH SẢN PHẨM ============
     document.addEventListener('DOMContentLoaded', () => {
       const grid = document.getElementById('adminProductGrid');
       if (!grid) return;
@@ -1392,7 +1725,6 @@
         grid.scrollIntoView({ behavior: 'smooth' });
       };
 
-      // Các event listener để giữ giao diện nhưng không lọc
       searchInput?.addEventListener('input', () => {});
       categorySelect?.addEventListener('change', () => {});
       priceSelect?.addEventListener('change', () => {});
@@ -1406,118 +1738,17 @@
       toggleEmptyNotice();
       renderPage();
     });
-  </script>
-  
-  <!-- Modal Sửa Sản Phẩm -->
-  <div id="editModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3><i class="fas fa-edit"></i> Chỉnh sửa sản phẩm</h3>
-        <button class="modal-close" id="closeModal">&times;</button>
-      </div>
-      <div class="modal-body">
-        <form id="editForm">
-          <div class="row g-3">
-            <!-- Thể loại -->
-            <div class="col-md-12">
-              <label class="form-label">Thể loại <span class="text-danger">*</span></label>
-              <div class="category-checkboxes">
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="checkbox" id="editCat1" value="Văn học">
-                  <label class="form-check-label" for="editCat1">Văn học</label>
-                </div>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="checkbox" id="editCat2" value="Kinh tế">
-                  <label class="form-check-label" for="editCat2">Kinh tế</label>
-                </div>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="checkbox" id="editCat3" value="Kỹ năng sống">
-                  <label class="form-check-label" for="editCat3">Kỹ năng sống</label>
-                </div>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="checkbox" id="editCat4" value="Thiếu nhi">
-                  <label class="form-check-label" for="editCat4">Thiếu nhi</label>
-                </div>
-                <div class="form-check form-check-inline">
-                  <input class="form-check-input" type="checkbox" id="editCat5" value="Giáo khoa">
-                  <label class="form-check-label" for="editCat5">Giáo khoa</label>
-                </div>
-              </div>
-            </div>
 
-            <div class="col-md-6">
-              <label class="form-label">Mã sản phẩm</label>
-              <input type="text" id="editMa" class="form-control" placeholder="VD: KN001">
-            </div>
-            <div class="col-md-12">
-              <label class="form-label">Tên sách</label>
-              <input type="text" id="editTen" class="form-control" placeholder="Nhập tên sách">
-            </div>
-            <div class="col-md-6">
-              <label class="form-label">Tác giả</label>
-              <input type="text" id="editTacGia" class="form-control" placeholder="Nhập tên tác giả">
-            </div>
-            <div class="col-md-6">
-              <label class="form-label">Nhà xuất bản</label>
-              <input type="text" id="editNXB" class="form-control" placeholder="Nhập NXB">
-            </div>
-            <div class="col-md-6">
-              <label class="form-label">Năm xuất bản</label>
-              <input type="text" id="editNam" class="form-control" placeholder="VD: 2024">
-            </div>
-            <div class="col-md-6">
-              <label class="form-label">Bìa sách</label>
-              <input type="file" id="editHinh" class="form-control" accept="image/*">
-              <img id="editPreview" style="display:none;" alt="Preview">
-            </div>
-            <div class="col-md-12">
-              <label class="form-label">Mô tả</label>
-              <textarea id="editMota" class="form-control" rows="3" placeholder="Nhập mô tả sản phẩm"></textarea>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label">Giá bán</label>
-              <input type="number" id="editGia" class="form-control" placeholder="VD: 85000">
-            </div>
-            <div class="col-md-6">
-              <label class="form-label">Giá gốc</label>
-              <input type="number" id="editGiagoc" class="form-control" placeholder="VD: 120000">
-            </div>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn-modal-save" id="saveEdit">Lưu thay đổi</button>
-        <button type="button" class="btn-modal-cancel" id="cancelEdit">Hủy</button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // Mở modal
-    function openEditModal() {
-      document.getElementById("editModal").style.display = "block";
-    }
-
-    // Đóng modal
-    function closeEditModal() {
-      document.getElementById("editModal").style.display = "none";
-    }
-
-    // Khi trang load xong
+    // ============ QUẢN LÝ MODAL ============
     document.addEventListener("DOMContentLoaded", function() {
-      // Thêm sự kiện cho tất cả nút Sửa
       const editButtons = document.querySelectorAll(".btn-edit");
       editButtons.forEach(button => {
         button.addEventListener("click", openEditModal);
       });
 
-      // Đóng modal khi click vào dấu X
       document.getElementById("closeModal").addEventListener("click", closeEditModal);
-
-      // Đóng modal khi click vào nút Hủy
       document.getElementById("cancelEdit").addEventListener("click", closeEditModal);
 
-      // Đóng modal khi click bên ngoài
       window.addEventListener("click", function(event) {
         const modal = document.getElementById("editModal");
         if (event.target === modal) {
@@ -1525,8 +1756,15 @@
         }
       });
     });
+
+    function openEditModal() {
+      document.getElementById("editModal").style.display = "block";
+    }
+
+    function closeEditModal() {
+      document.getElementById("editModal").style.display = "none";
+    }
   </script>
+
 </body>
 </html>
-
-
