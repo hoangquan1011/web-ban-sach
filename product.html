@@ -173,7 +173,20 @@
             <div class="navbar-nav ms-auto p-4 p-lg-0">
                 <a href="index.html" class="nav-item nav-link">Trang chủ</a>
                 <a href="about.html" class="nav-item nav-link">Về Thức Store</a>
-                <a href="product.html" class="nav-item nav-link active">Sản phẩm</a>
+                
+                <!-- 🔹 Dropdown Danh mục sản phẩm -->
+                <div class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle active" data-bs-toggle="dropdown" id="categoryDropdownLabel">Danh mục sản phẩm</a>
+                    <div class="dropdown-menu bg-light m-0">
+                        <a href="product.html?category=all" class="dropdown-item category-link" data-category="">Tất cả</a>
+                        <a href="product.html?category=giaokho" class="dropdown-item category-link" data-category="Giáo khoa">Giáo khoa</a>
+                        <a href="product.html?category=kinhte" class="dropdown-item category-link" data-category="Kinh tế">Kinh tế</a>
+                        <a href="product.html?category=kynang" class="dropdown-item category-link" data-category="Kỹ năng sống">Kỹ năng sống</a>
+                        <a href="product.html?category=thieunhi" class="dropdown-item category-link" data-category="Thiếu nhi">Thiếu nhi</a>
+                        <a href="product.html?category=vanhoc" class="dropdown-item category-link" data-category="Văn học">Văn học</a>
+                    </div>
+                </div>
+                
                 <a href="contact.html" class="nav-item nav-link">Liên lạc</a>
                 <a href="user/profile.html" class="nav-item nav-link">Thông tin cá nhân</a>
             </div>
@@ -222,18 +235,12 @@
 
             <div class="advanced-filter mb-4">
                 <div class="row g-3 align-items-end">
-                    <div class="col-lg-4">
+                    <div class="col-lg-6">
                         <label for="productSearch" class="form-label">Tìm kiếm nâng cao</label>
                         <div class="input-group">
                             <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
                             <input id="productSearch" type="text" class="form-control" placeholder="Nhập mã sách hoặc tên sách...">
                         </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <label for="productCategory" class="form-label">Danh mục</label>
-                        <select id="productCategory" class="form-select">
-                            <option value="">-- Tất cả --</option>
-                        </select>
                     </div>
                     <div class="col-lg-3 col-md-6">
                         <label class="form-label">Khoảng giá (VNĐ)</label>
@@ -242,7 +249,7 @@
                             <input id="priceMax" type="number" class="form-control" placeholder="Đến">
                         </div>
                     </div>
-                    <div class="col-lg-2 col-md-4">
+                    <div class="col-lg-3 col-md-4">
                         <button id="filterReset" type="button" class="btn btn-outline-success w-100">
                             <i class="bi bi-arrow-counterclockwise me-1"></i>Đặt lại bộ lọc
                         </button>
@@ -323,7 +330,6 @@
                         </div>
                     </div>
                 </div>
-
                 <!-- Product 3 -->
                 <div class="col-6 col-md-3 wow fadeInUp" data-wow-delay="0.3s"
                     data-product-code="KN003"
@@ -1046,7 +1052,7 @@
         </div>
     </div>
 </div>
-
+              
             </div>
         </div>
     </div>
@@ -1128,13 +1134,15 @@
             const badgesEl = document.getElementById('activeFilterBadges');
             const noResultsEl = document.getElementById('noResultsMessage');
             const searchInput = document.getElementById('productSearch');
-            const categorySelect = document.getElementById('productCategory');
             const minInput = document.getElementById('priceMin');
             const maxInput = document.getElementById('priceMax');
             const resetBtn = document.getElementById('filterReset');
             const chips = Array.from(document.querySelectorAll('.filter-chip'));
+            const categoryDropdownLabel = document.getElementById('categoryDropdownLabel');
+            const categoryLinks = document.querySelectorAll('.category-link');
             const productsPerPage = 12;
             let currentPage = 1;
+            let selectedCategory = '';
 
             const removeAccents = (str = '') =>
                 str
@@ -1174,23 +1182,38 @@
 
             let filteredProducts = [...products];
 
-            const populateCategories = () => {
-                if (!categorySelect) return;
-                const current = categorySelect.value;
-                const categories = [...new Set(products.map((p) => p.category).filter(Boolean))].sort((a, b) =>
-                    a.localeCompare(b, 'vi', { sensitivity: 'base' })
-                );
-                categorySelect.innerHTML = '<option value="">-- Tất cả --</option>';
-                categories.forEach((cat) => {
-                    const option = document.createElement('option');
-                    option.value = cat;
-                    option.textContent = cat;
-                    categorySelect.appendChild(option);
-                });
-                if (current && categories.includes(current)) {
-                    categorySelect.value = current;
+            // Xử lý URL parameters khi tải trang
+            const urlParams = new URLSearchParams(window.location.search);
+            const categoryParam = urlParams.get('category');
+            
+            if (categoryParam && categoryParam !== 'all') {
+                const categoryMap = {
+                    'giaokho': 'Giáo khoa',
+                    'kinhte': 'Kinh tế',
+                    'kynang': 'Kỹ năng sống',
+                    'thieunhi': 'Thiếu nhi',
+                    'vanhoc': 'Văn học'
+                };
+                selectedCategory = categoryMap[categoryParam] || '';
+                if (selectedCategory && categoryDropdownLabel) {
+                    categoryDropdownLabel.textContent = selectedCategory;
                 }
-            };
+            }
+
+            // Xử lý click vào menu dropdown
+            categoryLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const category = this.dataset.category;
+                    selectedCategory = category;
+                    
+                    if (categoryDropdownLabel) {
+                        categoryDropdownLabel.textContent = category || 'Danh mục sản phẩm';
+                    }
+                    
+                    applyFilters();
+                });
+            });
 
             const setCardVisibility = (card, visible) => {
                 if (!card) return;
@@ -1214,7 +1237,7 @@
                 }
                 if (filters.category) {
                     badges.push(
-                        `<span class="badge rounded-pill bg-light text-success border border-success">Danh mục: ${filters.categoryLabel || filters.category}</span>`
+                        `<span class="badge rounded-pill bg-light text-success border border-success">Danh mục: ${filters.category}</span>`
                     );
                 }
                 if (filters.min !== null || filters.max !== null) {
@@ -1304,16 +1327,10 @@
 
             const getFilters = () => {
                 const rawSearch = (searchInput?.value || '').trim();
-                const rawCategoryValue = categorySelect?.value || '';
-                const categoryLabel =
-                    rawCategoryValue && categorySelect?.selectedOptions?.length
-                        ? categorySelect.selectedOptions[0].textContent.trim()
-                        : '';
                 return {
                     search: normalizeText(rawSearch),
                     rawSearch,
-                    category: rawCategoryValue,
-                    categoryLabel,
+                    category: selectedCategory,
                     min: parseInputNumber(minInput?.value),
                     max: parseInputNumber(maxInput?.value)
                 };
@@ -1354,7 +1371,6 @@
             };
 
             searchInput?.addEventListener('input', applyFilters);
-            categorySelect?.addEventListener('change', applyFilters);
             minInput?.addEventListener('input', () => {
                 chips.forEach((chip) => chip.classList.remove('active'));
                 applyFilters();
@@ -1365,7 +1381,8 @@
             });
             resetBtn?.addEventListener('click', () => {
                 if (searchInput) searchInput.value = '';
-                if (categorySelect) categorySelect.value = '';
+                selectedCategory = '';
+                if (categoryDropdownLabel) categoryDropdownLabel.textContent = 'Danh mục sản phẩm';
                 if (minInput) minInput.value = '';
                 if (maxInput) maxInput.value = '';
                 chips.forEach((chip) => chip.classList.remove('active'));
@@ -1388,7 +1405,6 @@
                 });
             });
 
-            populateCategories();
             applyFilters();
         });
     </script>
@@ -1457,12 +1473,12 @@
             "GK001": { id: "GK001", ten: "TUYỂN TẬP BÀI VĂN NGHỊ LUẬN XÃ HỘI CHON LỌC", gia: 90000, hinh: "img/35.jpg" },
             "GK002": { id: "GK002", ten: "LUYỆN THI VÀO 10 NGỮ VĂN - CHINH PHỤC BÀI NGHỊ LUẬN", gia: 71500, hinh: "img/36.jpg" },
             "GK003": { id: "GK003", ten: "TAKENOTE NGỮ PHÁP TRỌNG ĐIỂM TIẾNG ANH TRUNG HỌC CƠ SỞ", gia: 71200, hinh: "img/37.jpg" },
-"GK004": { id: "GK004", ten: "BÀI TẬP NÂNG CAO TOÁN HỌC LỚP 9", gia: 85000, hinh: "img/1.jpg" },
-"GK005": { id: "GK005", ten: "TỔNG ÔN VẬT LÝ THPT - LÝ THUYẾT VÀ BÀI TẬP", gia: 95000, hinh: "img/2.jpg" },
-"GK006": { id: "GK006", ten: "HÓA HỌC PHỔ THÔNG - BÀI TẬP TRẮC NGHIỆM NÂNG CAO", gia: 78000, hinh: "img/3.jpg" },
-"GK007": { id: "GK007", ten: "LUYỆN ĐỌC HIỂU TIẾNG ANH - READING COMPREHENSION", gia: 82000, hinh: "img/4.jpg" },
-"GK008": { id: "GK008", ten: "BỒI DƯỠNG HỌC SINH GIỎI SINH HỌC LỚP 10-11-12", gia: 105000, hinh: "img/5.jpg" },
-"GK009": { id: "GK009", ten: "LỊCH SỬ VIỆT NAM - TRỌNG TÂM ÔN THI THPT QUỐC GIA", gia: 88000, hinh: "img/6.jpg" }
+            "GK004": { id: "GK004", ten: "BÀI TẬP NÂNG CAO TOÁN HỌC LỚP 9", gia: 85000, hinh: "img/1.jpg" },
+            "GK005": { id: "GK005", ten: "TỔNG ÔN VẬT LÝ THPT - LÝ THUYẾT VÀ BÀI TẬP", gia: 95000, hinh: "img/2.jpg" },
+            "GK006": { id: "GK006", ten: "HÓA HỌC PHỔ THÔNG - BÀI TẬP TRẮC NGHIỆM NÂNG CAO", gia: 78000, hinh: "img/3.jpg" },
+            "GK007": { id: "GK007", ten: "LUYỆN ĐỌC HIỂU TIẾNG ANH - READING COMPREHENSION", gia: 82000, hinh: "img/4.jpg" },
+            "GK008": { id: "GK008", ten: "BỒI DƯỠNG HỌC SINH GIỎI SINH HỌC LỚP 10-11-12", gia: 105000, hinh: "img/5.jpg" },
+            "GK009": { id: "GK009", ten: "LỊCH SỬ VIỆT NAM - TRỌNG TÂM ÔN THI THPT QUỐC GIA", gia: 88000, hinh: "img/6.jpg" }
         };
 
         const product = allProducts[productCode];
@@ -1514,5 +1530,3 @@
 </script>
 </body>
 </html>
-
-
