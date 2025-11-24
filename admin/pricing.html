@@ -104,6 +104,40 @@
               </div>
             </div>
           </div>
+          <div class="card mb-4">
+            <div class="card-header">
+              <div class="d-flex align-items-center gap-2">
+                <i class="fa-solid fa-sliders text-success"></i>
+                <strong>Điều chỉnh nhanh theo loại (giao diện)</strong>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="row g-3 align-items-end">
+                <div class="col-md-5">
+                  <label class="form-label">Chọn loại sách</label>
+                  <select class="form-select">
+                    <option value="__all" selected>-- Tất cả loại --</option>
+                    <option value="Giáo khoa">Giáo khoa</option>
+                    <option value="Kinh tế">Kinh tế</option>
+                    <option value="Kỹ năng sống">Kỹ năng sống</option>
+                    <option value="Thiếu nhi">Thiếu nhi</option>
+                    <option value="Văn học">Văn học</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">Lợi nhuận mục tiêu (%)</label>
+                  <input type="number" class="form-control" placeholder="Ví dụ 25">
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">Tăng / giảm giá (đ)</label>
+                  <input type="number" class="form-control" placeholder="+5000 hoặc -3000">
+                </div>
+                <div class="col-md-1 d-grid">
+                  <button class="btn btn-success" type="button"><i class="fa-solid fa-check me-1"></i>Áp dụng</button>
+                </div>
+              </div>
+            </div>
+          </div>
 
           <div class="card">
             <div class="card-header d-flex flex-wrap gap-2 justify-content-between align-items-center">
@@ -148,15 +182,8 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      let state = [];
-      let productData = [];
-      const el = {
-        table: document.getElementById('pricingTable'),
-        summary: document.getElementById('tableSummary'),
-        downloadBtn: document.getElementById('btnDownload'),
-        feedback: document.getElementById('feedback'),
-        feedbackText: document.getElementById('feedbackText')
-      };
+      const table = document.getElementById('pricingTable');
+      const summary = document.getElementById('tableSummary');
 
       const readDefaultProductsFromDOM = () => {
         const container = document.getElementById('defaultPricingData');
@@ -170,13 +197,6 @@
         }));
       };
 
-      const getProducts = () => {
-        if (!productData.length) {
-          productData = readDefaultProductsFromDOM();
-        }
-        return productData;
-      };
-
       const formatCurrency = (value) =>
         Number(value || 0).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }).replace('₫', 'đ');
 
@@ -185,247 +205,57 @@
         return Math.round(((price - cost) / cost) * 1000) / 10;
       };
 
-      const clampPercent = (value, min, max) => {
-        if (!Number.isFinite(value)) return null;
-        if (min !== undefined && value < min) return min;
-        if (max !== undefined && value > max) return max;
-        return value;
-      };
+      const products = readDefaultProductsFromDOM();
+      if (summary) summary.textContent = `${products.length} sản phẩm`;
 
-      const roundPriceValue = (value) => {
-        const numeric = Number(value);
-        if (!Number.isFinite(numeric)) return '';
-        return Math.max(0, Math.round(numeric));
-      };
+      if (!table) return;
+      if (!products.length) {
+        table.innerHTML = '<div class="pricing-empty">Chưa có dữ liệu để minh họa.</div>';
+        return;
+      }
 
-      const removeAccents = (str = '') =>
-        str
-          .toString()
-          .normalize('NFD')
-          .replace(/[\u0300-\u036f]/g, '')
-          .replace(/đ/g, 'd')
-          .replace(/Đ/g, 'D');
-
-      const showFeedback = (msg) => {
-        if (!el.feedback) return;
-        el.feedbackText.textContent = msg;
-        el.feedback.classList.remove('d-none');
-        setTimeout(() => el.feedback.classList.add('d-none'), 2200);
-      };
-
-      const toNumber = (value) => {
-        if (typeof value === 'number' && Number.isFinite(value)) return value;
-        if (!value) return 0;
-        const numeric = Number(value.toString().replace(/[^\d.-]/g, ''));
-        return Number.isFinite(numeric) ? numeric : 0;
-      };
-
-      const sanitizeKey = (value) =>
-        removeAccents(value.toString())
-          .toLowerCase()
-          .replace(/\s+/g, '-')
-          .replace(/[^a-z0-9-_]/g, '');
-
-      const buildKey = (product, index) => {
-        if (product && product.id !== undefined && product.id !== null) return `id-${product.id}`;
-        if (product && product.ma) return `code-${sanitizeKey(product.ma)}`;
-        return `idx-${index}`;
-      };
-
-      const normalizeCategories = (value) => {
-        if (Array.isArray(value)) return value.filter(Boolean);
-        if (typeof value === 'string' && value.trim()) {
-          return value
-            .split(',')
-            .map((item) => item.trim())
-            .filter(Boolean);
-        }
-        return [];
-      };
-
-      const normalizeProducts = (products) =>
-        products.map((product, index) => {
-          const categories = normalizeCategories(product?.loai);
-          const code = (product?.ma || '').toString().trim();
-          return {
-            key: buildKey(product, index),
-            storageIndex: index,
-            code: code || `SP-${String(index + 1).padStart(3, '0')}`,
-            name: product?.ten || 'Chưa cập nhật tên',
-            categories: categories.length ? categories : ['Khác'],
-            cost: toNumber(product?.giagoc),
-            price: toNumber(product?.gia)
-          };
-        });
-
-      const syncState = () => {
-        state = normalizeProducts(getProducts());
-      };
-
-      const getPriceInputTarget = (inputEl) => {
-        if (!inputEl) return null;
-        const targetId = inputEl.dataset.target;
-        return targetId ? document.getElementById(targetId) : null;
-      };
-
-      const applyProfitPercent = (inputEl) => {
-        const cost = Number(inputEl?.dataset.cost) || 0;
-        if (!cost) return;
-        if (inputEl.value === '') return;
-        const percent = clampPercent(Number(inputEl.value), -99, 999);
-        if (percent === null) return;
-        inputEl.value = percent;
-        const targetInput = getPriceInputTarget(inputEl);
-        if (!targetInput) return;
-        const computed = cost * (1 + percent / 100);
-        targetInput.value = roundPriceValue(computed);
-      };
-
-      const renderTable = () => {
-        if (!el.table) return;
-        const rows = [...state];
-        const total = rows.length;
-        el.summary.textContent = `${total} sản phẩm`;
-
-        if (!rows.length) {
-          const message = state.length
-            ? 'Không tìm thấy sản phẩm phù hợp.'
-            : 'Chưa có dữ liệu. Vui lòng thêm sách tại trang Quản lý Sản phẩm.';
-          el.table.innerHTML = `<div class="pricing-empty">${message}</div>`;
-          return;
-        }
-
-        el.table.innerHTML = rows
-          .map((p) => {
-            const profit = calcProfitPercent(p.cost, p.price);
-            const profitValue = p.price - p.cost;
-            const inputId = `price-${p.storageIndex}`;
-            const profitInputValue = Number.isFinite(profit) ? profit : '';
-            return `
-              <div class="price-card">
-                <div class="price-card__header">
-                  <div>
-                    <div class="price-card__code">${p.code}</div>
-                    <div class="price-card__categories">${p.categories.join(', ')}</div>
-                  </div>
-                  <span class="badge bg-success-subtle text-success fw-semibold">${profit}%</span>
+      table.innerHTML = products
+        .map((p) => {
+          const profit = calcProfitPercent(p.giagoc, p.gia);
+          const profitValue = p.gia - p.giagoc;
+          return `
+            <div class="price-card">
+              <div class="price-card__header">
+                <div>
+                  <div class="price-card__code">${p.ma}</div>
+                  <div class="price-card__categories">${p.loai}</div>
                 </div>
-                <div class="price-card__title">${p.name}</div>
-                <div class="price-card__metrics">
-                  <div class="price-card__metric">
-                    <span>Giá vốn</span>
-                    <strong>${formatCurrency(p.cost)}</strong>
-                  </div>
-                  <div class="price-card__metric">
-                    <span>Lợi nhuận ước tính</span>
-                    <strong>${formatCurrency(profitValue)}</strong>
-                    <small>${profit >= 0 ? '+' : ''}${profit}%</small>
-                  </div>
+                <span class="badge bg-success-subtle text-success fw-semibold">${profit}%</span>
+              </div>
+              <div class="price-card__title">${p.ten}</div>
+              <div class="price-card__metrics">
+                <div class="price-card__metric">
+                  <span>Giá vốn</span>
+                  <strong>${formatCurrency(p.giagoc)}</strong>
                 </div>
-                <div class="price-card__price">
-                  <span class="text-muted small text-uppercase">Giá bán hiện tại</span>
-                  <div class="price-card__actions">
-                    <input
-                      id="${inputId}"
-                      type="text"
-                      class="form-control price-input"
-                      data-index="${p.storageIndex}"
-                      data-key="${p.key}"
-                      value="${p.price || ''}"
-                      min="0"
-                      readonly
-                    >
-                    <button
-                      class="btn btn-success update-price"
-                      data-input="${inputId}"
-                      data-index="${p.storageIndex}"
-                      data-key="${p.key}"
-                    >
-                      <i class="fa-solid fa-floppy-disk me-1"></i>Lưu giá
-                    </button>
-                  </div>
-                  <div class="price-card__adjust mt-2">
-                    <label>Lợi nhuận (%)</label>
-                    <input
-                      type="number"
-                      class="form-control form-control-sm profit-input"
-                      data-target="${inputId}"
-                      data-cost="${p.cost}"
-                      value="${profitInputValue}"
-                      placeholder="+10"
-                    >
-                  </div>
+                <div class="price-card__metric">
+                  <span>Lợi nhuận ước tính</span>
+                  <strong>${formatCurrency(profitValue)}</strong>
+                  <small>${profit >= 0 ? '+' : ''}${profit}%</small>
                 </div>
               </div>
-            `;
-          })
-          .join('');
-      };
-
-      const findProductIndex = (dataset, products) => {
-        if (dataset.index !== undefined) {
-          const parsed = parseInt(dataset.index, 10);
-          if (!Number.isNaN(parsed) && products[parsed]) return parsed;
-        }
-        if (dataset.key) {
-          return products.findIndex((product, idx) => buildKey(product, idx) === dataset.key);
-        }
-        return -1;
-      };
-
-      const handlePriceUpdate = (dataset) => {
-        const input = dataset.input ? document.getElementById(dataset.input) : null;
-        if (!input) {
-          alert('Không thể xác định ô nhập giá cần cập nhật.');
-          return;
-        }
-        const value = Number(input.value);
-        if (Number.isNaN(value) || value <= 0) {
-          alert('Vui lòng nhập giá bán hợp lệ.');
-          return;
-        }
-
-        const products = getProducts();
-        const targetIndex = findProductIndex(dataset, products);
-        if (targetIndex === -1) {
-          alert('Không tìm thấy sản phẩm để cập nhật. Vui lòng tải lại trang.');
-          return;
-        }
-
-        products[targetIndex].gia = value;
-        syncState();
-        renderTable();
-
-        const updated = state.find((item) => item.storageIndex === targetIndex) || state.find((item) => item.key === dataset.key);
-        showFeedback(`Đã cập nhật giá cho ${updated?.name || 'sản phẩm'}.`);
-      };
-
-      document.addEventListener('click', (e) => {
-        if (e.target.closest('.update-price')) {
-          const btn = e.target.closest('.update-price');
-          handlePriceUpdate(btn.dataset);
-        }
-      });
-
-      document.addEventListener('input', (e) => {
-        if (e.target.matches('.profit-input')) {
-          applyProfitPercent(e.target);
-        }
-      });
-
-      el.downloadBtn?.addEventListener('click', () => {
-        const data = getProducts();
-        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'thuc-store-pricing.json';
-        a.click();
-        URL.revokeObjectURL(url);
-      });
-
-      syncState();
-      renderTable();
+              <div class="price-card__price">
+                <span class="text-muted small text-uppercase">Giá bán hiện tại</span>
+                <div class="price-card__actions">
+                  <input type="number" class="form-control price-input" value="${p.gia}" min="0">
+                  <button class="btn btn-success" type="button">
+                    <i class="fa-solid fa-floppy-disk me-1"></i>Lưu giá
+                  </button>
+                </div>
+                <div class="price-card__adjust mt-2">
+                  <label>Lợi nhuận (%)</label>
+                  <input type="number" class="form-control form-control-sm" value="${profit}">
+                </div>
+              </div>
+            </div>
+          `;
+        })
+        .join('');
     });
   </script>
 </body>
