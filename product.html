@@ -249,11 +249,17 @@
                             <input id="priceMax" type="number" class="form-control" placeholder="Đến">
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-4">
-                        <button id="filterReset" type="button" class="btn btn-outline-success w-100">
+                    <div class="col-lg-3 col-md-6 d-grid gap-2">
+                        <button id="filterSubmit" type="button" class="btn btn-success">
+                            <i class="bi bi-search me-1"></i>Tìm kiếm
+                        </button>
+                        <button id="filterReset" type="button" class="btn btn-outline-success">
                             <i class="bi bi-arrow-counterclockwise me-1"></i>Đặt lại bộ lọc
                         </button>
                     </div>
+                </div>
+                <div id="searchResultBanner" class="alert alert-info mt-3 d-none mb-0">
+                    Kết quả tìm kiếm sẽ hiển thị tại đây (giao diện minh họa).
                 </div>
                 <div class="filter-chips">
                     <button type="button" class="filter-chip btn btn-sm btn-outline-success" data-price-min="0" data-price-max="50000">Dưới 50K</button>
@@ -271,6 +277,8 @@
                 Không tìm thấy sản phẩm phù hợp với bộ lọc hiện tại. Vui lòng thử điều kiện khác nhé!
             </div>
     
+            <div class="alert alert-secondary mt-3 d-none" id="searchPlaceholder">Kết quả tìm kiếm</div>
+
             <!-- Danh sách sản phẩm -->
             <div id="productGrid" class="row gx-4 gy-4">
                 <!-- Product 1 -->
@@ -1256,5 +1264,16 @@
             updateCartBadgeDisplay();
         });
     </script>
+  <script>
+    document.getElementById('filterSubmit')?.addEventListener('click', () => {
+      const placeholder = document.getElementById('searchPlaceholder');
+      if (placeholder) placeholder.classList.remove('d-none');
+      const grid = document.getElementById('productGrid');
+      if (grid) grid.classList.add('d-none');
+      const noResult = document.getElementById('noResultsMessage');
+      if (noResult) noResult.classList.add('d-none');
+    });
+  </script>
+
 </body>
 </html>
