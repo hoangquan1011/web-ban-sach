@@ -19,6 +19,12 @@
     .sku-pill { font-weight:600; color:#1b4332; }
     .badge-cat { background:#ecfdf5; color:#065f46; border-radius:999px; padding:2px 8px; font-size:.8rem; }
     .text-muted-small { font-size:.9rem; color:#6c757d; }
+    .filter-card { border:1px solid #dbead5; background:#fbfffb; }
+    .filter-card .card-body { padding:1.25rem 1.5rem; }
+    .filter-chip { background:#e9f7ef; color:#1b4332; font-weight:600; padding:.25rem .75rem; border-radius:999px; font-size:.85rem; }
+    .filter-card .form-control,.filter-card .form-select { border-radius:.75rem; border-color:#cde0cd; }
+    .filter-actions button { min-width:105px; }
+    .filter-hint { font-size:.9rem; color:#64788b; background:#f4f9f4; border-radius:.75rem; padding:1rem; height:100%; }
     
     /* Thêm style cho tồn kho */
     .stock-badge {
@@ -90,41 +96,42 @@
             </div>
           </div>
 
-          <div class="card mb-4">
+          <div class="card filter-card mb-4">
             <div class="card-body">
-              <div class="row g-3 align-items-end">
-                <div class="col-md-5">
-                  <label class="form-label">Tìm kiếm (tên hoặc mã sản phẩm)</label>
-                  <input id="searchInput" class="form-control" placeholder="Ví dụ: Đắc Nhân Tâm / VH001">
+              <div class="d-flex flex-column flex-md-row justify-content-between gap-2">
+                <div>
+                  <div class="text-uppercase small text-muted fw-semibold">Bộ lọc hiển thị</div>
+                 
                 </div>
-                <div class="col-md-4">
-                  <label class="form-label">Lọc theo nhóm</label>
-                  <select id="categoryFilter" class="form-select">
-                    <option value="">-- Tất cả loại --</option>
-                    <option value="Kỹ năng sống">Kỹ năng sống</option>
-                    <option value="Thiếu nhi">Thiếu nhi</option>
-                    <option value="Văn học">Văn học</option>
-                    <option value="Kinh tế">Kinh tế</option>
-                    <option value="Giáo khoa">Giáo khoa</option>
+              </div>
+              <div class="row g-3 align-items-end mt-1">
+                <div class="col-md-5 col-xl-4">
+                  <label class="form-label mb-1">Tìm kiếm</label>
+                  <input class="form-control" placeholder="Nhập tên hoặc mã sách">
+                </div>
+                <div class="col-md-4 col-xl-3">
+                  <label class="form-label mb-1">Lọc theo nhóm</label>
+                  <select class="form-select">
+                    <option>-- Tất cả --</option>
+                    <option>Văn học</option>
+                    <option>Kinh tế</option>
+                    <option>Kỹ năng sống</option>
+                    <option>Thiếu nhi</option>
+                    <option>Giáo khoa</option>
                   </select>
                 </div>
-                <div class="col-md-3">
-                  <label class="form-label">Từ ngày cập nhật</label>
-                  <input type="date" id="stockDateFrom" class="form-control">
+                <div class="col-md-3 col-xl-2 filter-actions d-flex gap-2">
+                  <button class="btn btn-success flex-fill" type="button">Tìm</button>
+                  <button class="btn btn-outline-secondary flex-fill" type="button">Hôm nay</button>
                 </div>
-                <div class="col-md-3">
-                  <label class="form-label">Đến ngày</label>
-                  <input type="date" id="stockDateTo" class="form-control">
+                <div class="col-md-6 col-xl-4">
+                  <label class="form-label mb-1">Chọn ngày</label>
+                  <div class="d-flex gap-2">
+                    <input type="date" class="form-control" placeholder="Chọn ngày">
+                  </div>
                 </div>
-                <div class="col-md-2">
-                  <button id="stockFilterBtn" class="btn btn-success w-100">
-                    <i class="fa fa-filter me-1"></i>Lọc
-                  </button>
-                </div>
-                <div class="col-md-2">
-                  <button id="stockResetBtn" class="btn btn-outline-secondary w-100">
-                    <i class="fa fa-redo me-1"></i>Đặt lại
-                  </button>
+                <div class="col-md-6 col-xl-4">
+                  
                 </div>
               </div>
             </div>
@@ -133,7 +140,7 @@
           <div class="card">
             <div class="card-header d-flex justify-content-between flex-wrap gap-2 align-items-center">
               <h5 class="mb-0 text-success"><i class="fa-solid fa-boxes-stacked me-2"></i>Danh sách tồn kho</h5>
-              <span id="stockSummary" class="text-muted-small">0 sản phẩm</span>
+              <span class="text-muted-small">27 sản phẩm</span>
             </div>
             <div class="card-body">
               <div class="table-responsive">
@@ -144,14 +151,198 @@
                       <th>Tên sản phẩm</th>
                       <th style="min-width: 150px;">Loại</th>
                       <th style="width: 90px;">Tồn</th>
-                      <th style="min-width: 140px;">Giá bán</th>
-                      <th style="min-width: 140px;">Ngày cập nhật</th>
                       <th style="min-width: 160px;">Ghi chú</th>
                     </tr>
                   </thead>
-                  <tbody id="stockTable">
+                  <tbody>
                     <tr>
-                      <td colspan="7" class="text-center text-muted">Đang tải dữ liệu...</td>
+                      <td><span class="sku-pill">KN001</span></td>
+                      <td>GOOD ENERGY - NĂNG LƯỢNG TỐT</td>
+                      <td><span class="badge-cat">Kỹ năng sống</span></td>
+                      <td><span class="stock-badge stock-medium">68</span></td>
+                      <td>First News</td>
+                    </tr>
+                    <tr>
+                      <td><span class="sku-pill">KN002</span></td>
+                      <td>NGHỆ THUẬT TƯ DUY LOGIC</td>
+                      <td><span class="badge-cat">Kỹ năng sống</span></td>
+                      <td><span class="stock-badge stock-low">42</span></td>
+                      <td>Thái Hà Books</td>
+                    </tr>
+                    <tr>
+                      <td><span class="sku-pill">KN003</span></td>
+                      <td>KỸ NĂNG TƯ DUY THỰC CHIẾN</td>
+                      <td><span class="badge-cat">Kỹ năng sống</span></td>
+                      <td><span class="stock-badge stock-high">95</span></td>
+                      <td>Alphabooks</td>
+                    </tr>
+                    <tr>
+                      <td><span class="sku-pill">KN004</span></td>
+                      <td>SỐNG TỈNH THỨC MỖI NGÀY</td>
+                      <td><span class="badge-cat">Kỹ năng sống</span></td>
+                      <td><span class="stock-badge stock-high">88</span></td>
+                      <td>Thái Hà</td>
+                    </tr>
+                    <tr>
+                      <td><span class="sku-pill">KN005</span></td>
+                      <td>THÓI QUEN NGON LÀNH</td>
+                      <td><span class="badge-cat">Kỹ năng sống</span></td>
+                      <td><span class="stock-badge stock-medium">57</span></td>
+                      <td>NXB Trẻ</td>
+                    </tr>
+                    <tr>
+                      <td><span class="sku-pill">TN001</span></td>
+                      <td>THIÊN NHIÊN - TẠI SAO CHÚNG TA CẦN THIÊN NHIÊN XANH TƯƠI?</td>
+                      <td><span class="badge-cat">Thiếu nhi</span></td>
+                      <td><span class="stock-badge stock-high">156</span></td>
+                      <td>Kim Đồng</td>
+                    </tr>
+                    <tr>
+                      <td><span class="sku-pill">TN002</span></td>
+                      <td>GỢI MỞ TRÍ TƯỞNG TƯỢNG - NỖI BUỒN CỦA CÂY ÍCH KỶ</td>
+                      <td><span class="badge-cat">Thiếu nhi</span></td>
+                      <td><span class="stock-badge stock-high">128</span></td>
+                      <td>Dân Trí</td>
+                    </tr>
+                    <tr>
+                      <td><span class="sku-pill">TN003</span></td>
+                      <td>RÈN TRÍ THÔNG MINH - TẬP 3</td>
+                      <td><span class="badge-cat">Thiếu nhi</span></td>
+                      <td><span class="stock-badge stock-high">183</span></td>
+                      <td>Kim Đồng</td>
+                    </tr>
+                    <tr>
+                      <td><span class="sku-pill">TN004</span></td>
+                      <td>BỘ SÁCH TRUYỆN SONG NGỮ</td>
+                      <td><span class="badge-cat">Thiếu nhi</span></td>
+                      <td><span class="stock-badge stock-high">144</span></td>
+                      <td>Kim Đồng</td>
+                    </tr>
+                    <tr>
+                      <td><span class="sku-pill">TN005</span></td>
+                      <td>BÍ KÍP GIÚP BÉ TỰ LẬP</td>
+                      <td><span class="badge-cat">Thiếu nhi</span></td>
+                      <td><span class="stock-badge stock-high">132</span></td>
+                      <td>NXB Phụ Nữ</td>
+                    </tr>
+                    <tr>
+                      <td><span class="sku-pill">VN001</span></td>
+                      <td>RUỒI TRÂU (TÁI BẢN NĂM 2018)</td>
+                      <td><span class="badge-cat">Văn học</span></td>
+                      <td><span class="stock-badge stock-medium">74</span></td>
+                      <td>NXB Văn Học</td>
+                    </tr>
+                    <tr>
+                      <td><span class="sku-pill">VN002</span></td>
+                      <td>DẾ MÈN PHIÊU LƯU KÝ</td>
+                      <td><span class="badge-cat">Văn học</span></td>
+                      <td><span class="stock-badge stock-medium">81</span></td>
+                      <td>Kim Đồng</td>
+                    </tr>
+                    <tr>
+                      <td><span class="sku-pill">VN003</span></td>
+                      <td>TÔI THẤY HOA VÀNG TRÊN CỎ XANH</td>
+                      <td><span class="badge-cat">Văn học</span></td>
+                      <td><span class="stock-badge stock-medium">69</span></td>
+                      <td>NXB Trẻ</td>
+                    </tr>
+                    <tr>
+                      <td><span class="sku-pill">VH002</span></td>
+                      <td>VĂN HỌC KINH ĐIỂN - LỀ THÓI THỊ THÀNH</td>
+                      <td><span class="badge-cat">Văn học</span></td>
+                      <td><span class="stock-badge stock-low">38</span></td>
+                      <td>NXB Văn Học</td>
+                    </tr>
+                    <tr>
+                      <td><span class="sku-pill">VH003</span></td>
+                      <td>VĂN HỌC KINH ĐIỂN - CHÂN DUNG MỘT CUỘC HÔN NHÂN</td>
+                      <td><span class="badge-cat">Văn học</span></td>
+                      <td><span class="stock-badge stock-low">29</span></td>
+                      <td>NXB Hội Nhà Văn</td>
+                    </tr>
+                    <tr>
+                      <td><span class="sku-pill">KT001</span></td>
+                      <td>THE LITTLE BOOK - ĐẦU TƯ THEO CHIẾN LƯỢC PHÒNG THỦ</td>
+                      <td><span class="badge-cat">Kinh tế</span></td>
+                      <td><span class="stock-badge stock-medium">56</span></td>
+                      <td>AZ Việt Nam</td>
+                    </tr>
+                    <tr>
+                      <td><span class="sku-pill">KT002</span></td>
+                      <td>TƯ DUY ĐẦU TƯ - TIỀN ĐẺ RA TIỀN</td>
+                      <td><span class="badge-cat">Kinh tế</span></td>
+                      <td><span class="stock-badge stock-low">32</span></td>
+                      <td>1980 Books</td>
+                    </tr>
+                    <tr>
+                      <td><span class="sku-pill">KT003</span></td>
+                      <td>TIỀN ĐẺ RA TIỀN - ĐẦU TƯ TÀI CHÍNH THÔNG MINH</td>
+                      <td><span class="badge-cat">Kinh tế</span></td>
+                      <td><span class="stock-badge stock-medium">63</span></td>
+                      <td>NXB Lao Động</td>
+                    </tr>
+                    <tr>
+                      <td><span class="sku-pill">KT004</span></td>
+                      <td>TỰ DO TÀI CHÍNH 101</td>
+                      <td><span class="badge-cat">Kinh tế</span></td>
+                      <td><span class="stock-badge stock-medium">47</span></td>
+                      <td>Saigon Books</td>
+                    </tr>
+                    <tr>
+                      <td><span class="sku-pill">KT005</span></td>
+                      <td>NGHĨ GIÀU LÀM GIÀU</td>
+                      <td><span class="badge-cat">Kinh tế</span></td>
+                      <td><span class="stock-badge stock-medium">52</span></td>
+                      <td>NXB Tổng Hợp</td>
+                    </tr>
+                    <tr>
+                      <td><span class="sku-pill">GK001</span></td>
+                      <td>TUYỂN TẬP BÀI VĂN NGHỊ LUẬN XÃ HỘI CHỌN LỌC</td>
+                      <td><span class="badge-cat">Giáo khoa</span></td>
+                      <td><span class="stock-badge stock-high">142</span></td>
+                      <td>NXB Đại Học</td>
+                    </tr>
+                    <tr>
+                      <td><span class="sku-pill">GK002</span></td>
+                      <td>LUYỆN THI VÀO 10 NGỮ VĂN - CHINH PHỤC BÀI NGHỊ LUẬN</td>
+                      <td><span class="badge-cat">Giáo khoa</span></td>
+                      <td><span class="stock-badge stock-high">118</span></td>
+                      <td>Hồng Đức</td>
+                    </tr>
+                    <tr>
+                      <td><span class="sku-pill">GK003</span></td>
+                      <td>TAKENOTE NGỮ PHÁP TRỌNG ĐIỂM TIẾNG ANH THCS</td>
+                      <td><span class="badge-cat">Giáo khoa</span></td>
+                      <td><span class="stock-badge stock-high">158</span></td>
+                      <td>Đinh Tị</td>
+                    </tr>
+                    <tr>
+                      <td><span class="sku-pill">GK004</span></td>
+                      <td>BÀI TẬP NÂNG CAO TOÁN 9</td>
+                      <td><span class="badge-cat">Giáo khoa</span></td>
+                      <td><span class="stock-badge stock-high">125</span></td>
+                      <td>NXB Giáo Dục</td>
+                    </tr>
+                    <tr>
+                      <td><span class="sku-pill">GK005</span></td>
+                      <td>ÔN THI HÓA HỌC THPT</td>
+                      <td><span class="badge-cat">Giáo khoa</span></td>
+                      <td><span class="stock-badge stock-high">134</span></td>
+                      <td>NXB Đại Học</td>
+                    </tr>
+                    <tr>
+                      <td><span class="sku-pill">GK006</span></td>
+                      <td>TỔNG ÔN SINH HỌC 12</td>
+                      <td><span class="badge-cat">Giáo khoa</span></td>
+                      <td><span class="stock-badge stock-high">146</span></td>
+                      <td>NXB ĐHQG</td>
+                    </tr>
+                    <tr>
+                      <td><span class="sku-pill">GK007</span></td>
+                      <td>BỘ ĐỀ TIẾNG ANH 9+</td>
+                      <td><span class="badge-cat">Giáo khoa</span></td>
+                      <td><span class="stock-badge stock-high">138</span></td>
+                      <td>NXB Trẻ</td>
                     </tr>
                   </tbody>
                 </table>
@@ -163,131 +354,4 @@
     </div>
   </div>
 </body>
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const stockItems = [
-      { code: 'KN001', name: 'GOOD ENERGY - NĂNG LƯỢNG TỐT', category: 'Kỹ năng sống', stock: 68, price: 85000, originalPrice: 120000, note: 'First News', lastUpdated: '2025-02-12' },
-      { code: 'KN002', name: 'NGHỆ THUẬT TƯ DUY LOGIC', category: 'Kỹ năng sống', stock: 42, price: 126000, originalPrice: 169000, note: 'Thái Hà Books', lastUpdated: '2025-02-10' },
-      { code: 'KN003', name: 'KỸ NĂNG TƯ DUY THỰC CHIẾN', category: 'Kỹ năng sống', stock: 95, price: 126000, originalPrice: 169000, note: 'Alphabooks', lastUpdated: '2025-02-06' },
-      { code: 'TN001', name: 'THIÊN NHIÊN - TẠI SAO CHÚNG TA CẦN THIÊN NHIÊN XANH TƯƠI?', category: 'Thiếu nhi', stock: 156, price: 52000, originalPrice: 70000, note: 'Kim Đồng', lastUpdated: '2025-02-08' },
-      { code: 'TN002', name: 'GỢI MỞ TRÍ TƯỞNG TƯỢNG - NỖI BUỒN CỦA CÂY ÍCH KỶ', category: 'Thiếu nhi', stock: 128, price: 28000, originalPrice: 35000, note: 'Dân Trí', lastUpdated: '2025-02-09' },
-      { code: 'TN003', name: 'RÈN TRÍ THÔNG MINH - TẬP 3', category: 'Thiếu nhi', stock: 183, price: 24000, originalPrice: 30000, note: 'Kim Đồng', lastUpdated: '2025-02-11' },
-      { code: 'VN001', name: 'RUỒI TRÂU (TÁI BẢN NĂM 2018)', category: 'Văn học', stock: 74, price: 96000, originalPrice: 128000, note: 'NXB Văn Học', lastUpdated: '2025-02-05' },
-      { code: 'VH002', name: 'VĂN HỌC KINH ĐIỂN - LỀ THÓI THỊ THÀNH', category: 'Văn học', stock: 38, price: 164000, originalPrice: 205000, note: 'NXB Văn Học', lastUpdated: '2025-02-03' },
-      { code: 'VH003', name: 'VĂN HỌC KINH ĐIỂN - CHÂN DUNG MỘT CUỘC HÔN NHÂN', category: 'Văn học', stock: 29, price: 215000, originalPrice: 225000, note: 'NXB Hội Nhà Văn', lastUpdated: '2025-02-02' },
-      { code: 'KT001', name: 'THE LITTLE BOOK - ĐẦU TƯ THEO CHIẾN LƯỢC PHÒNG THỦ', category: 'Kinh tế', stock: 56, price: 134000, originalPrice: 179500, note: 'AZ Việt Nam', lastUpdated: '2025-02-07' },
-      { code: 'KT002', name: 'TƯ DUY ĐẦU TƯ - TIỀN ĐẺ RA TIỀN', category: 'Kinh tế', stock: 32, price: 203000, originalPrice: 239000, note: '1980 Books', lastUpdated: '2025-01-31' },
-      { code: 'KT003', name: 'TIỀN ĐẺ RA TIỀN - ĐẦU TƯ TÀI CHÍNH THÔNG MINH', category: 'Kinh tế', stock: 63, price: 128000, originalPrice: 160000, note: 'NXB Lao Động', lastUpdated: '2025-02-04' },
-      { code: 'GK001', name: 'TUYỂN TẬP BÀI VĂN NGHỊ LUẬN XÃ HỘI CHON LỌC', category: 'Giáo khoa', stock: 142, price: 90000, originalPrice: 120000, note: 'NXB Đại Học', lastUpdated: '2025-02-12' },
-      { code: 'GK002', name: 'LUYỆN THI VÀO 10 NGỮ VĂN - CHINH PHỤC BÀI NGHỊ LUẬN', category: 'Giáo khoa', stock: 118, price: 71500, originalPrice: 89000, note: 'Hồng Đức', lastUpdated: '2025-02-01' },
-      { code: 'GK003', name: 'TAKENOTE NGỮ PHÁP TRỌNG ĐIỂM TIẾNG ANH TRUNG HỌC CƠ SỞ', category: 'Giáo khoa', stock: 158, price: 71200, originalPrice: 89000, note: 'Đinh Tị', lastUpdated: '2025-02-09' }
-    ];
-
-    let filteredStock = [...stockItems];
-
-    const el = {
-      table: document.getElementById('stockTable'),
-      summary: document.getElementById('stockSummary'),
-      search: document.getElementById('searchInput'),
-      category: document.getElementById('categoryFilter'),
-      dateFrom: document.getElementById('stockDateFrom'),
-      dateTo: document.getElementById('stockDateTo'),
-      filterBtn: document.getElementById('stockFilterBtn'),
-      resetBtn: document.getElementById('stockResetBtn')
-    };
-
-    const formatCurrency = (value) => Number(value || 0).toLocaleString('vi-VN') + 'đ';
-
-    const formatDate = (value) => {
-      if (!value) return '—';
-      const date = new Date(value);
-      return Number.isNaN(date.getTime()) ? value : date.toLocaleDateString('vi-VN');
-    };
-
-    const getStockBadgeClass = (qty) => {
-      if (qty >= 120) return 'stock-high';
-      if (qty >= 60) return 'stock-medium';
-      return 'stock-low';
-    };
-
-    const renderStockTable = () => {
-      if (!el.table) return;
-      if (!filteredStock.length) {
-        el.table.innerHTML = `<tr><td colspan="7" class="text-center text-muted">Không có sản phẩm phù hợp.</td></tr>`;
-      } else {
-        el.table.innerHTML = filteredStock
-          .map((item) => `
-            <tr>
-              <td><span class="sku-pill">${item.code}</span></td>
-              <td>${item.name}</td>
-              <td><span class="badge-cat">${item.category}</span></td>
-              <td><span class="stock-badge ${getStockBadgeClass(item.stock)}">${item.stock}</span></td>
-              <td>
-                ${formatCurrency(item.price)}
-                <span class="price-original">${formatCurrency(item.originalPrice)}</span>
-              </td>
-              <td>${formatDate(item.lastUpdated)}</td>
-              <td>${item.note || ''}</td>
-            </tr>
-          `)
-          .join('');
-      }
-
-      if (el.summary) {
-        el.summary.textContent = `${filteredStock.length} sản phẩm`;
-      }
-    };
-
-    const normalizeText = (value) => (value || '').toString().toLowerCase();
-
-    const parseDateBoundary = (value, isEnd = false) => {
-      if (!value) return null;
-      const date = new Date(value);
-      if (Number.isNaN(date.getTime())) return null;
-      if (isEnd) {
-        date.setHours(23, 59, 59, 999);
-      } else {
-        date.setHours(0, 0, 0, 0);
-      }
-      return date.getTime();
-    };
-
-    const applyFilters = () => {
-      const searchValue = normalizeText(el.search?.value || '');
-      const categoryValue = el.category?.value || '';
-      const fromTime = parseDateBoundary(el.dateFrom?.value);
-      const toTime = parseDateBoundary(el.dateTo?.value, true);
-
-      filteredStock = stockItems.filter((item) => {
-        const combined = normalizeText(`${item.name} ${item.code}`);
-        const matchesSearch = !searchValue || combined.includes(searchValue);
-        const matchesCategory = !categoryValue || item.category === categoryValue;
-        const updatedTime = new Date(item.lastUpdated).getTime();
-        const matchesFrom = !fromTime || (!Number.isNaN(updatedTime) && updatedTime >= fromTime);
-        const matchesTo = !toTime || (!Number.isNaN(updatedTime) && updatedTime <= toTime);
-        return matchesSearch && matchesCategory && matchesFrom && matchesTo;
-      });
-
-      renderStockTable();
-    };
-
-    const resetFilters = () => {
-      if (el.search) el.search.value = '';
-      if (el.category) el.category.value = '';
-      if (el.dateFrom) el.dateFrom.value = '';
-      if (el.dateTo) el.dateTo.value = '';
-      filteredStock = [...stockItems];
-      renderStockTable();
-    };
-
-    el.search?.addEventListener('input', applyFilters);
-    el.category?.addEventListener('change', applyFilters);
-    el.dateFrom?.addEventListener('change', applyFilters);
-    el.dateTo?.addEventListener('change', applyFilters);
-    el.filterBtn?.addEventListener('click', applyFilters);
-    el.resetBtn?.addEventListener('click', resetFilters);
-
-    renderStockTable();
-  });
-</script>
 </html>

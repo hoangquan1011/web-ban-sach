@@ -601,21 +601,20 @@
                         </button>
                       </div>
                     </div>
-                    <div class="d-flex align-items-center gap-2 mt-2">
-                      <button type="button" class="btn-add-category" onclick="toggleAddCategoryForm()">
-                        <i class="fas fa-plus"></i> Thêm thể loại
-                      </button>
+                    <div class="row g-2 mt-3 align-items-center">
+                      <div class="col-sm-8 col-lg-6">
+                        <input type="text" id="newCategoryInput" class="form-control" placeholder="Nhập tên thể loại mới" maxlength="30">
+                      </div>
+                      <div class="col-sm-4 col-lg-3">
+                        <button type="button" class="btn-add-category w-100" disabled>
+                          <i class="fas fa-plus"></i> Thêm thể loại
+                        </button>
+                      </div>
+                      <div class="col-12">
+                        <small class="text-muted">Bạn có thể nhập tên nhưng chức năng lưu đang khóa.</small>
+                      </div>
                     </div>
-                    <div class="add-category-form" id="addCategoryForm">
-                      <input type="text" id="newCategoryInput" placeholder="Nhập tên thể loại mới..." maxlength="30">
-                      <button type="button" class="btn-confirm-category" onclick="addNewCategory()">
-                        <i class="fas fa-check"></i> Thêm
-                      </button>
-                      <button type="button" class="btn-cancel-category" onclick="cancelAddCategory()">
-                        <i class="fas fa-times"></i> Hủy
-                      </button>
-                    </div>
-                  </div>
+                 </div>
 
                   <div class="col-md-6">
                     <label class="form-label">Mã sản phẩm</label>
@@ -644,14 +643,6 @@
                   <div class="col-md-12">
                     <label class="form-label">Mô tả</label>
                     <textarea class="form-control" rows="3" placeholder="Nhập mô tả sản phẩm"></textarea>
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label">Giá bán</label>
-                    <input type="number" class="form-control" placeholder="VD: 85000">
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label">Giá gốc</label>
-                    <input type="number" class="form-control" placeholder="VD: 120000">
                   </div>
                 </div>
                 <button type="submit" class="btn-add-product mt-3">
@@ -1494,14 +1485,6 @@
               <label class="form-label">Mô tả</label>
               <textarea id="editMota" class="form-control" rows="3" placeholder="Nhập mô tả sản phẩm"></textarea>
             </div>
-            <div class="col-md-6">
-              <label class="form-label">Giá bán</label>
-              <input type="number" id="editGia" class="form-control" placeholder="VD: 85000">
-            </div>
-            <div class="col-md-6">
-              <label class="form-label">Giá gốc</label>
-              <input type="number" id="editGiagoc" class="form-control" placeholder="VD: 120000">
-            </div>
           </div>
         </form>
       </div>
@@ -1616,7 +1599,6 @@
 
       const searchInput = document.getElementById('productSearchInput');
       const categorySelect = document.getElementById('productCategorySelect');
-      const priceSelect = document.getElementById('productPriceSelect');
       const resetBtn = document.getElementById('productFilterReset');
       const summaryEl = document.getElementById('productResultSummary');
       const emptyNotice = document.getElementById('productEmptyNotice');
@@ -1727,11 +1709,9 @@
 
       searchInput?.addEventListener('input', () => {});
       categorySelect?.addEventListener('change', () => {});
-      priceSelect?.addEventListener('change', () => {});
       resetBtn?.addEventListener('click', () => {
         if (searchInput) searchInput.value = '';
         if (categorySelect) categorySelect.value = '';
-        if (priceSelect) priceSelect.value = '';
       });
 
       updateSummary();

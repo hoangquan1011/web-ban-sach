@@ -219,7 +219,7 @@
               </div>
 
               <div class="col-md-6">
-                <label>Thành phố</label>
+                <label>Địa chỉ</label>
                 <input type="text" id="city" class="form-control">
               </div>
 
@@ -232,14 +232,13 @@
                 <label>Mật khẩu hiện tại</label>
                 <div class="input-group">
                   <input type="password" id="currentPassword" class="form-control" readonly>
-                  <button class="btn btn-outline-secondary" type="button" id="togglePassword">Hiện</button>
+                  <button class="btn btn-outline-secondary" type="button" id="togglePassword" disabled>Hiện</button>
                 </div>
               </div>
 
               <div class="col-12">
                 <label>Mật khẩu mới</label>
-                <input type="password" id="newPassword" class="form-control" placeholder="Nhập mật khẩu mới (tùy chọn)">
-                <div class="form-text">Để trống nếu bạn chưa muốn thay đổi mật khẩu.</div>
+                <input type="password" id="newPassword" class="form-control" placeholder="Nhập mật khẩu mới ">
               </div>
 
               <div class="col-12 d-flex flex-wrap gap-3">
@@ -399,20 +398,16 @@
       formEls.username.value = user.username || '';
       formEls.currentPassword.value = user.password || '';
       formEls.newPassword.value = '';
+      formEls.newPassword.disabled = false;
       formEls.currentPassword.type = 'password';
       formEls.togglePasswordBtn.textContent = 'Hiện';
+      formEls.togglePasswordBtn.disabled = true;
 
       formEls.sidebarName.textContent = fallbackName || 'Người dùng';
       formEls.sidebarEmail.textContent = user.email || 'Chưa cập nhật';
       formEls.sidebarInitial.textContent = (fallbackName ? fallbackName.charAt(0) : 'U').toUpperCase();
     }
     loadProfile();
-
-    formEls.togglePasswordBtn.addEventListener('click', () => {
-      const isHidden = formEls.currentPassword.type === 'password';
-      formEls.currentPassword.type = isHidden ? 'text' : 'password';
-      formEls.togglePasswordBtn.textContent = isHidden ? 'Ẩn' : 'Hiện';
-    });
 
     document.getElementById('logoutProfileBtn').addEventListener('click', () => {
       localStorage.removeItem('currentUser');
@@ -428,16 +423,7 @@
       user.phone = formEls.phone.value.trim();
       user.city = formEls.city.value.trim();
 
-      const newPasswordValue = formEls.newPassword.value.trim();
-      if (newPasswordValue) {
-        user.password = newPasswordValue;
-        formEls.currentPassword.value = newPasswordValue;
-        formEls.newPassword.value = '';
-        formEls.currentPassword.type = 'password';
-        formEls.togglePasswordBtn.textContent = 'Hiện';
-      } else {
-        user.password = formEls.currentPassword.value.trim();
-      }
+      // Không xử lý thay đổi mật khẩu để tránh cập nhật dữ liệu thật
 
       const customerIdx = customerList.findIndex(u => u.username === user.username);
       if (customerIdx >= 0) customerList[customerIdx] = user;
@@ -449,7 +435,6 @@
         adminUser.phone = user.phone;
         adminUser.city = user.city;
         adminUser.username = user.username;
-        adminUser.password = user.password;
         adminUsers = adminUsers.map(u => (u.username === adminUser.username ? adminUser : u));
         localStorage.setItem('users', JSON.stringify(adminUsers));
       }

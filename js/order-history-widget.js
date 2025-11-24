@@ -120,33 +120,106 @@
     return modal;
   }
 
+  function buildItemSummary(items = []) {
+    if (!Array.isArray(items) || !items.length) {
+      return '<p class="text-muted mb-0">Không có dữ liệu sản phẩm.</p>';
+    }
+    const limitedItems = items.slice(0, 3);
+    const moreCount = items.length - limitedItems.length;
+    const listItems = limitedItems
+      .map(
+        (item) => `
+        <li class="d-flex justify-content-between align-items-center">
+          <div>
+            <span class="fw-semibold">${item.name || 'Tên sản phẩm'}</span>
+            <small class="text-muted d-block">x${item.qty || 0}</small>
+          </div>
+          <span class="text-muted small">${formatCurrency((item.price || 0) * (item.qty || 0))}₫</span>
+        </li>
+      `
+      )
+      .join('');
+    const moreLine =
+      moreCount > 0
+        ? `<li class="text-muted small">+ ${moreCount} sản phẩm khác</li>`
+        : '';
+    return `<ul class="list-unstyled mb-0">${listItems}${moreLine}</ul>`;
+  }
+
   function buildOrderCard(order, index) {
     const orderId = order.id || `#${index + 1}`;
     const totalAmount = order.totals?.total || order.total || 0;
     const paymentLabel = order.payment?.label || getPaymentMethodLabel(order.payment?.method);
     const orderDate = order.date ? new Date(order.date).toLocaleString('vi-VN') : 'Chưa xác định';
     const itemCount = (order.items || []).reduce((sum, item) => sum + (item?.qty || 0), 0);
+    const subtotal = order.totals?.subtotal || 0;
+    const shipping = order.totals?.shipping ?? 0;
+    const discount = order.totals?.discount ?? 0;
+
+    const customerName = order.customer?.name || 'Khách hàng';
+    const customerPhone = order.customer?.phone || '---';
+    const customerEmail = order.customer?.email || '---';
+    const customerAddress = order.customer?.address || 'Không có địa chỉ';
 
     return `
       <div class="border rounded p-3 mb-3 shadow-sm">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-          <div class="fw-bold text-primary">
-            <i class="fa fa-file-invoice me-2"></i>${orderId}
+        <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap">
+          <div>
+            <div class="fw-bold text-primary">
+              <i class="fa fa-file-invoice me-2"></i>${orderId}
+            </div>
+            <small class="text-muted"><i class="fa fa-calendar me-1"></i>${orderDate}</small>
           </div>
           <span class="${getStatusClass(order.status)}">${getStatusText(order.status)}</span>
         </div>
-        <p class="mb-1 small text-muted">
-          <i class="fa fa-calendar me-2"></i>${orderDate}
-        </p>
-        <p class="mb-1 small">
-          <i class="fa fa-box me-2"></i>${itemCount} sản phẩm
-        </p>
-        <p class="mb-1 small">
-          <i class="fa fa-credit-card me-2"></i>${paymentLabel}
-        </p>
-        <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top">
-          <span class="small text-muted">Tổng tiền</span>
-          <span class="fw-bold text-success">${formatCurrency(totalAmount)}₫</span>
+
+        <div class="bg-light rounded p-2 mb-2 small">
+          <div class="text-uppercase text-muted fw-semibold mb-1">Thông tin giao hàng</div>
+          <div class="mb-1">
+            <span class="text-muted"><i class="fa fa-user me-2"></i>Họ tên:</span>
+            <strong>${customerName}</strong>
+          </div>
+          <div class="mb-1">
+            <span class="text-muted"><i class="fa fa-phone me-2"></i>Số điện thoại:</span>
+            <span>${customerPhone}</span>
+          </div>
+          <div class="mb-1">
+            <span class="text-muted"><i class="fa fa-envelope me-2"></i>Email:</span>
+            <span>${customerEmail}</span>
+          </div>
+          <div>
+            <span class="text-muted"><i class="fa fa-map-marker-alt me-2"></i>Địa chỉ:</span>
+            <span>${customerAddress}</span>
+          </div>
+        </div>
+
+        <div class="mb-2">
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="small text-muted text-uppercase">Danh sách sản phẩm (${itemCount})</span>
+            <span class="small text-muted">${paymentLabel}</span>
+          </div>
+          <div class="mt-2">
+            ${buildItemSummary(order.items)}
+          </div>
+        </div>
+
+        <div class="pt-2 border-top">
+          <div class="d-flex justify-content-between small text-muted">
+            <span>Tạm tính</span>
+            <span>${formatCurrency(subtotal)}₫</span>
+          </div>
+          <div class="d-flex justify-content-between small text-muted">
+            <span>Vận chuyển</span>
+            <span>${formatCurrency(shipping)}₫</span>
+          </div>
+          <div class="d-flex justify-content-between small text-muted">
+            <span>Giảm giá</span>
+            <span>-${formatCurrency(discount)}₫</span>
+          </div>
+          <div class="d-flex justify-content-between align-items-center mt-2">
+            <span class="small text-muted text-uppercase fw-semibold">Tổng tiền</span>
+            <span class="fw-bold text-success">${formatCurrency(totalAmount)}₫</span>
+          </div>
         </div>
       </div>
     `;

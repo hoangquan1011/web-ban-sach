@@ -18,6 +18,12 @@
     .form-muted { font-size:.9rem; color:#6c757d; }
     .table thead { background:#f5f8f6; font-weight:600; color:#2d6a4f; }
     .combo-hint { font-size:.85rem; color:#6c757d; margin-top:4px; }
+    .detail-overlay { position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.5); padding:1rem; z-index:1050; }
+    .detail-overlay.show { display:flex; }
+    .detail-dialog { background:#fff; border-radius:1rem; width:min(860px,100%); max-height:90vh; overflow-y:auto; padding:1.5rem; box-shadow:0 15px 35px rgba(0,0,0,0.25); }
+    .detail-meta-label { font-size:.78rem; text-transform:uppercase; letter-spacing:.05em; color:#6c757d; }
+    .detail-meta-value { font-weight:600; font-size:1rem; color:#1b4332; }
+    .detail-summary { font-weight:600; color:#2d6a4f; }
   </style>
 </head>
 <body>
@@ -158,6 +164,7 @@
                       <th>Số lượng</th>
                       <th>Tổng tiền</th>
                       <th>Ghi chú</th>
+                      <th style="width: 120px;">Chi tiết</th>
                     </tr>
                   </thead>
                   <tbody id="receiptTable">
@@ -168,6 +175,56 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="detail-overlay" id="receiptDetailOverlay">
+    <div class="detail-dialog">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0 text-success"><i class="fa-solid fa-eye me-2"></i>Chi tiết phiếu nhập</h5>
+        <button type="button" class="btn btn-outline-secondary btn-sm" data-close-detail>&times;</button>
+      </div>
+      <div class="row g-3 mb-3">
+        <div class="col-md-4">
+          <div class="detail-meta-label">Mã phiếu</div>
+          <div class="detail-meta-value" id="detailCode">—</div>
+        </div>
+        <div class="col-md-4">
+          <div class="detail-meta-label">Ngày nhập</div>
+          <div class="detail-meta-value" id="detailDate">—</div>
+        </div>
+        <div class="col-md-4">
+          <div class="detail-meta-label">Nhà cung cấp</div>
+          <div class="detail-meta-value" id="detailSupplier">—</div>
+        </div>
+        <div class="col-12">
+          <div class="detail-meta-label">Ghi chú</div>
+          <div class="detail-meta-value" id="detailNote">—</div>
+        </div>
+      </div>
+      <div class="table-responsive mb-3">
+        <table class="table table-sm align-middle">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Mã</th>
+              <th>Sản phẩm</th>
+              <th class="text-center">Số lượng</th>
+              <th class="text-end">Giá nhập</th>
+              <th class="text-end">Thành tiền</th>
+            </tr>
+          </thead>
+          <tbody id="detailItems">
+            <tr>
+              <td colspan="6" class="text-center text-muted">Chưa có dữ liệu.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="detail-summary" id="detailSummary">0 sản phẩm • 0đ</div>
+      <div class="text-end mt-3">
+        <button type="button" class="btn btn-success" data-close-detail>Đóng</button>
       </div>
     </div>
   </div>
@@ -222,6 +279,16 @@
         saveBtn: document.getElementById('saveReceiptBtn'),
         addItemBtn: document.getElementById('addItemBtn'),
         itemsTable: document.getElementById('currentItemsTable')
+      };
+
+      const detailRefs = {
+        overlay: document.getElementById('receiptDetailOverlay'),
+        code: document.getElementById('detailCode'),
+        date: document.getElementById('detailDate'),
+        supplier: document.getElementById('detailSupplier'),
+        note: document.getElementById('detailNote'),
+        items: document.getElementById('detailItems'),
+        summary: document.getElementById('detailSummary')
       };
 
       let receipts = [];
@@ -285,12 +352,12 @@
       const renderReceipts = () => {
         if (!refs.table) return;
         if (!receipts.length) {
-          refs.table.innerHTML = '<tr><td colspan="6" class="text-center text-muted">Chưa có phiếu nào.</td></tr>';
+          refs.table.innerHTML = '<tr><td colspan="7" class="text-center text-muted">Chưa có phiếu nào.</td></tr>';
           return;
         }
 
         refs.table.innerHTML = receipts
-          .map((r) => {
+          .map((r, index) => {
             const totalQty = calculateReceiptQty(r);
             const totalAmount = calculateReceiptTotal(r);
             return `
@@ -301,6 +368,11 @@
                 <td>${totalQty}</td>
                 <td>${formatCurrency(totalAmount)}</td>
                 <td>${r.note || '—'}</td>
+                <td>
+                  <button class="btn btn-outline-success btn-sm" type="button" data-receipt-detail="${index}">
+                    <i class="fa-solid fa-eye me-1"></i>Xem
+                  </button>
+                </td>
               </tr>
             `;
           })
@@ -337,6 +409,47 @@
         if (!refs.totalPreview) return;
         const total = currentItems.reduce((sum, item) => sum + getItemTotal(item), 0);
         refs.totalPreview.value = total ? formatCurrency(total) : '';
+      };
+
+      const renderDetailItems = (items = []) => {
+        if (!detailRefs.items) return;
+        if (!items.length) {
+          detailRefs.items.innerHTML =
+            '<tr><td colspan="6" class="text-center text-muted">Chưa có dữ liệu sản phẩm.</td></tr>';
+          return;
+        }
+
+        detailRefs.items.innerHTML = items
+          .map(
+            (item, index) => `
+              <tr>
+                <td>${index + 1}</td>
+                <td>${item.code || '—'}</td>
+                <td>${item.name || 'Sản phẩm'}</td>
+                <td class="text-center">${item.qty || 0}</td>
+                <td class="text-end">${formatCurrency(item.price || 0)}</td>
+                <td class="text-end">${formatCurrency(getItemTotal(item))}</td>
+              </tr>
+            `
+          )
+          .join('');
+      };
+
+      const openDetail = (receipt = {}) => {
+        if (!detailRefs.overlay) return;
+        detailRefs.code.textContent = receipt.code || '—';
+        detailRefs.date.textContent = formatDate(receipt.date);
+        detailRefs.supplier.textContent = receipt.supplier || '—';
+        detailRefs.note.textContent = receipt.note || '—';
+        renderDetailItems(getReceiptItems(receipt));
+        const qty = calculateReceiptQty(receipt);
+        const total = calculateReceiptTotal(receipt);
+        detailRefs.summary.textContent = `${qty} sản phẩm • ${formatCurrency(total)}`;
+        detailRefs.overlay.classList.add('show');
+      };
+
+      const closeDetail = () => {
+        detailRefs.overlay?.classList.remove('show');
       };
 
       const renderCurrentItems = () => {
@@ -453,6 +566,20 @@
       refs.resetBtn?.addEventListener('click', resetForm);
       refs.saveBtn?.addEventListener('click', handleSave);
       refs.addItemBtn?.addEventListener('click', handleAddItem);
+      detailRefs.overlay?.addEventListener('click', (event) => {
+        if (event.target === detailRefs.overlay) closeDetail();
+      });
+      document.querySelectorAll('[data-close-detail]').forEach((btn) => {
+        btn.addEventListener('click', closeDetail);
+      });
+      refs.table?.addEventListener('click', (event) => {
+        const btn = event.target.closest('[data-receipt-detail]');
+        if (!btn) return;
+        const index = Number(btn.dataset.receiptDetail);
+        if (Number.isNaN(index)) return;
+        const receipt = receipts[index];
+        if (receipt) openDetail(receipt);
+      });
       refs.itemsTable?.addEventListener('click', (event) => {
         const btn = event.target.closest('[data-remove-index]');
         if (!btn) return;
