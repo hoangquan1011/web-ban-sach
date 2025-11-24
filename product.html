@@ -1265,6 +1265,7 @@
         });
     </script>
   <script>
+    const pager = document.querySelector('.pagination');
     document.getElementById('filterSubmit')?.addEventListener('click', () => {
       const placeholder = document.getElementById('searchPlaceholder');
       if (placeholder) placeholder.classList.remove('d-none');
@@ -1272,6 +1273,14 @@
       if (grid) grid.classList.add('d-none');
       const noResult = document.getElementById('noResultsMessage');
       if (noResult) noResult.classList.add('d-none');
+      if (pager) pager.classList.add('d-none');
+    });
+    document.getElementById('filterReset')?.addEventListener('click', () => {
+      const placeholder = document.getElementById('searchPlaceholder');
+      if (placeholder) placeholder.classList.add('d-none');
+      const grid = document.getElementById('productGrid');
+      if (grid) grid.classList.remove('d-none');
+      if (pager) pager.classList.remove('d-none');
     });
   </script>
 
