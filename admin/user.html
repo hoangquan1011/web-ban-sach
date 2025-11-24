@@ -107,6 +107,18 @@
   <script>
     // Dùng chung dữ liệu users
     let data = JSON.parse(localStorage.getItem('users') || '[]');
+    if(!Array.isArray(data) || !data.length){
+      data = [
+        {"id":1001,"name":"Nguyễn Văn Minh","email":"minh.nguyen@example.com","phone":"0901 234 567","city":"123 An Dương Vương, Q5, TP.HCM","username":"minhnguyen","password":"Minh@2025","status":"active","createdBy":"seed"},
+        {"id":1002,"name":"Trần Hoàng Phúc","email":"phuc.tran@example.com","phone":"0914 567 890","city":"45 Nguyễn Tri Phương, Q10, TP.HCM","username":"hoang.tran","password":"Phuc123","status":"active","createdBy":"seed"},
+        {"id":1003,"name":"Phạm Thùy Linh","email":"linh.pham@example.com","phone":"0909 246 810","city":"88 Võ Văn Tần, Q3, TP.HCM","username":"thuylinh","password":"Linh2024","status":"locked","createdBy":"seed"},
+        {"id":1004,"name":"Đỗ Quỳnh Anh","email":"quynhanh@example.com","phone":"0932 888 221","city":"25 Lý Thường Kiệt, Biên Hòa","username":"quynh.anh","password":"Anh@310","status":"active","createdBy":"seed"},
+        {"id":1005,"name":"Lê Khánh Huyền","email":"huyen.le@example.com","phone":"0987 111 222","city":"72 Trần Phú, Đà Nẵng","username":"le.huyen","password":"Huyenlee","status":"locked","createdBy":"seed"},
+        {"id":1006,"name":"Võ Nhật Tân","email":"tan.vo@example.com","phone":"0979 456 123","city":"19 Lê Lợi, Cần Thơ","username":"vo.tan","password":"Tanvo2025","status":"active","createdBy":"seed"},
+        {"id":1007,"name":"Mai Thanh Vinh","email":"vinh.mai@example.com","phone":"0981 222 345","city":"12 Kim Mã, Hà Nội","username":"maivinh","password":"Vinhmai","status":"active","createdBy":"seed"},
+        {"id":1008,"name":"Huỳnh Bảo Thuận","email":"thuan.huynh@example.com","phone":"0912 678 345","city":"56 Quang Trung, Nha Trang","username":"bao.thuan","password":"Thuan2025","status":"locked","createdBy":"seed"}
+      ];
+    }
 
     const tbody = document.getElementById('tbody');
     const modal = document.getElementById('modalBackdrop');

@@ -33,7 +33,7 @@
     .status-chua-xu-ly { background: #fff3cd; color: #856404; }
     .status-dang-giao { background: #cfe2ff; color: #084298; }
     .status-hoan-thanh { background: #d1e7dd; color: #0f5132; }
-    .status-da-huy { background: #d1e7; color: #842029; }
+    .status-da-huy { background: #f8d7da; color: #842029; }
 
     .username-display {
       font-weight: 600;
@@ -116,31 +116,32 @@
                 </button>
               </div>
             </div>
+        
           </div>
 
           <!-- Thống kê nhanh -->
           <div class="row mb-4">
             <div class="col-md-3">
               <div class="bg-warning bg-opacity-25 p-3 rounded text-center">
-                <h5 class="mb-0" id="countChuaXuLy">0</h5>
+                <h5 class="mb-0" id="countChuaXuLy">1</h5>
                 <small>Chưa xử lý</small>
               </div>
             </div>
             <div class="col-md-3">
               <div class="bg-info bg-opacity-25 p-3 rounded text-center">
-                <h5 class="mb-0" id="countDangGiao">0</h5>
+                <h5 class="mb-0" id="countDangGiao">1</h5>
                 <small>Đang giao</small>
               </div>
             </div>
             <div class="col-md-3">
               <div class="bg-success bg-opacity-25 p-3 rounded text-center">
-                <h5 class="mb-0" id="countHoanThanh">0</h5>
+                <h5 class="mb-0" id="countHoanThanh">1</h5>
                 <small>Hoàn thành</small>
               </div>
             </div>
             <div class="col-md-3">
               <div class="bg-danger bg-opacity-25 p-3 rounded text-center">
-                <h5 class="mb-0" id="countDaHuy">0</h5>
+                <h5 class="mb-0" id="countDaHuy">1</h5>
                 <small>Đã hủy</small>
               </div>
             </div>
@@ -160,147 +161,57 @@
                 <th>Chi tiết</th>
               </tr>
             </thead>
-            <tbody id="orderTable"></tbody>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td><strong>ORD-2025-001</strong></td>
+                <td><span class="username-display">minhnguyen</span></td>
+                <td>Nguyễn Văn Minh</td>
+                <td>12/02/2025 09:15</td>
+                <td><span class="status-badge status-chua-xu-ly">Chưa xử lý</span></td>
+                <td>123 An Dương Vương, Q5, TP.HCM</td>
+                <td><strong class="text-primary">1.250.000₫</strong></td>
+                <td><a class="btn-view" href="chitietdonhang.html#ord-2025-001">Xem</a></td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td><strong>ORD-2025-002</strong></td>
+                <td><span class="username-display">hoang.tran</span></td>
+                <td>Trần Hoàng Phúc</td>
+                <td>11/02/2025 14:42</td>
+                <td><span class="status-badge status-dang-giao">Đang giao</span></td>
+                <td>45 Nguyễn Tri Phương, Q10, TP.HCM</td>
+                <td><strong class="text-primary">865.000₫</strong></td>
+                <td><a class="btn-view" href="chitietdonhang.html#ord-2025-002">Xem</a></td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td><strong>ORD-2025-003</strong></td>
+                <td><span class="username-display">thuylinh</span></td>
+                <td>Phạm Thùy Linh</td>
+                <td>10/02/2025 08:05</td>
+                <td><span class="status-badge status-hoan-thanh">Hoàn thành</span></td>
+                <td>88 Võ Văn Tần, Q3, TP.HCM</td>
+                <td><strong class="text-primary">542.000₫</strong></td>
+                <td><a class="btn-view" href="chitietdonhang.html#ord-2025-003">Xem</a></td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td><strong>ORD-2025-004</strong></td>
+                <td><span class="username-display">quynh.anh</span></td>
+                <td>Đỗ Quỳnh Anh</td>
+                <td>09/02/2025 19:30</td>
+                <td><span class="status-badge status-da-huy">Đã hủy</span></td>
+                <td>25 Lý Thường Kiệt, TP. Biên Hòa</td>
+                <td><strong class="text-primary">310.000₫</strong></td>
+                <td><a class="btn-view" href="chitietdonhang.html#ord-2025-004">Xem</a></td>
+              </tr>
+            </tbody>
           </table>
         </div>
       </div>
     </div>
   </div>
-
-<script>
-  let allOrders = JSON.parse(localStorage.getItem("orders")) || [];
-  let filteredOrders = [...allOrders];
-  const table = document.getElementById("orderTable");
-
-  // Render bảng đơn hàng
-  const renderOrders = (ordersToRender = filteredOrders) => {
-    if (ordersToRender.length === 0) {
-      table.innerHTML = `<tr><td colspan="9" class="text-center text-muted">Chưa có đơn hàng nào</td></tr>`;
-      return;
-    }
-
-    table.innerHTML = ordersToRender.map((order, index) => {
-      const username = order.username || order.customer?.email || order.customer?.phone || "Không rõ";
-      const customerName = order.customer?.name || "Không có thông tin";
-      const totalAmount = order.totals?.total || order.total || 0;
-      
-      return `
-        <tr>
-          <td>${index + 1}</td>
-          <td><strong>${order.id}</strong></td>
-          <td><span class="username-display">${username}</span></td>
-          <td>${customerName}</td>
-          <td>${formatDate(order.date)}</td>
-          <td>${getStatusBadge(order.status)}</td>
-          <td>${order.customer?.address || "Không có địa chỉ"}</td>
-          <td><strong class="text-primary">${totalAmount.toLocaleString('vi-VN')}₫</strong></td>
-          <td><a href="chitietdonhang.html?id=${order.id}" class="btn-view">Xem</a></td>
-        </tr>
-      `;
-    }).join("");
-  };
-
-  // Format ngày tháng
-  const formatDate = (dateString) => {
-    if (!dateString) return "Không rõ";
-    const date = new Date(dateString);
-    if (isNaN(date)) return dateString;
-    return date.toLocaleString('vi-VN');
-  };
-
-  const getDateBoundary = (value, endOfDay = false) => {
-    if (!value) return null;
-    const date = new Date(value);
-    if (isNaN(date)) return null;
-    if (endOfDay) {
-      date.setHours(23, 59, 59, 999);
-    } else {
-      date.setHours(0, 0, 0, 0);
-    }
-    return date.getTime();
-  };
-
-  // Convert status sang badge
-  const getStatusBadge = (status) => {
-    const statusMap = {
-      'chua-xu-ly': { text: 'Chưa xử lý', class: 'status-chua-xu-ly' },
-      'dang-giao': { text: 'Đang giao', class: 'status-dang-giao' },
-      'hoan-thanh': { text: 'Hoàn thành', class: 'status-hoan-thanh' },
-      'da-huy': { text: 'Đã hủy', class: 'status-da-huy' }
-    };
-    const statusInfo = statusMap[status] || { text: 'Không xác định', class: '' };
-    return `<span class="status-badge ${statusInfo.class}">${statusInfo.text}</span>`;
-  };
-
-  // Thống kê số lượng đơn theo trạng thái
-  const updateStatistics = (orders = filteredOrders) => {
-    const stats = {
-      'chua-xu-ly': 0,
-      'dang-giao': 0,
-      'hoan-thanh': 0,
-      'da-huy': 0
-    };
-
-    orders.forEach(order => {
-      if (stats.hasOwnProperty(order.status)) {
-        stats[order.status]++;
-      }
-    });
-
-    document.getElementById('countChuaXuLy').textContent = stats['chua-xu-ly'];
-    document.getElementById('countDangGiao').textContent = stats['dang-giao'];
-    document.getElementById('countHoanThanh').textContent = stats['hoan-thanh'];
-    document.getElementById('countDaHuy').textContent = stats['da-huy'];
-  };
-
-  // Bộ lọc
-  const applyFilter = () => {
-    const searchOrderId = document.getElementById('searchOrderId').value.toLowerCase().trim();
-    const searchUsername = document.getElementById('searchUsername').value.toLowerCase().trim();
-    const filterStatus = document.getElementById('filterStatus').value;
-    const fromTimestamp = getDateBoundary(document.getElementById('filterDateFrom').value);
-    const toTimestamp = getDateBoundary(document.getElementById('filterDateTo').value, true);
-
-    filteredOrders = allOrders.filter(order => {
-      const matchOrderId = !searchOrderId || (order.id || '').toLowerCase().includes(searchOrderId);
-      
-      const username = (order.username || order.customer?.email || order.customer?.phone || '').toLowerCase();
-      const matchUsername = !searchUsername || username.includes(searchUsername);
-      
-      const matchStatus = !filterStatus || order.status === filterStatus;
-      const orderTime = order.date ? new Date(order.date).getTime() : null;
-      const matchDateFrom = !fromTimestamp || (orderTime !== null && orderTime >= fromTimestamp);
-      const matchDateTo = !toTimestamp || (orderTime !== null && orderTime <= toTimestamp);
-
-      return matchOrderId && matchUsername && matchStatus && matchDateFrom && matchDateTo;
-    });
-
-    renderOrders(filteredOrders);
-    updateStatistics(filteredOrders);
-  };
-
-  // Reset bộ lọc
-  const resetFilter = () => {
-    document.getElementById('searchOrderId').value = '';
-    document.getElementById('searchUsername').value = '';
-    document.getElementById('filterStatus').value = '';
-    document.getElementById('filterDateFrom').value = '';
-    document.getElementById('filterDateTo').value = '';
-    
-    filteredOrders = [...allOrders];
-    renderOrders(filteredOrders);
-    updateStatistics(filteredOrders);
-  };
-
-  // Event listeners
-  document.getElementById('btnFilter').addEventListener('click', applyFilter);
-  document.getElementById('btnReset').addEventListener('click', resetFilter);
-
-  // Khởi tạo
-  renderOrders();
-  updateStatistics();
   
-  console.log('📦 Loaded orders:', allOrders);
-</script>
 </body>
 </html>

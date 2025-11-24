@@ -1,4 +1,3 @@
-<!-- chitietdonhang.html (phiên bản fixed - hiển thị sản phẩm từ cart) -->
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -6,37 +5,45 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Chi tiết Đơn hàng - Thức Store</title>
 
-  <!-- Bootstrap & Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="../css/admin-shared.css">
 
   <style>
-    body { background-color: #f3f8f3; font-family: "Open Sans", sans-serif; }
-
-    /* Content */
-    .content-area {
-      background: #fff; border-radius: 1rem;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.05);
-      padding: 2rem; min-height: 75vh;
-    }
-
-    .table thead th { white-space: nowrap; }
-    .form-text-sm { font-size: .85rem; color: #6c757d; }
-    .currency { text-align: right; }
+    body { background-color:#f3f8f3; font-family:"Open Sans",sans-serif; }
+    .content-area { background:#fff; border-radius:1rem; box-shadow:0 3px 8px rgba(0,0,0,0.05); padding:2rem; min-height:75vh; }
+    .order-nav { list-style:none; padding:0; margin:0; display:flex; flex-wrap:wrap; gap:.75rem; }
+    .order-nav a { text-decoration:none; padding:.4rem 1rem; border-radius:999px; border:1px solid #cfe3d3; font-weight:600; color:#1b4332; background:#f8fff9; }
+    .order-nav a.active { background:#2d6a4f; color:#fff; border-color:#2d6a4f; }
+    .info-card { background:#f8fdf9; border:1px solid #dfeee4; border-radius:1rem; padding:1.5rem; }
+    .info-card.blue { background:#f0f6ff; border-color:#d8e6ff; }
+    .info-card.green { background:#f2fff6; border-color:#cdecd6; }
+    .info-card.red { background:#fff5f5; border-color:#f5c2c7; }
+    .info-label { font-size:.78rem; text-transform:uppercase; letter-spacing:.05em; color:#6c757d; margin-bottom:.2rem; }
+    .info-value { font-weight:600; font-size:1.05rem; color:#1b4332; }
+    .info-card.blue .info-value { color:#12345b; }
+    .info-card.red .info-value { color:#842029; }
+    .status-chip { display:inline-flex; align-items:center; gap:.35rem; padding:.35rem .9rem; border-radius:999px; font-weight:600; }
+    .status-chip.pending { background:#fff3cd; color:#856404; }
+    .status-chip.shipping { background:#cfe2ff; color:#084298; }
+    .status-chip.done { background:#d1f4e0; color:#0f5132; }
+    .status-chip.cancel { background:#f8d7da; color:#842029; }
+    .note-box { background:#fff; border:1px dashed #d7e2d9; border-radius:.85rem; padding:1rem; font-size:.95rem; }
+    .table thead th { white-space:nowrap; }
+    .currency { text-align:right; font-weight:600; }
+    .order-detail { display:none; }
+    .order-detail.active { display:block; }
   </style>
 </head>
 
 <body>
   <div class="container-fluid py-4">
-    <!-- Banner -->
     <div class="admin-banner">
       <h1>Thức Store Admin</h1>
       <p>Chi tiết Đơn hàng</p>
     </div>
 
     <div class="row">
-      <!-- Sidebar -->
       <div class="col-lg-3 mb-4">
         <div class="sidebar">
           <h5>📋 Menu quản lý</h5>
@@ -49,356 +56,308 @@
         </div>
       </div>
 
-      <!-- Content -->
       <div class="col-lg-9">
         <div class="content-area">
           <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="text-success fw-bold">Chi tiết Đơn hàng</h4>
-            <div class="d-flex gap-2">
-              <a href="quanlydonhang.html" class="btn btn-outline-success btn-sm">
-                <i class="fa fa-arrow-left"></i> Quay lại
-              </a>
+            <div>
+              <h4 class="text-success fw-bold mb-1">Chi tiết đơn hàng</h4>
+             
             </div>
+            <a href="quanlydonhang.html" class="btn btn-outline-success btn-sm">
+              <i class="fa fa-arrow-left me-1"></i>Quay lại danh sách
+            </a>
           </div>
 
-          <!-- Thông tin đơn hàng -->
-          <div class="mb-4">
-            <h5 class="fw-bold text-secondary mb-3">🧾 Thông tin đơn hàng</h5>
-            <div class="row g-3">
-              <div class="col-md-4">
-                <label class="form-label fw-semibold">Mã đơn hàng</label>
-                <input type="text" class="form-control" id="orderId" readonly>
-              </div>
-              <div class="col-md-4">
-                <label class="form-label fw-semibold">Ngày đặt</label>
-                <input type="datetime-local" class="form-control" id="orderDate">
-              </div>
-              <div class="col-md-4">
-                <label class="form-label fw-semibold">Tình trạng</label>
-                <select class="form-select" id="orderStatus">
-                  <option value="moi-dat">Mới đặt</option>
-                  <option value="da-xu-ly">Đã xử lý</option>
-                  <option value="da-giao">Đã giao</option>
-                  <option value="huy">Hủy</option>
-                </select>
-              </div>
+          <ul class="order-nav mb-4" id="orderNav">
+            <li><a href="#ord-2025-001">ORD-2025-001</a></li>
+            <li><a href="#ord-2025-002">ORD-2025-002</a></li>
+            <li><a href="#ord-2025-003">ORD-2025-003</a></li>
+            <li><a href="#ord-2025-004">ORD-2025-004</a></li>
+          </ul>
 
-              <div class="col-12"><hr class="my-3"></div>
-
-              <div class="col-md-6">
-                <label class="form-label fw-semibold">Họ tên khách hàng</label>
-                <input type="text" class="form-control" id="customerName" placeholder="Nguyễn Văn A" required>
-              </div>
-              <div class="col-md-3">
-                <label class="form-label fw-semibold">Số điện thoại</label>
-                <input type="tel" class="form-control" id="customerPhone" placeholder="09xxxxxxxx">
-              </div>
-              <div class="col-md-3">
-                <label class="form-label fw-semibold">Email</label>
-                <input type="email" class="form-control" id="customerEmail" placeholder="name@email.com">
-              </div>
-              <div class="col-md-12">
-                <label class="form-label fw-semibold">Địa chỉ giao hàng</label>
-                <input type="text" class="form-control" id="address" placeholder="Số nhà, đường, phường, quận, tỉnh/thành">
-              </div>
-            </div>
-          </div>
-
-          <!-- Danh sách sản phẩm -->
-          <div class="mb-4">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-              <h5 class="fw-bold text-secondary">📦 Sản phẩm trong đơn hàng</h5>
-            </div>
-
-            <div class="table-responsive">
-              <table class="table table-bordered align-middle text-center">
-                <thead class="table-success">
-                  <tr>
-                    <th style="width:60px">STT</th>
-                    <th>Tên sản phẩm</th>
-                    <th style="width:120px">Số lượng</th>
-                    <th style="width:160px">Đơn giá (đ)</th>
-                    <th style="width:160px">Thành tiền (đ)</th>
-                  </tr>
-                </thead>
-                <tbody id="productList"></tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- Tổng tiền -->
-          <div class="row g-3">
-            <div class="col-lg-6">
-              <label class="form-label fw-semibold">Ghi chú</label>
-              <textarea id="note" class="form-control" rows="3" placeholder="(Tuỳ chọn)"></textarea>
-            </div>
-            <div class="col-lg-6">
-              <div class="bg-light rounded p-3">
-                <div class="d-flex justify-content-between mb-2">
-                  <span>Tạm tính</span>
-                  <strong id="subtotal">0đ</strong>
-                </div>
-                <div class="d-flex justify-content-between mb-2 align-items-center">
-                  <span>Phí vận chuyển</span>
-                  <strong class="text-end" id="shippingDisplay">30,000đ</strong>
+          <div id="orderDetails">
+            <section class="order-detail" id="ord-2025-001" data-card="default">
+              <div class="info-card">
+                <div class="row g-3">
+                  <div class="col-sm-6 col-lg-3">
+                    <div class="info-label">Mã đơn</div>
+                    <div class="info-value">ORD-2025-001</div>
+                  </div>
+                  <div class="col-sm-6 col-lg-3">
+                    <div class="info-label">Ngày đặt</div>
+                    <div class="info-value">12/02/2025 • 09:15</div>
+                  </div>
+                  <div class="col-sm-6 col-lg-3">
+                    <div class="info-label">Phương thức</div>
+                    <div class="info-value">Thẻ ngân hàng</div>
+                  </div>
+                  <div class="col-sm-6 col-lg-3">
+                    <div class="info-label">Trạng thái</div>
+                    <span class="status-chip pending"><i class="fa-solid fa-clock-rotate-left"></i>Chưa xử lý</span>
+                  </div>
                 </div>
                 <hr>
-                <div class="d-flex justify-content-between">
-                  <h5>Tổng cộng</h5>
-                  <h5 id="grandTotal" class="text-success">0đ</h5>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <div class="info-label">Khách hàng</div>
+                    <div class="info-value">Nguyễn Văn Minh</div>
+                    <div class="text-muted small">Username: minhnguyen</div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="info-label">Địa chỉ giao hàng</div>
+                    <div class="info-value">123 An Dương Vương, Phường 8, Quận 5, TP.HCM</div>
+                  </div>
+                </div>
+                <div class="row g-3 mt-1">
+                  <div class="col-md-4">
+                    <div class="info-label">Số điện thoại</div>
+                    <div class="info-value">0901 234 567</div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="info-label">Email</div>
+                    <div class="info-value">minh.nguyen@example.com</div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="info-label">Giao dự kiến</div>
+                    <div class="info-value">Từ 13-15/02/2025</div>
+                  </div>
                 </div>
               </div>
-            </div>
+
+              <div class="mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <h5 class="fw-bold text-secondary">📦 Danh sách sản phẩm</h5>
+                  <span class="text-muted small">5 sản phẩm</span>
+                </div>
+                <div class="table-responsive">
+                  <table class="table table-bordered align-middle text-center">
+                    <thead class="table-success">
+                      <tr>
+                        <th>STT</th>
+                        <th>Sản phẩm</th>
+                        <th>Số lượng</th>
+                        <th>Đơn giá</th>
+                        <th>Thành tiền</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>1</td>
+                        <td class="text-start"><strong>GOOD ENERGY - NĂNG LƯỢNG TỐT</strong><div class="text-muted small">Mã: KN001</div></td>
+                        <td>4 quyển</td>
+                        <td class="currency">85.000đ</td>
+                        <td class="currency">340.000đ</td>
+                      </tr>
+                      <tr>
+                        <td>2</td>
+                        <td class="text-start"><strong>NGHỆ THUẬT TƯ DUY LOGIC</strong><div class="text-muted small">Mã: KN002</div></td>
+                        <td>3 quyển</td>
+                        <td class="currency">126.000đ</td>
+                        <td class="currency">378.000đ</td>
+                      </tr>
+                      <tr>
+                        <td>3</td>
+                        <td class="text-start"><strong>NGHĨ GIÀU LÀM GIÀU</strong><div class="text-muted small">Mã: KT005</div></td>
+                        <td>2 quyển</td>
+                        <td class="currency">135.000đ</td>
+                        <td class="currency">270.000đ</td>
+                      </tr>
+                      <tr>
+                        <td>4</td>
+                        <td class="text-start"><strong>THE LITTLE BOOK - ĐẦU TƯ THEO CHIẾN LƯỢC PHÒNG THỦ</strong><div class="text-muted small">Mã: KT001</div></td>
+                        <td>1 quyển</td>
+                        <td class="currency">134.000đ</td>
+                        <td class="currency">134.000đ</td>
+                      </tr>
+                      <tr>
+                        <td>5</td>
+                        <td class="text-start"><strong>SỐNG TỈNH THỨC MỖI NGÀY</strong><div class="text-muted small">Mã: KN004</div></td>
+                        <td>1 quyển</td>
+                        <td class="currency">98.000đ</td>
+                        <td class="currency">98.000đ</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="row g-3 mt-2">
+                <div class="col-lg-6">
+                  <label class="form-label fw-semibold">Ghi chú</label>
+                  <div class="note-box">Giao trước 10h sáng, liên hệ trước khi tới. Khách đã thanh toán online và muốn kiểm tra sách trước khi ký nhận.</div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="bg-light rounded p-3">
+                    <div class="d-flex justify-content-between mb-2"><span>Tạm tính</span><strong>1.220.000đ</strong></div>
+                    <div class="d-flex justify-content-between mb-2"><span>Phí vận chuyển</span><strong>30.000đ</strong></div>
+                    <hr>
+                    <div class="d-flex justify-content-between"><h5>Tổng cộng</h5><h5 class="text-success">1.250.000đ</h5></div>
+                  </div>
+                </div>
+              </div>
+             
+            </section>
+
+            <section class="order-detail" id="ord-2025-002">
+              <div class="info-card blue">
+                <div class="row g-3">
+                  <div class="col-sm-6 col-lg-3"><div class="info-label">Mã đơn</div><div class="info-value">ORD-2025-002</div></div>
+                  <div class="col-sm-6 col-lg-3"><div class="info-label">Ngày đặt</div><div class="info-value">11/02/2025 • 14:42</div></div>
+                  <div class="col-sm-6 col-lg-3"><div class="info-label">Phương thức</div><div class="info-value">Thanh toán khi nhận</div></div>
+                  <div class="col-sm-6 col-lg-3"><div class="info-label">Trạng thái</div><span class="status-chip shipping"><i class="fa-solid fa-truck"></i>Đang giao</span></div>
+                </div>
+                <hr>
+                <div class="row g-3">
+                  <div class="col-md-6"><div class="info-label">Khách hàng</div><div class="info-value">Trần Hoàng Phúc</div><div class="text-muted small">Username: hoang.tran</div></div>
+                  <div class="col-md-6"><div class="info-label">Địa chỉ giao hàng</div><div class="info-value">45 Nguyễn Tri Phương, Quận 10, TP.HCM</div></div>
+                </div>
+                <div class="row g-3 mt-1">
+                  <div class="col-md-4"><div class="info-label">Số điện thoại</div><div class="info-value">0914 567 890</div></div>
+                  <div class="col-md-4"><div class="info-label">Email</div><div class="info-value">hoang.tran@example.com</div></div>
+                  <div class="col-md-4"><div class="info-label">Dự kiến giao</div><div class="info-value">12 - 14/02/2025</div></div>
+                </div>
+              </div>
+              <div class="mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-2"><h5 class="fw-bold text-secondary">📦 Danh sách sản phẩm</h5><span class="text-muted small">4 sản phẩm</span></div>
+                <div class="table-responsive">
+                  <table class="table table-bordered align-middle text-center">
+                    <thead class="table-success"><tr><th>STT</th><th>Sản phẩm</th><th>Số lượng</th><th>Đơn giá</th><th>Thành tiền</th></tr></thead>
+                    <tbody>
+                      <tr><td>1</td><td class="text-start"><strong>NGHĨ GIÀU LÀM GIÀU</strong><div class="text-muted small">Mã: KT005</div></td><td>2 quyển</td><td class="currency">135.000đ</td><td class="currency">270.000đ</td></tr>
+                      <tr><td>2</td><td class="text-start"><strong>NGHỆ THUẬT TƯ DUY LOGIC</strong><div class="text-muted small">Mã: KN002</div></td><td>3 quyển</td><td class="currency">126.000đ</td><td class="currency">378.000đ</td></tr>
+                      <tr><td>3</td><td class="text-start"><strong>SỐNG TỈNH THỨC MỖI NGÀY</strong><div class="text-muted small">Mã: KN004</div></td><td>1 quyển</td><td class="currency">98.000đ</td><td class="currency">98.000đ</td></tr>
+                      <tr><td>4</td><td class="text-start"><strong>THÓI QUEN NGON LÀNH</strong><div class="text-muted small">Mã: KN005</div></td><td>1 quyển</td><td class="currency">89.000đ</td><td class="currency">89.000đ</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="row g-3 mt-2">
+                <div class="col-lg-6"><label class="form-label fw-semibold">Ghi chú</label><div class="note-box">Shipper đang liên hệ khách, yêu cầu kiểm tra sơ bộ ngoại quan trước khi bàn giao. Vui lòng gọi trước 30 phút.</div></div>
+                <div class="col-lg-6"><div class="bg-light rounded p-3"><div class="d-flex justify-content-between mb-2"><span>Tạm tính</span><strong>835.000đ</strong></div><div class="d-flex justify-content-between mb-2"><span>Phí vận chuyển</span><strong>30.000đ</strong></div><hr><div class="d-flex justify-content-between"><h5>Tổng cộng</h5><h5 class="text-success">865.000đ</h5></div></div></div>
+              </div>
+              <div class="text-muted small mt-3">* Dữ liệu minh họa dành riêng cho ORD-2025-002.</div>
+            </section>
+
+            <section class="order-detail" id="ord-2025-003">
+              <div class="info-card green">
+                <div class="row g-3">
+                  <div class="col-sm-6 col-lg-3"><div class="info-label">Mã đơn</div><div class="info-value">ORD-2025-003</div></div>
+                  <div class="col-sm-6 col-lg-3"><div class="info-label">Ngày đặt</div><div class="info-value">10/02/2025 • 08:05</div></div>
+                  <div class="col-sm-6 col-lg-3"><div class="info-label">Phương thức</div><div class="info-value">Tiền mặt</div></div>
+                  <div class="col-sm-6 col-lg-3"><div class="info-label">Trạng thái</div><span class="status-chip done"><i class="fa-solid fa-circle-check"></i>Hoàn thành</span></div>
+                </div>
+                <hr>
+                <div class="row g-3">
+                  <div class="col-md-6"><div class="info-label">Khách hàng</div><div class="info-value">Phạm Thùy Linh</div><div class="text-muted small">Username: thuylinh</div></div>
+                  <div class="col-md-6"><div class="info-label">Địa chỉ giao hàng</div><div class="info-value">88 Võ Văn Tần, Quận 3, TP.HCM</div></div>
+                </div>
+                <div class="row g-3 mt-1">
+                  <div class="col-md-4"><div class="info-label">Số điện thoại</div><div class="info-value">0909 246 810</div></div>
+                  <div class="col-md-4"><div class="info-label">Email</div><div class="info-value">phamlh@example.com</div></div>
+                  <div class="col-md-4"><div class="info-label">Ngày giao</div><div class="info-value">Đã giao 11/02/2025</div></div>
+                </div>
+              </div>
+              <div class="mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-2"><h5 class="fw-bold text-secondary">📦 Danh sách sản phẩm</h5><span class="text-muted small">4 sản phẩm</span></div>
+                <div class="table-responsive">
+                  <table class="table table-bordered align-middle text-center">
+                    <thead class="table-success"><tr><th>STT</th><th>Sản phẩm</th><th>Số lượng</th><th>Đơn giá</th><th>Thành tiền</th></tr></thead>
+                    <tbody>
+                      <tr><td>1</td><td class="text-start"><strong>RUỒI TRÂU (TÁI BẢN)</strong><div class="text-muted small">Mã: VN001</div></td><td>2 quyển</td><td class="currency">96.000đ</td><td class="currency">192.000đ</td></tr>
+                      <tr><td>2</td><td class="text-start"><strong>TÔI THẤY HOA VÀNG TRÊN CỎ XANH</strong><div class="text-muted small">Mã: VN003</div></td><td>1 quyển</td><td class="currency">87.000đ</td><td class="currency">87.000đ</td></tr>
+                      <tr><td>3</td><td class="text-start"><strong>DẾ MÈN PHIÊU LƯU KÝ</strong><div class="text-muted small">Mã: VN002</div></td><td>2 quyển</td><td class="currency">72.000đ</td><td class="currency">144.000đ</td></tr>
+                      <tr><td>4</td><td class="text-start"><strong>THÓI QUEN NGON LÀNH</strong><div class="text-muted small">Mã: KN005</div></td><td>1 quyển</td><td class="currency">89.000đ</td><td class="currency">89.000đ</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="row g-3 mt-2">
+                <div class="col-lg-6"><label class="form-label fw-semibold">Ghi chú</label><div class="note-box">Khách hàng đã kiểm tra và xác nhận đủ số lượng, đánh giá hài lòng. Đề nghị lưu ý sẵn giấy bảo hành khi giao các đơn tương tự.</div></div>
+                <div class="col-lg-6"><div class="bg-light rounded p-3"><div class="d-flex justify-content-between mb-2"><span>Tạm tính</span><strong>512.000đ</strong></div><div class="d-flex justify-content-between mb-2"><span>Phí vận chuyển</span><strong>30.000đ</strong></div><hr><div class="d-flex justify-content-between"><h5>Tổng cộng</h5><h5 class="text-success">542.000đ</h5></div></div></div>
+              </div>
+              <div class="text-muted small mt-3">* Dữ liệu minh họa dành riêng cho ORD-2025-003.</div>
+            </section>
+
+            <section class="order-detail" id="ord-2025-004">
+              <div class="info-card red">
+                <div class="row g-3">
+                  <div class="col-sm-6 col-lg-3"><div class="info-label">Mã đơn</div><div class="info-value">ORD-2025-004</div></div>
+                  <div class="col-sm-6 col-lg-3"><div class="info-label">Ngày đặt</div><div class="info-value">09/02/2025 • 19:30</div></div>
+                  <div class="col-sm-6 col-lg-3"><div class="info-label">Phương thức</div><div class="info-value">Chờ xác nhận</div></div>
+                  <div class="col-sm-6 col-lg-3"><div class="info-label">Trạng thái</div><span class="status-chip cancel"><i class="fa-solid fa-circle-xmark"></i>Đã hủy</span></div>
+                </div>
+                <hr>
+                <div class="row g-3">
+                  <div class="col-md-6"><div class="info-label">Khách hàng</div><div class="info-value">Đỗ Quỳnh Anh</div><div class="text-muted small">Username: quynh.anh</div></div>
+                  <div class="col-md-6"><div class="info-label">Địa chỉ giao hàng</div><div class="info-value">25 Lý Thường Kiệt, TP. Biên Hòa</div></div>
+                </div>
+                <div class="row g-3 mt-1">
+                  <div class="col-md-4"><div class="info-label">Số điện thoại</div><div class="info-value">0932 888 221</div></div>
+                  <div class="col-md-4"><div class="info-label">Email</div><div class="info-value">quynhanh@example.com</div></div>
+                  <div class="col-md-4"><div class="info-label">Ghi chú</div><div class="info-value">Khách hẹn đặt lại</div></div>
+                </div>
+              </div>
+              <div class="mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-2"><h5 class="fw-bold text-secondary">📦 Danh sách sản phẩm</h5><span class="text-muted small">3 sản phẩm</span></div>
+                <div class="table-responsive">
+                  <table class="table table-bordered align-middle text-center">
+                    <thead class="table-success"><tr><th>STT</th><th>Sản phẩm</th><th>Số lượng</th><th>Đơn giá</th><th>Thành tiền</th></tr></thead>
+                    <tbody>
+                      <tr><td>1</td><td class="text-start"><strong>NGHỆ THUẬT TƯ DUY LOGIC</strong><div class="text-muted small">Mã: KN002</div></td><td>1 quyển</td><td class="currency">126.000đ</td><td class="currency">126.000đ</td></tr>
+                      <tr><td>2</td><td class="text-start"><strong>SỐNG TỈNH THỨC MỖI NGÀY</strong><div class="text-muted small">Mã: KN004</div></td><td>1 quyển</td><td class="currency">98.000đ</td><td class="currency">98.000đ</td></tr>
+                      <tr><td>3</td><td class="text-start"><strong>GỢI MỞ TRÍ TƯỞNG TƯỢNG</strong><div class="text-muted small">Mã: TN002</div></td><td>2 quyển</td><td class="currency">28.000đ</td><td class="currency">56.000đ</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="row g-3 mt-2">
+                <div class="col-lg-6"><label class="form-label fw-semibold">Ghi chú</label><div class="note-box">Khách báo sai địa chỉ và yêu cầu hủy để đặt lại. Kho đã hoàn tiền trong vòng 24h, lưu ý hỗ trợ khách ưu tiên lần tới.</div></div>
+                <div class="col-lg-6"><div class="bg-light rounded p-3"><div class="d-flex justify-content-between mb-2"><span>Tạm tính</span><strong>280.000đ</strong></div><div class="d-flex justify-content-between mb-2"><span>Phí vận chuyển</span><strong>30.000đ</strong></div><hr><div class="d-flex justify-content-between"><h5>Tổng cộng</h5><h5 class="text-success">310.000đ</h5></div></div></div>
+              </div>
+              <div class="text-muted small mt-3">* Dữ liệu minh họa dành riêng cho ORD-2025-004.</div>
+            </section>
           </div>
 
-          <div id="statusMessage" class="text-success fw-semibold mt-3"></div>
+          <div class="alert alert-secondary mt-4" id="orderHint">Chưa chọn mã đơn nào. Vui lòng nhấn vào một mã ở phía trên.</div>
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    // ====== TIỆN ÍCH ======
-    const fmt = (n) => (Number(n) || 0).toLocaleString('vi-VN') + 'đ';
-    const parseNum = (v) => Math.max(0, Number(v) || 0);
-    const pad2 = (value) => String(value).padStart(2, '0');
-    const toDatetimeLocalValue = (value) => {
-      if (!value) return '';
-      const date = new Date(value);
-      if (Number.isNaN(date.getTime())) return '';
-      return `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())}T${pad2(date.getHours())}:${pad2(date.getMinutes())}`;
-    };
-    const inputValueToISO = (value) => {
-      if (!value) return new Date().toISOString();
-      const date = new Date(value);
-      return Number.isNaN(date.getTime()) ? new Date().toISOString() : date.toISOString();
-    };
+    (function() {
+      const sections = Array.from(document.querySelectorAll('.order-detail'));
+      const navLinks = Array.from(document.querySelectorAll('#orderNav a'));
+      const hint = document.getElementById('orderHint');
 
-    // Map trạng thái UI <-> nội bộ (tương thích trang cũ)
-    const uiToInternal = { 'moi-dat': 'chua-xu-ly', 'da-xu-ly': 'hoan-thanh', 'da-giao': 'dang-giao', 'huy': 'da-huy' };
-    const internalToUi = { 'chua-xu-ly': 'moi-dat', 'hoan-thanh': 'da-xu-ly', 'dang-giao': 'da-giao', 'da-huy': 'huy' };
-
-    // ====== DOM ELEMENTS ======
-    const orderIdInput = document.getElementById('orderId');
-    const orderDateInput = document.getElementById('orderDate');
-    const orderStatusSelect = document.getElementById('orderStatus');
-    const nameInput = document.getElementById('customerName');
-    const phoneInput = document.getElementById('customerPhone');
-    const emailInput = document.getElementById('customerEmail');
-    const addressInput = document.getElementById('address');
-    const noteInput = document.getElementById('note');
-    const tbody = document.getElementById('productList');
-    const subtotalEl = document.getElementById('subtotal');
-    const grandEl = document.getElementById('grandTotal');
-    const shippingDisplay = document.getElementById('shippingDisplay');
-    const statusMessage = document.getElementById('statusMessage');
-    const btnSave = document.getElementById('btnSave');
-
-    // ====== STATE ======
-    let orders = JSON.parse(localStorage.getItem('orders') || '[]');
-    let order = null;
-
-    // ====== KHỞI TẠO ======
-    (function init() {
-      const params = new URLSearchParams(window.location.search);
-      const orderIdParam = params.get('id');
-
-      console.log('🔍 Loading order:', orderIdParam);
-      console.log('📦 All orders:', orders);
-
-      if (orderIdParam) {
-        order = orders.find(o => String(o.id) === String(orderIdParam)) || null;
-        console.log('✅ Found order:', order);
-      }
-
-      if (!order) {
-        // Tạo mới
-        order = {
-          id: `ORD-${Date.now()}`,
-          date: new Date().toISOString(),
-          customer: { name: '', phone: '', email: '', address: '' },
-          items: [],
-          note: '',
-          status: 'chua-xu-ly',
-          totals: { subtotal: 0, shipping: 30000, discount: 0, total: 0 }
-        };
-      } else {
-        // Chuẩn hóa dữ liệu đơn hàng từ cart
-        if (!order.items) order.items = [];
-        
-        // Xử lý trường hợp items có thể là products hoặc cartItems
-        if (!order.items.length && order.products) {
-          console.log('🔄 Converting products to items');
-          order.items = order.products;
+      function activateSection(id) {
+        let target = sections.find(sec => sec.id === id);
+        if (!target) {
+          target = sections[0];
         }
-        if (!order.items.length && order.cartItems) {
-          console.log('🔄 Converting cartItems to items');
-          order.items = order.cartItems;
+        if (!target) {
+          if (hint) hint.style.display = 'block';
+          return;
         }
-        
-        // Chuẩn hóa cấu trúc từng item (xử lý nhiều định dạng khác nhau)
-        order.items = order.items.map(item => {
-          console.log('🔧 Processing item:', item);
-          return {
-            name: item.name || item.productName || item.title || '',
-            qty: item.qty || item.quantity || item.amount || 1,
-            price: item.price || item.unitPrice || item.pricePerUnit || 0
-          };
-        });
-
-        console.log('✅ Normalized items:', order.items);
-
-        // Chuẩn hóa totals
-        if (!order.totals) {
-          order.totals = {
-            subtotal: order.subtotal || 0,
-            shipping: order.shipping || 30000,
-            discount: order.discount || 0,
-            total: order.total || order.totalAmount || 0
-          };
+        sections.forEach(sec => sec.classList.toggle('active', sec === target));
+        navLinks.forEach(link => link.classList.toggle('active', link.getAttribute('href') === `#${target.id}`));
+        if (hint) {
+          hint.style.display = sections.length ? 'none' : 'block';
         }
       }
 
-      const parsedDate = order.date ? new Date(order.date) : new Date();
-      order.date = Number.isNaN(parsedDate.getTime()) ? new Date().toISOString() : parsedDate.toISOString();
+      function handleHashChange() {
+        const hash = window.location.hash.replace('#', '').trim();
+        if (!hash) {
+          activateSection(sections[0]?.id);
+        } else {
+          activateSection(hash);
+        }
+      }
 
-      // Render form
-      orderIdInput.value = order.id;
-      orderDateInput.value = toDatetimeLocalValue(order.date) || toDatetimeLocalValue(new Date().toISOString());
-      orderStatusSelect.value = internalToUi[order.status] || 'moi-dat';
-      nameInput.value = order.customer?.name || '';
-      phoneInput.value = order.customer?.phone || '';
-      emailInput.value = order.customer?.email || '';
-      addressInput.value = order.customer?.address || '';
-      noteInput.value = order.note || '';
-      order.totals.shipping = 30000;
-      order.totals.discount = 0;
-      shippingDisplay.textContent = fmt(order.totals.shipping);
-
-      renderItems();
-      recalcTotals();
+      window.addEventListener('hashchange', handleHashChange);
+      handleHashChange();
     })();
-
-    // ====== SẢN PHẨM ======
-    function renderItems() {
-      console.log('🎨 Rendering items:', order.items);
-      
-      if (!order.items || order.items.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" class="text-muted">Chưa có sản phẩm trong đơn.</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = '';
-      order.items.forEach((it, idx) => tbody.appendChild(makeRow(it, idx)));
-    }
-
-    function makeRow(item, idx) {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${idx + 1}</td>
-        <td><input type="text" class="form-control" value="${item.name || ''}" placeholder="Tên sản phẩm" /></td>
-        <td><input type="number" class="form-control text-end" min="1" value="${item.qty || 1}" /></td>
-        <td><input type="number" class="form-control text-end" min="0" value="${item.price || 0}" /></td>
-        <td class="currency">${fmt((item.qty || 1) * (item.price || 0))}</td>
-      `;
-
-      const [nameEl, qtyEl, priceEl] = [tr.children[1].firstElementChild, tr.children[2].firstElementChild, tr.children[3].firstElementChild];
-      const totalCell = tr.children[4];
-
-      const onChange = () => {
-        item.name = nameEl.value.trim();
-        item.qty = parseNum(qtyEl.value) || 1;
-        item.price = parseNum(priceEl.value);
-        totalCell.textContent = fmt(item.qty * item.price);
-        recalcTotals();
-      };
-
-      nameEl.addEventListener('input', onChange);
-      qtyEl.addEventListener('input', onChange);
-      priceEl.addEventListener('input', onChange);
-
-      return tr;
-    }
-
-    // ====== TÍNH TIỀN ======
-    function recalcTotals() {
-      const subtotal = (order.items || []).reduce((s, it) => s + (parseNum(it.qty) * parseNum(it.price)), 0);
-      const shipping = 30000;
-      const discount = 0;
-      const total = Math.max(0, subtotal + shipping - discount);
-
-      order.totals = { subtotal, shipping, discount, total };
-      order.date = inputValueToISO(orderDateInput.value);
-
-      subtotalEl.textContent = fmt(subtotal);
-      shippingDisplay.textContent = fmt(shipping);
-      grandEl.textContent = fmt(total);
-    }
-
-    // ====== LƯU ======
-    btnSave.addEventListener('click', () => {
-      // Validate tối thiểu
-      if (!nameInput.value.trim()) {
-        alert('Vui lòng nhập tên khách hàng');
-        nameInput.focus();
-        return;
-      }
-
-      // Đồng bộ state từ form -> object
-      order.id = String(orderIdInput.value).trim();
-      order.date = inputValueToISO(orderDateInput.value);
-      order.status = uiToInternal[orderStatusSelect.value] || 'chua-xu-ly';
-      order.customer = {
-        name: nameInput.value.trim(),
-        phone: phoneInput.value.trim(),
-        email: emailInput.value.trim(),
-        address: addressInput.value.trim(),
-      };
-      order.note = noteInput.value.trim();
-
-      // Lọc bỏ dòng sản phẩm trống
-      order.items = (order.items || []).filter(it => (it.name || '').trim() !== '' && parseNum(it.qty) > 0);
-
-      // Không cho lưu nếu chưa có sản phẩm
-      if (order.items.length === 0) {
-        alert('Vui lòng thêm ít nhất 1 sản phẩm.');
-        return;
-      }
-
-      // Cập nhật totals
-      recalcTotals();
-
-      // Ghi vào localStorage
-      const idx = orders.findIndex(o => String(o.id) === String(order.id));
-      if (idx === -1) {
-        orders.push(order);
-      } else {
-        orders[idx] = order;
-      }
-      localStorage.setItem('orders', JSON.stringify(orders));
-
-      console.log('💾 Saved order:', order);
-
-      statusMessage.textContent = 'Đã lưu đơn hàng thành công!';
-      setTimeout(() => statusMessage.textContent = '', 2500);
-    });
-
-    // ====== ĐỒNG BỘ TRẠNG THÁI UI -> TOTALS khi sửa trực tiếp ======
-    orderStatusSelect.addEventListener('change', () => {
-      order.status = uiToInternal[orderStatusSelect.value] || 'chua-xu-ly';
-    });
-
-    // Lắng nghe thay đổi để cập nhật object khi chỉnh sửa trường text
-    ;[nameInput, phoneInput, emailInput, addressInput, noteInput].forEach(el => {
-      el.addEventListener('input', () => {
-        order.customer = order.customer || {};
-        order.customer.name = nameInput.value.trim();
-        order.customer.phone = phoneInput.value.trim();
-        order.customer.email = emailInput.value.trim();
-        order.customer.address = addressInput.value.trim();
-        order.note = noteInput.value.trim();
-      });
-    });
   </script>
 </body>
 </html>

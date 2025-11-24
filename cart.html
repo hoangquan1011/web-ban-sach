@@ -237,9 +237,23 @@
               <div class="fw-semibold" id="summaryPhone">---</div>
             </div>
             <div class="mb-4">
-              <label for="summaryAddress" class="form-label">Địa chỉ giao hàng</label>
-              <textarea id="summaryAddress" class="form-control" rows="2" placeholder="Nhập địa chỉ nhận hàng"></textarea>
-              <div class="form-text" id="addressHint">Nhập địa chỉ nhận hàng cho đơn này.</div>
+              <small class="text-muted text-uppercase d-block mb-2">Địa chỉ giao hàng</small>
+              <div class="form-check border rounded p-3 mb-2 d-flex align-items-start">
+                <input class="form-check-input mt-1 me-3" type="radio" name="addressOption" id="addressOptionDefault" value="default" checked>
+                <label class="form-check-label w-100" for="addressOptionDefault">
+                  <span class="fw-semibold text-success">Dùng địa chỉ mặc định</span>
+                  <small class="d-block text-muted">Địa chỉ: <span id="defaultAddressDisplay">123 An Dương Vương</span></small>
+                </label>
+              </div>
+              <div class="form-check border rounded p-3 mb-3 d-flex align-items-start">
+                <input class="form-check-input mt-1 me-3" type="radio" name="addressOption" id="addressOptionCustom" value="custom">
+                <label class="form-check-label w-100" for="addressOptionCustom">
+                  <span class="fw-semibold text-success">Nhập địa chỉ khác</span>
+                  <small class="d-block text-muted">Chọn tùy chọn này để nhập địa chỉ giao hàng mới.</small>
+                </label>
+              </div>
+              <textarea id="summaryAddress" class="form-control mb-2" rows="2" placeholder="Nhập địa chỉ mới" disabled></textarea>
+              <div class="form-text" id="addressHint">Đang sử dụng địa chỉ mặc định: 123 An Dương Vương.</div>
             </div>
             <div class="mb-4">
               <small class="text-muted text-uppercase d-block mb-2">Phương thức thanh toán</small>
@@ -337,6 +351,7 @@
     });
 
     const PAYMENT_METHOD_STORAGE_KEY = 'preferredPaymentMethod';
+    const DEFAULT_SHIPPING_ADDRESS = '123 An Dương Vương';
 
     // ====== QUẢN LÝ TRẠNG THÁI ĐĂNG NHẬP (GIAO DIỆN MỚI) ======
     function checkLoginStatus() {
@@ -458,31 +473,50 @@
       const phoneEl = document.getElementById('summaryPhone');
       const addressInput = document.getElementById('summaryAddress');
       const addressHint = document.getElementById('addressHint');
-      if (!nameEl || !phoneEl || !addressInput) return;
+      const defaultRadio = document.getElementById('addressOptionDefault');
+      const customRadio = document.getElementById('addressOptionCustom');
+      const defaultAddressDisplay = document.getElementById('defaultAddressDisplay');
+      if (!nameEl || !phoneEl || !addressInput || !defaultRadio || !customRadio) return;
+      if (defaultAddressDisplay) {
+        defaultAddressDisplay.textContent = DEFAULT_SHIPPING_ADDRESS;
+      }
 
       const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
       const isLoggedIn = Boolean(currentUser && (currentUser.username || currentUser.name));
+      const applyAddressMode = (mode) => {
+        const useCustom = mode === 'custom';
+        addressInput.disabled = !useCustom;
+        if (useCustom) {
+          addressInput.placeholder = 'Nhập địa chỉ giao hàng mới';
+          if (addressHint) {
+            addressHint.textContent = 'Nhập địa chỉ giao hàng mới cho đơn này.';
+          }
+        } else {
+          addressInput.placeholder = 'Địa chỉ mặc định đang được sử dụng';
+          if (addressHint) {
+            addressHint.textContent = `Đang sử dụng địa chỉ mặc định: ${DEFAULT_SHIPPING_ADDRESS}.`;
+          }
+        }
+      };
+
+      const updateAddressModeFromSelection = () => {
+        applyAddressMode(customRadio.checked ? 'custom' : 'default');
+      };
+
+      defaultRadio.addEventListener('change', updateAddressModeFromSelection);
+      customRadio.addEventListener('change', updateAddressModeFromSelection);
+      updateAddressModeFromSelection();
 
       if (isLoggedIn) {
         nameEl.textContent = currentUser.hoten || currentUser.name || currentUser.username || 'Khách hàng';
         phoneEl.textContent = currentUser.phone || 'Chưa cập nhật';
-        addressInput.disabled = false;
         if (!addressInput.dataset.dirty) {
           addressInput.value = currentUser.address || '';
-        }
-        addressInput.placeholder = 'Nhập địa chỉ nhận hàng';
-        if (addressHint) {
-          addressHint.textContent = 'Bạn có thể cập nhật địa chỉ giao hàng cho đơn này.';
         }
       } else {
         nameEl.textContent = 'Chưa đăng nhập';
         phoneEl.textContent = '---';
         addressInput.value = '';
-        addressInput.disabled = true;
-        addressInput.placeholder = 'Đăng nhập để nhập địa chỉ';
-        if (addressHint) {
-          addressHint.textContent = 'Vui lòng đăng nhập để nhập địa chỉ giao hàng.';
-        }
       }
 
       addressInput.addEventListener('input', () => {
